@@ -1,0 +1,157 @@
+// This is your Prisma schema file
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ── Auth Models (NextAuth) ──────────────────────────────────────────────────
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ── User ─────────────────────────────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  password      String?
+  image         String?
+  role          String    @default("user") // "user" | "admin"
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  diaries       Diary[]
+  progress      UserProgress?
+  wardrobeItems UserWardrobeItem[]
+  keigoProgress KeigoLessonProgress[]
+}
+
+// ── Diary ─────────────────────────────────────────────────────────────────────
+
+model Diary {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  mood      String?
+  topicId   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ── Gamification ──────────────────────────────────────────────────────────────
+
+model UserProgress {
+  id          String    @id @default(cuid())
+  userId      String    @unique
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  xp          Int       @default(0)
+  level       Int       @default(1)
+  totalStamps Int       @default(0)
+  streakDays  Int       @default(0)
+  lastStudyAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model WardrobeItem {
+  id            String             @id @default(cuid())
+  name          String
+  description   String?
+  imageUrl      String
+  icon          String
+  isRare        Boolean            @default(false)
+  requiredLevel Int                @default(1)
+  stampCost     Int                @default(0)
+  ownerships    UserWardrobeItem[]
+  createdAt     DateTime           @default(now())
+}
+
+model UserWardrobeItem {
+  id             String       @id @default(cuid())
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wardrobeItemId String
+  wardrobeItem   WardrobeItem @relation(fields: [wardrobeItemId], references: [id])
+  equippedAt     DateTime?
+  earnedAt       DateTime     @default(now())
+
+  @@unique([userId, wardrobeItemId])
+}
+
+// ── Keigo Lesson Progress ─────────────────────────────────────────────────────
+
+model KeigoLessonProgress {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId    String
+  completed   Boolean   @default(false)
+  quizScore   Int?
+  quizTotal   Int?
+  completedAt DateTime?
+  xpAwarded   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([userId, lessonId])
+}
+
+// ── Content Models ────────────────────────────────────────────────────────────
+
+model Topic {
+  id           String   @id @default(cuid())
+  title        String
+  titleJp      String
+  category     String
+  difficulty   Int      @default(1)
+  wordCount    Int      @default(0)
+  grammarCount Int      @default(0)
+  imageUrl     String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
