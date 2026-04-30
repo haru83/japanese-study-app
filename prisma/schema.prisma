@@ -60,12 +60,13 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  accounts      Account[]
-  sessions      Session[]
-  diaries       Diary[]
-  progress      UserProgress?
-  wardrobeItems UserWardrobeItem[]
-  keigoProgress KeigoLessonProgress[]
+  accounts              Account[]
+  sessions              Session[]
+  diaries               Diary[]
+  progress              UserProgress?
+  wardrobeItems         UserWardrobeItem[]
+  keigoProgress         KeigoLessonProgress[]
+  learningDiaryProgress LearningDiaryProgress[]
 }
 
 // ── Diary ─────────────────────────────────────────────────────────────────────
@@ -138,6 +139,21 @@ model KeigoLessonProgress {
   updatedAt   DateTime  @updatedAt
 
   @@unique([userId, lessonId])
+}
+
+// ── Learning Diary Progress ───────────────────────────────────────────────────
+
+model LearningDiaryProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  diaryId     String
+  quizScore   Int?
+  quizTotal   Int?
+  completedAt DateTime @default(now())
+  xpAwarded   Int      @default(0)
+
+  @@unique([userId, diaryId])
 }
 
 // ── Content Models ────────────────────────────────────────────────────────────

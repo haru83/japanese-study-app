@@ -11,6 +11,8 @@ interface LessonCompleteBannerProps {
   newLevel: number;
   quizScore: number;
   quizTotal: number;
+  backHref?: string;
+  backLabel?: string;
 }
 
 export function LessonCompleteBanner({
@@ -20,6 +22,8 @@ export function LessonCompleteBanner({
   newLevel,
   quizScore,
   quizTotal,
+  backHref = "/keigo",
+  backLabel = "목록으로",
 }: LessonCompleteBannerProps) {
   const router = useRouter();
   const isPerfect = quizScore === quizTotal && quizTotal > 0;
@@ -90,10 +94,10 @@ export function LessonCompleteBanner({
           <Button
             variant="secondary"
             size="lg"
-            onClick={() => router.push("/keigo")}
+            onClick={() => router.push(backHref)}
             className="flex-1"
           >
-            목록으로
+            {backLabel}
           </Button>
           <Button
             size="lg"

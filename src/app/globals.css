@@ -54,3 +54,6 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #d0cec7; border-radius: 3px; }
 .dark ::-webkit-scrollbar-thumb { background: #3a2e1e; }
+
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
