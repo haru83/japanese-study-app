@@ -1,18 +1,20 @@
 import { cn } from "@/lib/utils";
 
 interface ProgressBarProps {
-  value: number; // 0-100
+  value: number;
   className?: string;
-  color?: "primary" | "keigo";
+  color?: "primary" | "grape" | "matcha";
 }
 
 export function ProgressBar({ value, className, color = "primary" }: ProgressBarProps) {
   return (
-    <div className={cn("w-full bg-gray-100 dark:bg-border-dark rounded-full h-2", className)}>
+    <div className={cn("w-full bg-canvas-almond rounded-full h-3 border-2 border-black overflow-hidden", className)}>
       <div
         className={cn(
-          "h-2 rounded-full transition-all duration-500",
-          color === "primary" ? "bg-primary" : "bg-keigo"
+          "h-full rounded-full transition-all duration-500",
+          color === "primary" && "bg-sakura-pink",
+          color === "grape" && "bg-grape-punch",
+          color === "matcha" && "bg-matcha-green",
         )}
         style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
       />

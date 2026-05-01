@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
-import { Noto_Sans_KR, Plus_Jakarta_Sans } from "next/font/google";
+import { Zen_Maru_Gothic, Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "@/components/providers/session-provider";
 
-const notoSansKR = Noto_Sans_KR({
+const zenMaruGothic = Zen_Maru_Gothic({
   subsets: ["latin"],
   weight: ["400", "500", "700", "900"],
-  variable: "--font-noto-sans-kr",
+  variable: "--font-zen-maru",
   display: "swap",
 });
 
-const plusJakartaSans = Plus_Jakarta_Sans({
+const notoSansKR = Noto_Sans_KR({
   subsets: ["latin"],
-  weight: ["400", "500", "700", "800"],
-  variable: "--font-plus-jakarta-sans",
+  weight: ["400", "500", "700"],
+  variable: "--font-noto-sans-kr",
   display: "swap",
 });
 
@@ -36,9 +36,9 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${notoSansKR.variable} ${plusJakartaSans.variable} font-body bg-background-light dark:bg-background-dark min-h-screen flex justify-center`}
+        className={`${zenMaruGothic.variable} ${notoSansKR.variable} font-body bg-sakura-blush min-h-screen flex justify-center`}
       >
-        <div className="w-full max-w-md min-h-screen bg-background-light dark:bg-background-dark shadow-2xl overflow-hidden relative">
+        <div className="w-full max-w-md min-h-screen bg-sakura-blush shadow-2xl overflow-hidden relative">
           <SessionProvider>{children}</SessionProvider>
         </div>
       </body>

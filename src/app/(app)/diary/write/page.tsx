@@ -48,14 +48,12 @@ function DiaryWriteForm() {
 
   if (done) {
     return (
-      <div className="min-h-screen bg-bg-light dark:bg-bg-dark flex flex-col items-center justify-center px-6 gap-6">
-        <div className="text-7xl animate-bounce">⭐</div>
-        <h2 className="text-2xl font-bold text-text-main dark:text-text-main-dark">
-          일기 완성!
-        </h2>
-        <div className="bg-primary/10 rounded-2xl px-6 py-4 text-center">
-          <p className="text-primary font-bold text-xl">+{xpGained} XP</p>
-          <p className="text-text-sub text-sm mt-1">+1 스탬프 획득!</p>
+      <div className="min-h-screen bg-sakura-blush flex flex-col items-center justify-center px-6 gap-6">
+        <div className="text-8xl animate-bounce wobbly-2 sticker inline-block">⭐</div>
+        <h2 className="text-3xl font-black text-type-black">일기 완성!</h2>
+        <div className="bg-paper-white border-2 border-black rounded-2xl px-6 py-4 text-center shadow-[4px_4px_0px_0px_#000]">
+          <p className="text-grape-punch font-black text-2xl">+{xpGained} XP</p>
+          <p className="text-type-black/60 font-bold text-sm mt-1">+1 스탬프 획득!</p>
         </div>
         <Button size="lg" onClick={() => router.push("/home")} className="w-full max-w-xs">
           홈으로
@@ -65,67 +63,53 @@ function DiaryWriteForm() {
   }
 
   return (
-    <div className="min-h-screen bg-bg-light dark:bg-bg-dark">
-      {/* Header */}
-      <div className="bg-white dark:bg-surface-dark px-5 pt-12 pb-5 shadow-sm">
+    <div className="min-h-screen bg-sakura-blush">
+      <div className="bg-canvas-almond px-5 pt-12 pb-5 border-b-4 border-black">
         <button
           onClick={() => router.back()}
-          className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-text-main dark:text-text-main-dark -ml-2 mb-1"
+          className="p-2 rounded-full border-2 border-black bg-paper-white shadow-[2px_2px_0px_0px_#000] hover:shadow-[1px_1px_0px_0px_#000] transition-all text-type-black -ml-2 mb-1"
         >
           <span className="material-symbols-outlined">arrow_back</span>
         </button>
-        <h1 className="text-xl font-bold text-text-main dark:text-text-main-dark">
-          {topicKo}
-        </h1>
-        {topicJp && (
-          <p className="text-sm text-text-sub dark:text-text-sub-dark mt-0.5">
-            {topicJp}
-          </p>
-        )}
+        <h1 className="text-xl font-black text-type-black">{topicKo}</h1>
+        {topicJp && <p className="text-sm text-type-black/60 font-bold mt-0.5">{topicJp}</p>}
       </div>
 
       <form onSubmit={handleSubmit} className="px-5 py-4 flex flex-col gap-4">
-        {/* Title */}
         <div>
-          <label className="block text-sm font-medium text-text-main dark:text-text-main-dark mb-1.5">
-            제목
-          </label>
+          <label className="block text-sm font-black text-type-black mb-1.5">제목</label>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder={`${topicKo} 일기`}
-            className="w-full px-4 py-3 rounded-2xl border border-gray-200 dark:border-border-dark bg-white dark:bg-surface-dark text-text-main dark:text-text-main-dark focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full px-4 py-3 rounded-2xl border-2 border-black bg-paper-white text-type-black focus:outline-none focus:ring-2 focus:ring-sakura-pink font-bold"
           />
         </div>
 
-        {/* Mood */}
         <div>
-          <label className="block text-sm font-medium text-text-main dark:text-text-main-dark mb-2">
-            오늘의 기분
-          </label>
+          <label className="block text-sm font-black text-type-black mb-2">오늘의 기분</label>
           <div className="flex gap-2">
             {MOODS.map((m) => (
               <button
                 key={m.id}
                 type="button"
                 onClick={() => setMood(m.id)}
-                className={`flex flex-col items-center gap-1 flex-1 py-2 rounded-2xl border-2 transition-all ${
+                className={`flex flex-col items-center gap-1 flex-1 py-2 rounded-2xl border-2 border-black transition-all font-bold ${
                   mood === m.id
-                    ? "border-primary bg-primary/10"
-                    : "border-gray-100 dark:border-border-dark bg-white dark:bg-surface-dark"
+                    ? "bg-sakura-pink shadow-[3px_3px_0px_0px_#000]"
+                    : "bg-paper-white shadow-[2px_2px_0px_0px_#000] hover:shadow-[1px_1px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px]"
                 }`}
               >
                 <span className="text-2xl">{m.emoji}</span>
-                <span className="text-[10px] text-text-sub">{m.label}</span>
+                <span className="text-[10px]">{m.label}</span>
               </button>
             ))}
           </div>
         </div>
 
-        {/* Content */}
         <div>
-          <label className="block text-sm font-medium text-text-main dark:text-text-main-dark mb-1.5">
+          <label className="block text-sm font-black text-type-black mb-1.5">
             일기 내용 (일본어로 써보세요 🇯🇵)
           </label>
           <textarea
@@ -134,11 +118,9 @@ function DiaryWriteForm() {
             placeholder="今日は..."
             rows={8}
             required
-            className="w-full px-4 py-3 rounded-2xl border border-gray-200 dark:border-border-dark bg-white dark:bg-surface-dark text-text-main dark:text-text-main-dark focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+            className="w-full px-4 py-3 rounded-2xl border-2 border-black bg-paper-white text-type-black focus:outline-none focus:ring-2 focus:ring-sakura-pink resize-none font-bold"
           />
-          <p className="text-xs text-text-sub dark:text-text-sub-dark mt-1 text-right">
-            {content.length}자
-          </p>
+          <p className="text-xs text-type-black/60 font-bold mt-1 text-right">{content.length}자</p>
         </div>
 
         <Button type="submit" size="lg" disabled={loading || !content.trim()}>
@@ -151,7 +133,7 @@ function DiaryWriteForm() {
 
 export default function DiaryWritePage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-bg-light flex items-center justify-center"><span className="text-text-sub">로딩 중...</span></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-sakura-blush flex items-center justify-center"><span className="text-type-black font-bold">로딩 중...</span></div>}>
       <DiaryWriteForm />
     </Suspense>
   );

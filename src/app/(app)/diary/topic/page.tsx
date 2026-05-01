@@ -12,6 +12,16 @@ const PRESET_TOPICS = [
 
 const DIFFICULTY_STARS = (d: number) => "⭐".repeat(d);
 
+const WOBBLES = ["wobbly-1", "wobbly-2", "wobbly-3", "wobbly-4", "wobbly-5"];
+const BG_CYCLE = [
+  "bg-paper-white",
+  "bg-sakura-pink",
+  "bg-canvas-almond",
+  "bg-paper-white",
+  "bg-sakura-pink",
+  "bg-canvas-almond",
+];
+
 export default async function TopicSelectionPage() {
   const dbTopics = await getTopics();
 
@@ -27,48 +37,43 @@ export default async function TopicSelectionPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-bg-light dark:bg-bg-dark">
-      {/* Header */}
-      <div className="bg-white dark:bg-surface-dark px-5 pt-12 pb-5 shadow-sm flex items-center gap-3">
+    <div className="min-h-screen bg-sakura-blush">
+      <div className="bg-canvas-almond px-5 pt-12 pb-5 border-b-4 border-black flex items-center gap-3">
         <Link
           href="/diary"
-          className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-text-main dark:text-text-main-dark -ml-2"
+          className="p-2 rounded-full border-2 border-black bg-paper-white shadow-[2px_2px_0px_0px_#000] hover:shadow-[1px_1px_0px_0px_#000] transition-all text-type-black -ml-2"
         >
           <span className="material-symbols-outlined">arrow_back</span>
         </Link>
         <div>
-          <h1 className="text-xl font-bold text-text-main dark:text-text-main-dark">
-            오늘의 주제 선택
-          </h1>
-          <p className="text-sm text-text-sub dark:text-text-sub-dark">
-            어떤 주제로 일기를 쓸까요?
-          </p>
+          <h1 className="text-xl font-black text-type-black">오늘의 주제 선택</h1>
+          <p className="text-sm text-type-black/60 font-bold">어떤 주제로 일기를 쓸까요?</p>
         </div>
       </div>
 
       <div className="px-5 py-4 grid grid-cols-1 gap-3">
-        {allTopics.map((topic) => (
-          <Link
-            key={topic.id}
-            href={`/diary/write?topic=${encodeURIComponent(topic.titleJp)}&topicKo=${encodeURIComponent(topic.title)}`}
-            className="bg-white dark:bg-surface-dark rounded-2xl p-4 shadow-sm border border-orange-50 dark:border-border-dark flex items-center gap-4 hover:shadow-md transition-shadow active:scale-95"
-          >
-            <div className="flex-1">
-              <p className="font-bold text-text-main dark:text-text-main-dark">
-                {topic.title}
-              </p>
-              <p className="text-sm text-text-sub dark:text-text-sub-dark mt-0.5">
-                {topic.titleJp}
-              </p>
-            </div>
-            <div className="flex flex-col items-end gap-1">
-              <span className="text-xs bg-amber-50 dark:bg-border-dark text-amber-700 dark:text-primary px-2 py-0.5 rounded-full font-medium">
-                {topic.category}
-              </span>
-              <span className="text-xs">{DIFFICULTY_STARS(topic.difficulty)}</span>
-            </div>
-          </Link>
-        ))}
+        {allTopics.map((topic, i) => {
+          const w = WOBBLES[i % WOBBLES.length];
+          const bg = BG_CYCLE[i % BG_CYCLE.length];
+          return (
+            <Link
+              key={topic.id}
+              href={`/diary/write?topic=${encodeURIComponent(topic.titleJp)}&topicKo=${encodeURIComponent(topic.title)}`}
+              className={`${bg} ${w} rounded-[15px] p-4 border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] flex items-center gap-4 transition-all active:scale-95`}
+            >
+              <div className="flex-1">
+                <p className="font-black text-type-black">{topic.title}</p>
+                <p className="text-sm text-type-black/60 font-bold mt-0.5">{topic.titleJp}</p>
+              </div>
+              <div className="flex flex-col items-end gap-1">
+                <span className="text-xs bg-grape-punch text-white px-2 py-0.5 rounded-full font-black border-2 border-black">
+                  {topic.category}
+                </span>
+                <span className="text-xs">{DIFFICULTY_STARS(topic.difficulty)}</span>
+              </div>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

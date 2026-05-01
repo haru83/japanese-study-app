@@ -75,21 +75,16 @@ function LoginForm() {
   }
 
   const inputClass =
-    "w-full px-4 py-3.5 rounded-2xl border border-gray-200 dark:border-border-dark bg-white dark:bg-surface-dark focus:outline-none focus:ring-2 focus:ring-primary/50 text-text-main dark:text-text-main-dark placeholder:text-text-sub dark:placeholder:text-text-sub-dark text-sm";
+    "w-full px-4 py-3.5 rounded-2xl border-2 border-black bg-canvas-almond focus:outline-none focus:ring-2 focus:ring-sakura-pink text-type-black placeholder:text-type-black/40 text-sm font-bold";
 
   return (
-    <div className="flex flex-col min-h-screen bg-background-light dark:bg-bg-dark">
+    <div className="flex flex-col min-h-screen bg-sakura-blush">
       {/* Logo header */}
       <header className="flex items-center justify-center pt-12 pb-2 px-6">
-        <div className="flex items-center gap-2">
-          <span
-            className="material-symbols-outlined text-primary text-2xl"
-            style={{ fontVariationSettings: "'FILL' 1" }}
-          >
-            translate
-          </span>
-          <span className="text-text-main dark:text-text-main-dark font-bold text-base tracking-tight">
-            다이어리 일본어
+        <div className="flex items-center gap-2 border-2 border-black bg-paper-white px-4 py-2 rounded-full shadow-[3px_3px_0px_0px_#000]">
+          <span className="text-xl">🐕</span>
+          <span className="text-type-black font-bold text-base tracking-tight">
+            사쿠라 시바
           </span>
         </div>
       </header>
@@ -97,10 +92,10 @@ function LoginForm() {
       <div className="flex flex-1 flex-col px-6 pt-8 pb-10">
         {/* Title */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-text-main dark:text-text-main-dark tracking-tight">
+          <h1 className="text-3xl font-black text-type-black tracking-tight">
             {isLogin ? "다시 오셨군요! 👋" : "환영합니다! 🎌"}
           </h1>
-          <p className="text-text-sub dark:text-text-sub-dark text-sm mt-2">
+          <p className="text-type-black/60 text-sm mt-2 font-medium">
             {isLogin
               ? "오늘도 일본어 일기를 써보아요"
               : "함께 일본어 일기를 시작해보아요"}
@@ -108,7 +103,7 @@ function LoginForm() {
         </div>
 
         {/* Form card */}
-        <div className="bg-white dark:bg-surface-dark rounded-3xl p-6 shadow-sm border border-orange-50 dark:border-border-dark">
+        <div className="bg-paper-white rounded-3xl p-6 border-2 border-black shadow-[6px_6px_0px_0px_#000]">
           <form onSubmit={handleSubmit} className="flex flex-col gap-3">
             {!isLogin && (
               <input
@@ -150,15 +145,15 @@ function LoginForm() {
             )}
 
             {error && (
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800/30 rounded-2xl px-4 py-3">
-                <p className="text-red-600 dark:text-red-400 text-sm text-center">{error}</p>
+              <div className="bg-red-100 border-2 border-red-400 rounded-2xl px-4 py-3">
+                <p className="text-red-600 text-sm text-center font-bold">{error}</p>
               </div>
             )}
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-primary hover:bg-primary-hover active:scale-[0.98] transition-all h-[54px] rounded-full font-bold text-text-main text-base shadow-[0_4px_0_0_#d97706] hover:shadow-[0_2px_0_0_#d97706] hover:translate-y-[2px] disabled:opacity-60 disabled:cursor-not-allowed mt-1"
+              className="w-full bg-sakura-pink hover:bg-primary-hover active:scale-[0.98] transition-all h-[54px] rounded-2xl font-black text-type-black text-base border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] disabled:opacity-60 disabled:cursor-not-allowed mt-1"
             >
               {loading ? "처리 중..." : isLogin ? "로그인" : "회원가입"}
             </button>
@@ -170,17 +165,17 @@ function LoginForm() {
           <button
             type="button"
             onClick={() => setIsLogin(!isLogin)}
-            className="text-sm font-medium text-text-sub dark:text-text-sub-dark"
+            className="text-sm font-bold text-type-black/70"
           >
             {isLogin ? (
               <>
                 계정이 없으신가요?{" "}
-                <span className="text-primary font-bold">회원가입</span>
+                <span className="text-grape-punch underline">회원가입</span>
               </>
             ) : (
               <>
                 이미 계정이 있으신가요?{" "}
-                <span className="text-primary font-bold">로그인</span>
+                <span className="text-grape-punch underline">로그인</span>
               </>
             )}
           </button>

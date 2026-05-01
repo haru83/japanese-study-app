@@ -1,59 +1,74 @@
 @import "tailwindcss";
 
 @theme {
-  /* Brand colors */
-  --color-primary: #f4af25;
-  --color-primary-hover: #d99616;
-  --color-primary-dark: #b37e10;
+  /* Design.md palette */
+  --color-sakura-blush: #ffe4ec;
+  --color-canvas-almond: #ffe9ce;
+  --color-paper-white: #ffffff;
+  --color-type-black: #000000;
+  --color-sakura-pink: #ffb7c5;
+  --color-shiba-orange: #ffa54f;
+  --color-grape-punch: #8a53ff;
+  --color-matcha-green: #3ccb09;
 
-  /* Keigo accent */
-  --color-keigo: #f9a8c9;
-  --color-keigo-hover: #f472b0;
-  --color-keigo-soft: #fdf2f8;
-
-  /* Surfaces */
-  --color-bg-light: #f8f7f5;
-  --color-bg-dark: #221c10;
-  --color-background-light: #f8f7f5;
-  --color-background-dark: #221c10;
-  --color-surface-dark: #2d2416;
-  --color-border-dark: #3a2e1e;
-
-  /* Text */
-  --color-text-main: #1c170d;
-  --color-text-sub: #6b6255;
-  --color-text-main-light: #1c170d;
-  --color-text-main-dark: #fcfbf8;
-  --color-text-sub-light: #6b6255;
-  --color-text-sub-dark: #d0cec7;
+  /* Mapped tokens used by existing components */
+  --color-primary: #ffb7c5;
+  --color-primary-hover: #ff9ab5;
+  --color-primary-dark: #e0869a;
+  --color-bg-light: #ffe4ec;
+  --color-background-light: #ffe4ec;
+  --color-text-main: #000000;
+  --color-text-sub: #5a4a4a;
 
   /* Fonts */
-  --font-display: var(--font-plus-jakarta-sans), var(--font-noto-sans-kr), sans-serif;
-  --font-body: var(--font-noto-sans-kr), sans-serif;
-  --font-japanese: "Noto Sans JP", var(--font-noto-sans-kr), sans-serif;
+  --font-display: "Zen Maru Gothic", "Noto Sans KR", sans-serif;
+  --font-body: "Zen Maru Gothic", "Noto Sans KR", sans-serif;
+  --font-japanese: "Noto Sans JP", "Zen Maru Gothic", sans-serif;
 }
 
 :root {
-  --background: #f8f7f5;
-  --foreground: #1c170d;
-}
+  --background: #ffe4ec;
+  --foreground: #000000;
 
-.dark {
-  --background: #221c10;
-  --foreground: #fcfbf8;
+  /* Design.md component tokens */
+  --radius-bubble: 144px;
+  --radius-sticker: 15px;
+  --shadow-sticker: 0px 0px 0px 2px #ffd80c;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
+  font-family: "Zen Maru Gothic", "Noto Sans KR", sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Sticker-bomb utility classes */
+.sticker {
+  border: 5px solid white;
+  filter: drop-shadow(0 4px 0 rgba(0, 0, 0, 0.12));
+}
+
+.bubble-card {
+  background: #ffffff;
+  border-radius: 144px;
+  box-shadow: 0px 0px 0px 2px #ffd80c;
+}
+
+.wobbly-1 { transform: rotate(-1.5deg); }
+.wobbly-2 { transform: rotate(1deg); }
+.wobbly-3 { transform: rotate(-0.8deg); }
+.wobbly-4 { transform: rotate(1.8deg); }
+.wobbly-5 { transform: rotate(-2deg); }
+
+.shadow-sticker {
+  box-shadow: 0px 0px 0px 2px #ffd80c;
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #d0cec7; border-radius: 3px; }
-.dark ::-webkit-scrollbar-thumb { background: #3a2e1e; }
+::-webkit-scrollbar-thumb { background: #ffb7c5; border-radius: 3px; }
 
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }

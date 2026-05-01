@@ -2,7 +2,6 @@
 
 import type { LessonCategory } from "@/types/lesson";
 import { CATEGORY_LABELS } from "@/types/lesson";
-import { cn } from "@/lib/utils";
 
 interface CategoryFilterProps {
   active: LessonCategory;
@@ -11,19 +10,25 @@ interface CategoryFilterProps {
 
 const CATEGORIES: LessonCategory[] = ["all", "business", "hospitality", "social"];
 
+const ACTIVE_BG: Record<LessonCategory, string> = {
+  all: "bg-type-black text-white",
+  business: "bg-grape-punch text-white",
+  hospitality: "bg-sakura-pink text-black",
+  social: "bg-shiba-orange text-black",
+};
+
 export function CategoryFilter({ active, onChange }: CategoryFilterProps) {
   return (
-    <div className="flex gap-2 overflow-x-auto pb-1">
+    <div className="flex gap-2 flex-wrap">
       {CATEGORIES.map((cat) => (
         <button
           key={cat}
           onClick={() => onChange(cat)}
-          className={cn(
-            "flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all",
+          className={`px-3 py-1.5 rounded-full text-sm font-bold border-2 border-black transition-all ${
             active === cat
-              ? "bg-keigo text-white shadow-sm"
-              : "bg-white dark:bg-surface-dark text-text-sub dark:text-text-sub-dark border border-orange-50 dark:border-border-dark"
-          )}
+              ? `${ACTIVE_BG[cat]} shadow-[3px_3px_0px_0px_#000]`
+              : "bg-paper-white text-black shadow-[2px_2px_0px_0px_#000] hover:shadow-[1px_1px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px]"
+          }`}
         >
           {CATEGORY_LABELS[cat]}
         </button>
