@@ -6,9 +6,18 @@
 
 ## 주요 기능
 
-### 📔 일기 학습
+### 📔 개인 일기
 - 매일 주제를 선택해 일본어 일기 작성
 - 완료 시 XP와 스탬프 획득
+
+### 📚 학습 일기
+- 100개의 카테고리별 학습 일기 (10개 카테고리 × 10개 엔트리)
+- **카테고리**: 일상, 음식, 여행, 계절, 감정, 학교, 직장, 취미, 쇼핑, 건강
+- **구성**: 일본어 본문 → 한국어 해석 → 어휘 → 문법 → 퀴즈
+- **난이도**: 초급, 중급, 고급 혼합
+- 원문/해석/어휘/문법/퀴즈 탭 인터페이스
+- 루비 문자(furigana) 표시 토글
+- 완료 시 XP 획득 (+10 XP / 만점 퀴즈 +5 XP 보너스)
 
 ### 🎤 경어 레슨
 - 비즈니스·접객·사회 상황별 30가지 경어 레슨
@@ -110,9 +119,13 @@ src/
 │   └── api/               # NextAuth, 회원가입, 경어 동기화
 ├── components/
 │   ├── keigo/             # 경어 전용 컴포넌트
+│   ├── learningDiary/     # 학습 일기 컴포넌트 (RubyText, Filter, Card)
 │   └── layout/            # BottomNav, AdminBottomNav
-├── actions/               # 서버 액션 (diary, keigo, user)
-├── data/lessons.ts        # 30개 경어 레슨 데이터
+├── actions/               # 서버 액션 (diary, keigo, learningDiary, user)
+├── data/
+│   ├── lessons.ts         # 30개 경어 레슨 데이터
+│   ├── learningDiaries.ts # 100개 학습 일기 (part1~part10 병합)
+│   ├── ld_p1.ts~ld_p10.ts # 카테고리별 학습 일기 배치 파일 (각 10개 엔트리)
 ├── store/                 # Zustand 스토어
 ├── lib/                   # auth, db, xp 유틸리티
 └── types/                 # TypeScript 타입 정의
@@ -123,9 +136,10 @@ src/
 ## 데이터베이스 스키마
 
 - `User` — 사용자 계정
-- `Diary` — 일기 항목
+- `Diary` — 개인 일기 항목
 - `UserProgress` — XP, 레벨, 스탬프, 연속 학습일
 - `KeigoLessonProgress` — 경어 레슨 완료 기록
+- `LearningDiaryProgress` — 학습 일기 완료 기록 (퀴즈 점수, XP)
 - `WardrobeItem` / `UserWardrobeItem` — 옷장 아이템
 - `Topic` — 일기 토픽 (어드민 관리)
 
