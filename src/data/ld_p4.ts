@@ -172,7 +172,7 @@ export const part4: LearningDiary[] = [
     contentKo: "겨울이 가까워지고 있습니다. 스웨터와 코트를 꺼냈습니다. 난방도 준비했습니다.",
     vocabulary: [
       { word: "冬", reading: "ふゆ", meaning: "겨울" },
-      { word: "セーター", meaning: "스웨터" },
+      { word: "セーター", reading: "セーター", meaning: "스웨터" },
       { word: "暖房", reading: "だんぼう", meaning: "난방" },
     ],
     grammarPoints: [

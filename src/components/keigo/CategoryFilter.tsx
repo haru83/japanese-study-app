@@ -22,7 +22,7 @@ export function CategoryFilter({ active, onChange }: CategoryFilterProps) {
             "flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all",
             active === cat
               ? "bg-keigo text-white shadow-sm"
-              : "bg-white dark:bg-surface-dark text-text-sub dark:text-text-sub-dark border border-gray-100 dark:border-border-dark"
+              : "bg-white dark:bg-surface-dark text-text-sub dark:text-text-sub-dark border border-orange-50 dark:border-border-dark"
           )}
         >
           {CATEGORY_LABELS[cat]}

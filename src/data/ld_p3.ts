@@ -511,7 +511,7 @@ export const part3: LearningDiary[] = [
     ],
     grammarPoints: [
       { rule: "〜たいです", explanation: "~하고 싶습니다. 소망이나 희망을 나타냄." },
-      { word: "〜てくれます", explanation: "~해주다. 다른 사람이 자신을 위해 하는 행동을 나타냄." },
+      { rule: "〜てくれます", explanation: "~해주다. 다른 사람이 자신을 위해 하는 행동을 나타냄." },
     ],
     quiz: [
       {

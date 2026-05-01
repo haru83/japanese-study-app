@@ -23,7 +23,7 @@ export default function LearnDiaryListPage() {
   });
 
   return (
-    <main className="flex-1 overflow-y-auto px-4 pt-4 pb-24 space-y-4">
+    <main className="flex-1 overflow-y-auto px-5 pt-4 pb-24 space-y-4">
       {/* Header */}
       <div className="flex items-center gap-2 mb-1">
         <span className="text-2xl">📖</span>

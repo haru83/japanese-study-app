@@ -21,7 +21,7 @@ export const part10: LearningDiary[] = [
     contentKo: "건강이 가장 중요합니다. 매일 균형 잡힌 식사를 합니다. 운동도 합니다. 충분한 수면도 필요합니다.",
     vocabulary: [
       { word: "健康", reading: "けんこう", meaning: "건강" },
-      { word: "バランスの良い", meaning: "균형 잡힌" },
+      { word: "バランスの良い", reading: "バランスのよい", meaning: "균형 잡힌" },
       { word: "睡眠", reading: "すいみん", meaning: "수면" },
     ],
     grammarPoints: [
@@ -69,7 +69,7 @@ export const part10: LearningDiary[] = [
     vocabulary: [
       { word: "予防", reading: "よぼう", meaning: "예방" },
       { word: "健康診断", reading: "けんこうしんだん", meaning: "건강검진" },
-      { word: "ワクチン接種", meaning: "예방접종" },
+      { word: "ワクチン接種", reading: "ワクチンせっしゅ", meaning: "예방접종" },
     ],
     grammarPoints: [
       { rule: "〜することより重要", explanation: "~하는 것이 중요하다. 비교를 통한 강조." },
@@ -113,7 +113,7 @@ export const part10: LearningDiary[] = [
     ],
     contentKo: "스트레스는 건강에 나쁜 영향을 줍니다. 일이나 학교의 스트레스를 해소해야 합니다. 운동이나 명상이 효과적입니다.",
     vocabulary: [
-      { word: "ストレス", meaning: "스트레스" },
+      { word: "ストレス", reading: "ストレス", meaning: "스트레스" },
       { word: "影響", reading: "えいきょう", meaning: "영향" },
       { word: "瞑想", reading: "めいそう", meaning: "명상" },
     ],
@@ -302,9 +302,9 @@ export const part10: LearningDiary[] = [
     ],
     contentKo: "정신 건강은 신체 건강만큼 중요합니다. 정신 건강을 유지하기 위해 충분한 휴식과 취미 시간이 필요합니다. 필요에 따라 전문가의 지원을 구하는 것도 중요합니다.",
     vocabulary: [
-      { word: "メンタルヘルス", meaning: "정신 건강" },
-      { word: "同じくらい", meaning: "똑같이, 마찬가지로" },
-      { word: "サポート", meaning: "지원" },
+      { word: "メンタルヘルス", reading: "メンタルヘルス", meaning: "정신 건강" },
+      { word: "同じくらい", reading: "おなじくらい", meaning: "똑같이, 마찬가지로" },
+      { word: "サポート", reading: "サポート", meaning: "지원" },
     ],
     grammarPoints: [
       { rule: "〜同じくらい重要", explanation: "~만큼 중요하다. 동등성을 강조." },

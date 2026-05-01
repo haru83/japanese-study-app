@@ -45,7 +45,7 @@ async function MyDiaries() {
         diaries.map((diary) => (
           <div
             key={diary.id}
-            className="group relative flex items-center gap-4 bg-white dark:bg-surface-dark p-4 rounded-[2rem] shadow-sm hover:shadow-md transition-all border border-transparent hover:border-primary/20"
+            className="group relative flex items-center gap-4 bg-white dark:bg-surface-dark p-4 rounded-2xl shadow-sm hover:shadow-md transition-all border border-orange-50 dark:border-border-dark hover:border-primary/20"
           >
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
@@ -88,7 +88,7 @@ async function LearnDiariesPreview() {
   return (
     <div className="flex flex-col gap-3">
       {/* Progress summary */}
-      <div className="bg-white dark:bg-surface-dark rounded-2xl p-4 border border-gray-100 dark:border-border-dark shadow-sm">
+      <div className="bg-white dark:bg-surface-dark rounded-2xl p-4 border border-orange-50 dark:border-border-dark shadow-sm">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-bold text-text-main dark:text-text-main-dark">전체 진행률</span>
           <span className="text-sm font-bold text-primary">
@@ -105,7 +105,7 @@ async function LearnDiariesPreview() {
 
       <Link
         href="/diary/learn"
-        className="w-full flex items-center justify-center gap-2 bg-keigo/20 hover:bg-keigo/30 text-text-main dark:text-text-main-dark font-bold h-[52px] rounded-full transition-all active:scale-[0.98] border-2 border-keigo"
+        className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-text-main font-bold h-[52px] rounded-full transition-all active:scale-[0.98] shadow-[0_4px_0_0_#d97706] hover:shadow-[0_2px_0_0_#d97706] hover:translate-y-[2px]"
       >
         <span className="text-lg">📖</span>
         전체 목록 보기
@@ -115,7 +115,7 @@ async function LearnDiariesPreview() {
         <Link
           key={diary.id}
           href={`/diary/learn/${diary.id}`}
-          className="flex items-center gap-3 bg-white dark:bg-surface-dark p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-border-dark hover:border-keigo/30 transition-all"
+          className="flex items-center gap-3 bg-white dark:bg-surface-dark p-4 rounded-2xl shadow-sm border border-orange-50 dark:border-border-dark hover:border-primary/30 transition-all"
         >
           <span className="text-2xl">{diary.thumbnail}</span>
           <div className="flex-1 min-w-0">

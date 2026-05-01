@@ -58,7 +58,7 @@ function LoginForm() {
         });
 
         const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "회원가입에 실패했습니다.");
+        if (!res.ok) throw new Error(data.message || data.error || "회원가입에 실패했습니다.");
 
         await signIn("credentials", {
           redirect: false,
@@ -75,95 +75,102 @@ function LoginForm() {
   }
 
   const inputClass =
-    "w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary/50 text-text-main dark:text-text-main-dark placeholder:text-text-sub dark:placeholder:text-text-sub-dark";
+    "w-full px-4 py-3.5 rounded-2xl border border-gray-200 dark:border-border-dark bg-white dark:bg-surface-dark focus:outline-none focus:ring-2 focus:ring-primary/50 text-text-main dark:text-text-main-dark placeholder:text-text-sub dark:placeholder:text-text-sub-dark text-sm";
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col overflow-hidden bg-background-light dark:bg-background-dark">
-      {/* Logo */}
-      <div className="flex items-center justify-center pt-10 pb-2 z-10 w-full">
-        <div className="flex items-center gap-2 px-6 py-2 rounded-full bg-white/50 dark:bg-black/20 backdrop-blur-sm">
+    <div className="flex flex-col min-h-screen bg-background-light dark:bg-bg-dark">
+      {/* Logo header */}
+      <header className="flex items-center justify-center pt-12 pb-2 px-6">
+        <div className="flex items-center gap-2">
           <span
             className="material-symbols-outlined text-primary text-2xl"
             style={{ fontVariationSettings: "'FILL' 1" }}
           >
-            edit_note
+            translate
           </span>
           <span className="text-text-main dark:text-text-main-dark font-bold text-base tracking-tight">
             다이어리 일본어
           </span>
         </div>
-      </div>
+      </header>
 
-      <div className="flex flex-1 flex-col items-center justify-center w-full px-8 pb-6">
-        <div className="text-center space-y-3 mb-8">
-          <h1 className="text-text-main dark:text-text-main-dark tracking-tight text-[28px] font-extrabold leading-tight">
-            {isLogin ? "다시 오셨군요!" : "환영합니다!"}
+      <div className="flex flex-1 flex-col px-6 pt-8 pb-10">
+        {/* Title */}
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold text-text-main dark:text-text-main-dark tracking-tight">
+            {isLogin ? "다시 오셨군요! 👋" : "환영합니다! 🎌"}
           </h1>
-          <p className="text-text-sub dark:text-text-sub-dark text-base font-medium">
+          <p className="text-text-sub dark:text-text-sub-dark text-sm mt-2">
             {isLogin
               ? "오늘도 일본어 일기를 써보아요"
               : "함께 일본어 일기를 시작해보아요"}
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="w-full space-y-4">
-          {!isLogin && (
+        {/* Form card */}
+        <div className="bg-white dark:bg-surface-dark rounded-3xl p-6 shadow-sm border border-orange-50 dark:border-border-dark">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+            {!isLogin && (
+              <input
+                type="text"
+                placeholder="닉네임"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className={inputClass}
+                required
+              />
+            )}
             <input
-              type="text"
-              placeholder="닉네임"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              type="email"
+              placeholder="이메일"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               className={inputClass}
               required
             />
-          )}
-          <input
-            type="email"
-            placeholder="이메일"
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className={inputClass}
-            required
-          />
-          <input
-            type="password"
-            placeholder="비밀번호"
-            value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            className={inputClass}
-            required
-          />
-          {!isLogin && (
             <input
               type="password"
-              placeholder="비밀번호 확인"
-              value={formData.confirmPassword}
-              onChange={(e) =>
-                setFormData({ ...formData, confirmPassword: e.target.value })
-              }
+              placeholder="비밀번호"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               className={inputClass}
               required
             />
-          )}
+            {!isLogin && (
+              <input
+                type="password"
+                placeholder="비밀번호 확인"
+                value={formData.confirmPassword}
+                onChange={(e) =>
+                  setFormData({ ...formData, confirmPassword: e.target.value })
+                }
+                className={inputClass}
+                required
+              />
+            )}
 
-          {error && (
-            <p className="text-red-500 text-sm text-center">{error}</p>
-          )}
+            {error && (
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800/30 rounded-2xl px-4 py-3">
+                <p className="text-red-600 dark:text-red-400 text-sm text-center">{error}</p>
+              </div>
+            )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-primary hover:bg-primary-hover active:scale-[0.98] transition-all h-[56px] rounded-full font-bold text-text-main text-[17px] shadow-[0_4px_0_0_#d97706] hover:shadow-[0_2px_0_0_#d97706] hover:translate-y-[2px] disabled:opacity-60 disabled:cursor-not-allowed mt-2"
-          >
-            {loading ? "처리 중..." : isLogin ? "로그인" : "회원가입"}
-          </button>
-        </form>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-primary hover:bg-primary-hover active:scale-[0.98] transition-all h-[54px] rounded-full font-bold text-text-main text-base shadow-[0_4px_0_0_#d97706] hover:shadow-[0_2px_0_0_#d97706] hover:translate-y-[2px] disabled:opacity-60 disabled:cursor-not-allowed mt-1"
+            >
+              {loading ? "처리 중..." : isLogin ? "로그인" : "회원가입"}
+            </button>
+          </form>
+        </div>
 
-        <div className="mt-6 text-center">
+        {/* Toggle */}
+        <div className="mt-5 text-center">
           <button
             type="button"
             onClick={() => setIsLogin(!isLogin)}
-            className="text-[15px] font-medium text-text-sub dark:text-text-sub-dark"
+            className="text-sm font-medium text-text-sub dark:text-text-sub-dark"
           >
             {isLogin ? (
               <>

@@ -23,7 +23,7 @@ export const part9: LearningDiary[] = [
     vocabulary: [
       { word: "買い物", reading: "かいもの", meaning: "쇼핑" },
       { word: "服", reading: "ふく", meaning: "옷" },
-      { word: "セール", meaning: "세일" },
+      { word: "セール", reading: "セール", meaning: "세일" },
     ],
     grammarPoints: [
       { rule: "〜を探す", explanation: "~을 찾다. 탐색을 나타냄." },
@@ -117,7 +117,7 @@ export const part9: LearningDiary[] = [
     ],
     contentKo: "최근에 온라인 쇼핑을 자주 이용합니다. 집에서 구입할 수 있어서 매우 편합니다. 배송도 빠릅니다.",
     vocabulary: [
-      { word: "オンラインショッピング", meaning: "온라인 쇼핑" },
+      { word: "オンラインショッピング", reading: "オンラインショッピング", meaning: "온라인 쇼핑" },
       { word: "購入", reading: "こうにゅう", meaning: "구입" },
       { word: "配達", reading: "はいたつ", meaning: "배송" },
     ],
@@ -167,8 +167,8 @@ export const part9: LearningDiary[] = [
     contentKo: "지난날 사이즈가 맞지 않아서 반품했습니다. 많은 쇼핑몰은 반품 정책이 명확합니다. 대응도 친절해서 부드럽게 반품할 수 있었습니다.",
     vocabulary: [
       { word: "返品", reading: "へんぴん", meaning: "반품" },
-      { word: "サイズが合わない", meaning: "사이즈가 맞지 않다" },
-      { word: "ポリシー", meaning: "정책" },
+      { word: "サイズが合わない", reading: "サイズがあわない", meaning: "사이즈가 맞지 않다" },
+      { word: "ポリシー", reading: "ポリシー", meaning: "정책" },
     ],
     grammarPoints: [
       { rule: "〜理由で", explanation: "~이유로. 이유를 나타냄." },
@@ -215,7 +215,7 @@ export const part9: LearningDiary[] = [
     ],
     contentKo: "세일 시즌이 왔습니다. 많은 가게에서 큰 할인이 이루어지고 있습니다. 이 시기에 쇼핑하는 것은 절약이 됩니다. 다만 정말 필요한 것만 구입해야 합니다.",
     vocabulary: [
-      { word: "セール", meaning: "세일" },
+      { word: "セール", reading: "セール", meaning: "세일" },
       { word: "季節", reading: "きせつ", meaning: "계절" },
       { word: "割引", reading: "わりびき", meaning: "할인" },
     ],
@@ -265,7 +265,7 @@ export const part9: LearningDiary[] = [
     ],
     contentKo: "쇼핑몰은 쇼핑에 최적의 장소입니다. 다양한 가게가 한 곳에 모여 있습니다. 옷, 신발, 악세서리, 음식 등 모든 것이 갖춰져 있습니다. 가족이나 친구와 즐겁게 시간을 보낼 수 있습니다.",
     vocabulary: [
-      { word: "ショッピングモール", meaning: "쇼핑몰" },
+      { word: "ショッピングモール", reading: "ショッピングモール", meaning: "쇼핑몰" },
       { word: "最適", reading: "さいてき", meaning: "최적" },
       { word: "一箇所", reading: "いっかしょ", meaning: "한 곳" },
     ],
@@ -415,7 +415,7 @@ export const part9: LearningDiary[] = [
     ],
     contentKo: "유명한 브랜드가 반드시 최고의 품질을 보장하는 것은 아닙니다. 때로는 잘 알려지지 않은 브랜드가 우수한 품질의 제품을 제공합니다. 브랜드보다 상품 자체의 품질을 평가해야 합니다.",
     vocabulary: [
-      { word: "ブランド", meaning: "브랜드" },
+      { word: "ブランド", reading: "ブランド", meaning: "브랜드" },
       { word: "品質", reading: "ひんしつ", meaning: "품질" },
       { word: "提供", reading: "ていきょう", meaning: "제공" },
     ],
@@ -466,7 +466,7 @@ export const part9: LearningDiary[] = [
     vocabulary: [
       { word: "持続可能", reading: "じぞくかのう", meaning: "지속 가능한" },
       { word: "環境", reading: "かんきょう", meaning: "환경" },
-      { word: "サステナブル", meaning: "지속 가능한" },
+      { word: "サステナブル", reading: "サステナブル", meaning: "지속 가능한" },
     ],
     grammarPoints: [
       { rule: "〜を選ぶ", explanation: "~을 선택하다. 선택을 나타냄." },

@@ -63,7 +63,7 @@ export function DiaryLevelFilter({
             onClick={() => onCategoryChange(c.value)}
             className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all flex-shrink-0 ${
               selectedCategory === c.value
-                ? "bg-keigo text-text-main shadow-sm"
+                ? "bg-primary text-text-main shadow-sm"
                 : "bg-white dark:bg-surface-dark text-text-sub dark:text-text-sub-dark border border-gray-200 dark:border-border-dark"
             }`}
           >

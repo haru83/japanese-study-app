@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function SplashPage() {
   return (
-    <div className="flex flex-col h-full min-h-screen justify-between items-center relative w-full">
+    <div className="flex flex-col h-full min-h-screen justify-between items-center relative w-full bg-background-light dark:bg-bg-dark">
       {/* Background blobs */}
       <div className="absolute top-[-5%] right-[-15%] w-[80%] aspect-square bg-primary/10 rounded-full blur-3xl pointer-events-none opacity-60" />
       <div className="absolute bottom-[15%] left-[-10%] w-[60%] aspect-square bg-orange-300/10 rounded-full blur-3xl pointer-events-none opacity-60" />

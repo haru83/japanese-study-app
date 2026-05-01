@@ -20,7 +20,7 @@ export const part8: LearningDiary[] = [
     contentKo: "제 취미는 음악입니다. 매일 기타를 연주합니다. 좋아하는 곡을 연주하는 것이 즐겁습니다. 앞으로 음악가가 되고 싶습니다.",
     vocabulary: [
       { word: "趣味", reading: "しゅみ", meaning: "취미" },
-      { word: "ギター", meaning: "기타" },
+      { word: "ギター", reading: "ギター", meaning: "기타" },
       { word: "弾く", reading: "ひく", meaning: "연주하다" },
     ],
     grammarPoints: [
@@ -162,7 +162,7 @@ export const part8: LearningDiary[] = [
     contentKo: "저는 요리하는 것을 좋아합니다. 새로운 레시피를 시도하는 것이 즐겁습니다. 친구들이 제가 만든 음식을 먹으면 매우 기립니다.",
     vocabulary: [
       { word: "料理", reading: "りょうり", meaning: "요리" },
-      { word: "レシピ", meaning: "레시피" },
+      { word: "レシピ", reading: "レシピ", meaning: "레시피" },
       { word: "試す", reading: "ためす", meaning: "시도하다" },
     ],
     grammarPoints: [
@@ -408,7 +408,7 @@ export const part8: LearningDiary[] = [
     contentKo: "사람은 평생을 통해 새로운 취미를 발견할 가능성이 있습니다. 새로운 경험에 도전함으로써 자신의 가능성을 넓힐 수 있습니다. 나이가 들어도 새로운 세상에 대한 흥미가 생기는 것은 훌륭한 일입니다.",
     vocabulary: [
       { word: "発見", reading: "はっけん", meaning: "발견" },
-      { word: "チャレンジ", meaning: "도전" },
+      { word: "チャレンジ", reading: "チャレンジ", meaning: "도전" },
       { word: "可能性", reading: "かのうせい", meaning: "가능성" },
     ],
     grammarPoints: [

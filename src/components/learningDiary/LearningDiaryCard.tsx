@@ -16,7 +16,7 @@ export function LearningDiaryCard({ diary, completed }: LearningDiaryCardProps) 
   return (
     <Link
       href={`/diary/learn/${diary.id}`}
-      className="flex items-center gap-3 bg-white dark:bg-surface-dark p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-border-dark hover:border-primary/30 hover:shadow-md transition-all active:scale-[0.98]"
+      className="flex items-center gap-3 bg-white dark:bg-surface-dark p-4 rounded-2xl shadow-sm border border-orange-50 dark:border-border-dark hover:border-primary/30 hover:shadow-md transition-all active:scale-[0.98]"
     >
       <div className="text-3xl shrink-0">{diary.thumbnail}</div>
       <div className="flex-1 min-w-0">

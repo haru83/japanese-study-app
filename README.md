@@ -35,6 +35,31 @@
 
 ---
 
+## 디자인 시스템
+
+`src/app/globals.css`의 `@theme` 블록에 정의된 디자인 토큰을 전체 앱에 일관되게 적용합니다.
+
+### 색상 토큰
+| 토큰 | 값 | 용도 |
+|------|-----|------|
+| `primary` | `#f4af25` | 일기·XP·일반 인터랙션 |
+| `keigo` / `keigo-hover` | `#f9a8c9` / `#f472b0` | 경어 레슨 전용 |
+| `bg-light` / `bg-dark` | `#f8f7f5` / `#221c10` | 페이지 배경 |
+| `surface-dark` | `#2d2416` | 다크모드 카드 배경 |
+| `border-dark` | `#3a2e1e` | 다크모드 테두리 |
+| `text-main` / `text-sub` | `#1c170d` / `#6b6255` | 본문·보조 텍스트 |
+
+### 공통 컴포넌트 패턴
+- **카드**: `bg-white dark:bg-surface-dark rounded-2xl shadow-sm border border-orange-50 dark:border-border-dark`
+- **페이지 헤더**: `bg-white dark:bg-surface-dark px-5 pt-12 pb-5 shadow-sm`
+- **뒤로가기 버튼**: `p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors`
+- **주요 버튼**: `bg-primary rounded-full shadow-[0_4px_0_0_#d97706]` (3D 효과)
+- **섹션 탭**: underline 스타일 (`border-b-2 border-[color]`) — 경어·학습일기 상세 공통
+- **진행바**: `h-2 rounded-full bg-primary` (또는 `bg-keigo`)
+- **레벨 뱃지**: 초급=green / 중급=blue / 고급=purple (다크모드 변형 포함)
+
+---
+
 ## 기술 스택
 
 | 분류 | 기술 |

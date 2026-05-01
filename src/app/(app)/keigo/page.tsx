@@ -29,9 +29,9 @@ export default function KeigoPage() {
         </p>
 
         {/* Overall progress bar */}
-        <div className="mt-3 w-full bg-gray-100 dark:bg-border-dark rounded-full h-1.5">
+        <div className="mt-3 w-full bg-gray-100 dark:bg-border-dark rounded-full h-2">
           <div
-            className="bg-keigo h-1.5 rounded-full transition-all duration-500"
+            className="bg-keigo h-2 rounded-full transition-all duration-500"
             style={{ width: `${(completedCount / lessons.length) * 100}%` }}
           />
         </div>

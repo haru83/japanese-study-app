@@ -155,7 +155,7 @@ export const part5: LearningDiary[] = [
     id: "ld-044",
     title: "怒りを感じた",
     titleKo: "화를 느꼈다",
-    category: "감情",
+    category: "감정",
     level: "중급",
     thumbnail: "😠",
     contentJp: [

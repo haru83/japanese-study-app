@@ -263,7 +263,7 @@ export const part7: LearningDiary[] = [
     vocabulary: [
       { word: "関係", reading: "かんけい", meaning: "관계" },
       { word: "助ける", reading: "たすける", meaning: "돕다" },
-      { word: "チームワーク", meaning: "팀워크" },
+      { word: "チームワーク", reading: "チームワーク", meaning: "팀워크" },
     ],
     grammarPoints: [
       { rule: "〜に重要", explanation: "~에 중요하다. 중요성을 나타냄." },
@@ -358,7 +358,7 @@ export const part7: LearningDiary[] = [
     ],
     contentKo: "경력을 발전시키려면 지속적인 학습이 필요합니다. 새로운 기술을 습득하거나 자격을 취득하여 자신을 높여봅시다.",
     vocabulary: [
-      { word: "キャリア", meaning: "경력" },
+      { word: "キャリア", reading: "キャリア", meaning: "경력" },
       { word: "継続的", reading: "けいぞくてき", meaning: "지속적인" },
       { word: "資格", reading: "しかく", meaning: "자격" },
     ],
@@ -410,7 +410,7 @@ export const part7: LearningDiary[] = [
     ],
     contentKo: "일과 생활의 균형을 맞추는 것은 중요합니다. 일에 집중하는 것도 중요하지만 가족과의 시간과 휴식도 똑같이 중요합니다. 건강한 생활을 위해 의식적으로 균형을 조정합시다.",
     vocabulary: [
-      { word: "バランス", meaning: "균형" },
+      { word: "バランス", reading: "バランス", meaning: "균형" },
       { word: "没頭", reading: "ぼっとう", meaning: "몰입" },
       { word: "休息", reading: "きゅうそく", meaning: "휴식" },
     ],

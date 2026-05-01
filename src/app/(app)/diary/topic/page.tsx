@@ -30,7 +30,10 @@ export default async function TopicSelectionPage() {
     <div className="min-h-screen bg-bg-light dark:bg-bg-dark">
       {/* Header */}
       <div className="bg-white dark:bg-surface-dark px-5 pt-12 pb-5 shadow-sm flex items-center gap-3">
-        <Link href="/diary" className="text-text-sub dark:text-text-sub-dark">
+        <Link
+          href="/diary"
+          className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-text-main dark:text-text-main-dark -ml-2"
+        >
           <span className="material-symbols-outlined">arrow_back</span>
         </Link>
         <div>

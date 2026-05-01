@@ -115,7 +115,7 @@ export const part6: LearningDiary[] = [
     ],
     contentKo: "제 반의 친구들은 모두 친절합니다. 뭔가 어려운 일이 있으면 금방 도와줍니다. 반에서 즐겁게 지낼 수 있습니다.",
     vocabulary: [
-      { word: "クラス", meaning: "반" },
+      { word: "クラス", reading: "クラス", meaning: "반" },
       { word: "友達", reading: "ともだち", meaning: "친구" },
       { word: "手伝う", reading: "てつだう", meaning: "도와주다" },
     ],
@@ -171,7 +171,7 @@ export const part6: LearningDiary[] = [
     ],
     grammarPoints: [
       { rule: "〜見直す", explanation: "~다시 보다. 검토를 나타냄." },
-      { word: "〜グループを作る", explanation: "~그룹을 만들다. 집단 형성을 나타냄." },
+      { rule: "〜グループを作る", explanation: "~그룹을 만들다. 집단 형성을 나타냄." },
     ],
     quiz: [
       {
@@ -365,7 +365,7 @@ export const part6: LearningDiary[] = [
     contentKo: "수능 공부는 힘듭니다. 아침부터 밤까지 공부해야 합니다. 스트레스가 쌓이지만 꿈을 실현하기 위해 열심히 해야 합니다.",
     vocabulary: [
       { word: "受験勉強", reading: "じゅけんべんきょう", meaning: "수능 공부" },
-      { word: "ストレス", meaning: "스트레스" },
+      { word: "ストレス", reading: "ストレス", meaning: "스트레스" },
       { word: "頑張る", reading: "がんばる", meaning: "열심히 하다" },
     ],
     grammarPoints: [
@@ -397,7 +397,7 @@ export const part6: LearningDiary[] = [
     id: "ld-059",
     title: "学生生活の価値",
     titleKo: "학생 생활의 가치",
-    category: "학校",
+    category: "학교",
     level: "고급",
     thumbnail: "🌟",
     contentJp: [

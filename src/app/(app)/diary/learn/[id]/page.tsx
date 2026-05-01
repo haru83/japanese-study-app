@@ -15,9 +15,9 @@ type Section = "원문" | "해석" | "어휘" | "문법" | "퀴즈";
 const SECTIONS: Section[] = ["원문", "해석", "어휘", "문법", "퀴즈"];
 
 const LEVEL_COLORS = {
-  초급: "bg-green-100 text-green-700",
-  중급: "bg-blue-100 text-blue-700",
-  고급: "bg-purple-100 text-purple-700",
+  초급: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+  중급: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+  고급: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
 };
 
 export default function LearnDiaryDetailPage({
@@ -119,7 +119,7 @@ export default function LearnDiaryDetailPage({
                     </div>
                   </label>
                 </div>
-                <div className="bg-white dark:bg-surface-dark rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-border-dark">
+                <div className="bg-white dark:bg-surface-dark rounded-2xl p-5 shadow-sm border border-orange-50 dark:border-border-dark">
                   <p className="text-base leading-loose font-japanese text-text-main dark:text-text-main-dark">
                     <RubyText segments={diary.contentJp} showRuby={showRuby} />
                   </p>
@@ -129,7 +129,7 @@ export default function LearnDiaryDetailPage({
 
             {/* 해석 */}
             {section === "해석" && (
-              <div className="bg-white dark:bg-surface-dark rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-border-dark">
+              <div className="bg-white dark:bg-surface-dark rounded-2xl p-5 shadow-sm border border-orange-50 dark:border-border-dark">
                 <p className="text-sm leading-relaxed text-text-main dark:text-text-main-dark">
                   {diary.contentKo}
                 </p>
@@ -142,7 +142,7 @@ export default function LearnDiaryDetailPage({
                 {diary.vocabulary.map((v, i) => (
                   <div
                     key={i}
-                    className="bg-white dark:bg-surface-dark rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-border-dark flex items-center gap-4"
+                    className="bg-white dark:bg-surface-dark rounded-2xl p-4 shadow-sm border border-orange-50 dark:border-border-dark flex items-center gap-4"
                   >
                     <div className="flex-1">
                       <p className="font-bold text-text-main dark:text-text-main-dark font-japanese">
@@ -164,7 +164,7 @@ export default function LearnDiaryDetailPage({
                 {diary.grammarPoints.map((g, i) => (
                   <div
                     key={i}
-                    className="bg-white dark:bg-surface-dark rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-border-dark"
+                    className="bg-white dark:bg-surface-dark rounded-2xl p-4 shadow-sm border border-orange-50 dark:border-border-dark"
                   >
                     <p className="font-bold text-primary mb-1 font-japanese">{g.rule}</p>
                     <p className="text-sm text-text-main dark:text-text-main-dark leading-relaxed">

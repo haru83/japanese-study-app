@@ -83,7 +83,7 @@ export default function LessonDetailPage({ params }: PageProps) {
         <div className="flex items-center gap-3 mb-3">
           <button
             onClick={() => router.back()}
-            className="text-text-sub dark:text-text-sub-dark"
+            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-text-main dark:text-text-main-dark -ml-2"
           >
             <span className="material-symbols-outlined">arrow_back</span>
           </button>
@@ -99,14 +99,14 @@ export default function LessonDetailPage({ params }: PageProps) {
         </div>
 
         {/* Section tabs */}
-        <div className="flex gap-1 overflow-x-auto">
+        <div className="flex border-b border-gray-100 dark:border-border-dark -mx-5 px-5 mt-3">
           {SECTIONS.map((sec) => (
             <button
               key={sec}
               onClick={() => setActiveSection(sec)}
-              className={`flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${
+              className={`flex-1 py-2.5 text-xs font-medium transition-colors ${
                 activeSection === sec
-                  ? "bg-keigo text-white"
+                  ? "text-keigo-hover border-b-2 border-keigo-hover"
                   : "text-text-sub dark:text-text-sub-dark"
               }`}
             >

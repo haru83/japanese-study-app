@@ -70,7 +70,7 @@ function DiaryWriteForm() {
       <div className="bg-white dark:bg-surface-dark px-5 pt-12 pb-5 shadow-sm">
         <button
           onClick={() => router.back()}
-          className="text-text-sub dark:text-text-sub-dark mb-3"
+          className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-text-main dark:text-text-main-dark -ml-2 mb-1"
         >
           <span className="material-symbols-outlined">arrow_back</span>
         </button>

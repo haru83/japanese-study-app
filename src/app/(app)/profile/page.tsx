@@ -117,7 +117,7 @@ export default async function ProfilePage() {
           ].map((stat) => (
             <div
               key={stat.label}
-              className="bg-white dark:bg-surface-dark p-3 rounded-2xl shadow-sm border border-gray-100 dark:border-border-dark flex flex-col items-center gap-1.5"
+              className="bg-white dark:bg-surface-dark p-3 rounded-2xl shadow-sm border border-orange-50 dark:border-border-dark flex flex-col items-center gap-1.5"
             >
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-lg ${stat.color}`}>
                 {stat.icon}
