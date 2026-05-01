@@ -1,6 +1,7 @@
-# 다이어리 일본어 📖🎌
+# 사쿠라 시바 🐕🌸
 
-일기 쓰기와 경어(敬語) 레슨을 하나로 합친 통합 일본어 학습 앱입니다.
+일기 쓰기와 경어(敬語) 레슨을 하나로 합친 통합 일본어 학습 앱입니다.  
+**Sakura Shiba (Sticker Bomb Edition)** 디자인 시스템 적용.
 
 ---
 
@@ -14,16 +15,13 @@
 - 100개의 카테고리별 학습 일기 (10개 카테고리 × 10개 엔트리)
 - **카테고리**: 일상, 음식, 여행, 계절, 감정, 학교, 직장, 취미, 쇼핑, 건강
 - **구성**: 일본어 본문 → 한국어 해석 → 어휘 → 문법 → 퀴즈
-- **난이도**: 초급, 중급, 고급 혼합
-- 원문/해석/어휘/문법/퀴즈 탭 인터페이스
 - 루비 문자(furigana) 표시 토글
 - 완료 시 XP 획득 (+10 XP / 만점 퀴즈 +5 XP 보너스)
 
 ### 🎤 경어 레슨
-- 비즈니스·접객·사회 상황별 **100가지** 경어 레슨
-- **카테고리**: 비즈니스(37개) · 서비스/접객(29개) · 사교(34개)
+- 비즈니스·접객·사회 상황별 경어 레슨
+- **카테고리**: 비즈니스 · 서비스/접객 · 사교
 - 만화 → 대화 → 문법 → 어휘 → 퀴즈 순서로 구성
-- 퀴즈 만점 시 추가 XP 보너스
 
 ### ⭐ 게임화 시스템
 - **XP**: 일기 +10 XP / 경어 레슨 최초 완료 +15 XP / 퀴즈 만점 +5 XP
@@ -36,28 +34,36 @@
 
 ---
 
-## 디자인 시스템
+## 디자인 시스템 — Sakura Shiba Sticker Bomb Edition
 
-`src/app/globals.css`의 `@theme` 블록에 정의된 디자인 토큰을 전체 앱에 일관되게 적용합니다.
+`Design.md` 기반. `src/app/globals.css`의 `@theme` 블록에 정의된 디자인 토큰을 전체 앱에 일관되게 적용합니다.
 
 ### 색상 토큰
-| 토큰 | 값 | 용도 |
-|------|-----|------|
-| `primary` | `#f4af25` | 일기·XP·일반 인터랙션 |
-| `keigo` / `keigo-hover` | `#f9a8c9` / `#f472b0` | 경어 레슨 전용 |
-| `bg-light` / `bg-dark` | `#f8f7f5` / `#221c10` | 페이지 배경 |
-| `surface-dark` | `#2d2416` | 다크모드 카드 배경 |
-| `border-dark` | `#3a2e1e` | 다크모드 테두리 |
-| `text-main` / `text-sub` | `#1c170d` / `#6b6255` | 본문·보조 텍스트 |
 
-### 공통 컴포넌트 패턴
-- **카드**: `bg-white dark:bg-surface-dark rounded-2xl shadow-sm border border-orange-50 dark:border-border-dark`
-- **페이지 헤더**: `bg-white dark:bg-surface-dark px-5 pt-12 pb-5 shadow-sm`
-- **뒤로가기 버튼**: `p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors`
-- **주요 버튼**: `bg-primary rounded-full shadow-[0_4px_0_0_#d97706]` (3D 효과)
-- **섹션 탭**: underline 스타일 (`border-b-2 border-[color]`) — 경어·학습일기 상세 공통
-- **진행바**: `h-2 rounded-full bg-primary` (또는 `bg-keigo`)
-- **레벨 뱃지**: 초급=green / 중급=blue / 고급=purple (다크모드 변형 포함)
+| 토큰 | Hex | 역할 |
+|------|-----|------|
+| `sakura-blush` | `#ffe4ec` | 메인 페이지 배경 |
+| `canvas-almond` | `#ffe9ce` | 헤더·섹션 구분 배경 |
+| `paper-white` | `#ffffff` | 카드 표면 |
+| `type-black` | `#000000` | 모든 텍스트 |
+| `sakura-pink` | `#ffb7c5` | 브랜드 액센트, 주요 버튼 |
+| `shiba-orange` | `#ffa54f` | 마스코트 포인트 |
+| `grape-punch` | `#8a53ff` | 경어 레슨·보조 액센트 |
+| `matcha-green` | `#3ccb09` | 완료·정답 피드백 |
+
+### 컴포넌트 패턴
+
+| 패턴 | 설명 |
+|------|------|
+| **Wobbly Card** | `border-2 border-black shadow-[4px_4px_0px_0px_#000] rounded-[15px]` + `.wobbly-1~5` 회전 |
+| **Bubble Card** | `rounded-[144px] shadow-[0px_0px_0px_2px_#ffd80c]` (말풍선 형태) |
+| **Sticker** | `.sticker` 클래스: 흰 테두리 + drop-shadow |
+| **주요 버튼** | `bg-sakura-pink border-2 border-black shadow-[4px_4px_0px_0px_#000]` (hover 시 이동) |
+| **헤더** | `bg-canvas-almond border-b-4 border-black` |
+
+### 폰트
+- **Zen Maru Gothic** (Google Fonts) — 둥글고 표현력 있는 고딕체
+- **Noto Sans KR** — 한국어 보조 폰트
 
 ---
 
@@ -69,10 +75,9 @@
 | Language | TypeScript 5 |
 | Styling | Tailwind CSS v4 (CSS-based `@theme` config) |
 | DB | Prisma + SQLite |
-| Auth | NextAuth.js v4 (Credentials Provider) |
+| Auth | NextAuth.js v4 (Credentials Provider, JWT) |
 | State | Zustand (경어 진행상황 persist) |
-| Animation | Framer Motion 12 |
-| Font | Noto Sans KR + Plus Jakarta Sans |
+| Font | Zen Maru Gothic + Noto Sans KR |
 
 ---
 
@@ -90,7 +95,7 @@ npm install
 
 # 환경변수 설정
 cp .env.example .env
-# .env 파일에서 NEXTAUTH_SECRET 값을 설정하세요
+# .env 파일에서 NEXTAUTH_SECRET, NEXTAUTH_URL 값을 설정하세요
 
 # DB 초기화
 npx prisma generate
@@ -104,23 +109,29 @@ npm run dev
 # http://localhost:3000
 ```
 
-### 빌드
+> ⚠️ **중요**: `.env`의 `NEXTAUTH_URL`을 실제 실행 포트와 동일하게 설정해야 로그인이 정상 동작합니다.  
+> 개발 시: `NEXTAUTH_URL="http://localhost:3000"`  
+> 프로덕션 시: `NEXTAUTH_URL="http://localhost:8000"` (또는 실제 도메인)
+
+### 프로덕션 빌드 및 실행
 
 ```bash
 npm run build
 npm run start
+# 또는 특정 포트 지정:
+npx next start -p 8000
 ```
+
+> ⚠️ `npm run build` 후에는 반드시 서버를 재시작해야 새 빌드가 반영됩니다.
 
 ---
 
 ## 환경 변수
 
-`.env` 파일을 생성하고 아래 값을 설정하세요:
-
 ```env
 DATABASE_URL="file:./dev.db"
 NEXTAUTH_SECRET="your-secret-key"
-NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_URL="http://localhost:3000"   # 실제 실행 URL과 일치해야 함
 ```
 
 ---
@@ -146,12 +157,12 @@ src/
 ├── components/
 │   ├── keigo/             # 경어 전용 컴포넌트
 │   ├── learningDiary/     # 학습 일기 컴포넌트 (RubyText, Filter, Card)
+│   ├── ui/                # 공유 UI (Button, Card, ProgressBar)
 │   └── layout/            # BottomNav, AdminBottomNav
 ├── actions/               # 서버 액션 (diary, keigo, learningDiary, user)
 ├── data/
-│   ├── lessons.ts         # 30개 경어 레슨 데이터
-│   ├── learningDiaries.ts # 100개 학습 일기 (part1~part10 병합)
-│   ├── ld_p1.ts~ld_p10.ts # 카테고리별 학습 일기 배치 파일 (각 10개 엔트리)
+│   ├── lessons.ts         # 경어 레슨 데이터
+│   └── learningDiaries.ts # 100개 학습 일기
 ├── store/                 # Zustand 스토어
 ├── lib/                   # auth, db, xp 유틸리티
 └── types/                 # TypeScript 타입 정의
