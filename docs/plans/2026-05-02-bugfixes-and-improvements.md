@@ -80,9 +80,9 @@ const incrementStreak = shouldIncrementStreak(userProgress.lastStudyAt);
 
 ---
 
-## Task 4: Wardrobe 구매 서버 액션 구현 🔄 진행 중
+## Task 4: Wardrobe 구매 서버 액션 구현 ✅ 완료
 
-**Status:** 🔄 IN PROGRESS
+**Status:** ✅ COMPLETED (2026-05-02)
 
 **Objective:** 옷장 페이지의 "구매" 버튼이 현재 UI만 있고 실제 동작하지 않음. 서버 액션을 추가하여 스탬프 차감 + 아이템 저장 처리
 
@@ -196,6 +196,6 @@ git commit -m "feat: add wardrobe purchase system with DB-backed items and stamp
 | 1. 스트릭 중복 증가 수정 | ✅ 완료 | 4/4 PASS | `fix: streak days only increment once per day` |
 | 2. Admin 권한 검증 강화 | ✅ 완료 | 6/6 PASS | `feat: add server-side admin route protection via middleware and layout auth check` |
 | 3. 원격 이미지 패턴 제한 | ✅ 완료 | N/A (config 변경) | `security: restrict remote image patterns to lh3.googleusercontent.com only` |
-| 4. Wardrobe 구매 액션 | 🔄 진행 중 | — | — |
+| 4. Wardrobe 구매 액션 | ✅ 완료 | 4/4 PASS | `feat: add wardrobe purchase system with DB-backed items and stamp deduction` |
 
-**전체 테스트 현황:** 10/10 PASS (streak 4 + admin-auth 6)
+**전체 테스트 현황:** 14/14 PASS (streak 4 + admin-auth 6 + wardrobe 4)
