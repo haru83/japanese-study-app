@@ -1,18 +1,13 @@
 import { getUserProfile } from "@/actions/user";
-
-const WARDROBE_ITEMS = [
-  { id: "default", name: "기본", icon: "🐕", stampCost: 0, requiredLevel: 1, equipped: true },
-  { id: "hat-cap", name: "야구 모자", icon: "🧢", stampCost: 5, requiredLevel: 1 },
-  { id: "hat-santa", name: "산타 모자", icon: "🎅", stampCost: 8, requiredLevel: 2 },
-  { id: "scarf", name: "목도리", icon: "🧣", stampCost: 6, requiredLevel: 2 },
-  { id: "glasses", name: "선글라스", icon: "😎", stampCost: 10, requiredLevel: 3 },
-  { id: "crown", name: "왕관", icon: "👑", stampCost: 20, requiredLevel: 5 },
-];
+import { getWardrobeItems } from "@/actions/wardrobe";
+import { PurchaseButton } from "@/components/wardrobe/PurchaseButton";
 
 export default async function WardrobePage() {
   const profile = await getUserProfile();
   const stamps = profile?.progress?.totalStamps ?? 0;
   const level = profile?.progress?.level ?? 1;
+
+  const { items, ownedIds } = await getWardrobeItems();
 
   return (
     <div className="min-h-screen bg-bg-light dark:bg-bg-dark">
@@ -35,16 +30,23 @@ export default async function WardrobePage() {
           아이템
         </h2>
         <div className="grid grid-cols-2 gap-3">
-          {WARDROBE_ITEMS.map((item) => {
+          {items.map((item) => {
+            const isOwned = ownedIds.includes(item.id);
             const canAfford = stamps >= item.stampCost;
             const levelOk = level >= item.requiredLevel;
             const available = canAfford && levelOk;
+
+            let label: string;
+            if (isOwned) label = "보유 중";
+            else if (!levelOk) label = `Lv.${item.requiredLevel} 필요`;
+            else if (!canAfford) label = "스탬프 부족";
+            else label = "구매";
 
             return (
               <div
                 key={item.id}
                 className={`bg-white dark:bg-surface-dark rounded-2xl p-4 shadow-sm border text-center ${
-                  item.equipped
+                  isOwned
                     ? "border-primary"
                     : "border-orange-50 dark:border-border-dark"
                 }`}
@@ -60,16 +62,17 @@ export default async function WardrobePage() {
                     <p className="text-xs text-text-sub dark:text-text-sub-dark">
                       ⭐ {item.stampCost} / Lv.{item.requiredLevel}
                     </p>
-                    <button
-                      disabled={!available}
-                      className={`mt-2 text-xs px-3 py-1.5 rounded-xl font-medium transition-all ${
-                        available
-                          ? "bg-primary text-text-main hover:bg-primary-hover"
-                          : "bg-gray-100 text-text-sub cursor-not-allowed"
-                      }`}
-                    >
-                      {!levelOk ? `Lv.${item.requiredLevel} 필요` : !canAfford ? "스탬프 부족" : "구매"}
-                    </button>
+                    {isOwned ? (
+                      <p className="mt-2 text-xs px-3 py-1.5 rounded-xl font-medium bg-primary/10 text-primary">
+                        보유 중
+                      </p>
+                    ) : (
+                      <PurchaseButton
+                        itemId={item.id}
+                        available={available}
+                        label={label}
+                      />
+                    )}
                   </div>
                 )}
               </div>
