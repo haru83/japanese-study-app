@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState } from "react";
+import { use, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { notFound } from "next/navigation";
 import { lessons } from "@/data/lessons";
@@ -11,9 +11,30 @@ import { LessonCompleteBanner } from "@/components/keigo/LessonCompleteBanner";
 import { useProgressStore } from "@/store/useProgressStore";
 import { completeKeigoLesson } from "@/actions/keigo";
 import { CATEGORY_LABELS } from "@/types/lesson";
+import { GuestUpsellModal } from "@/components/guest/GuestUpsellModal";
+import { RubyText } from "@/components/learningDiary/RubyText";
+import { buildRubySegments } from "@/lib/rubyParser";
+import { VOCAB_READINGS } from "@/data/vocabReadings";
 import type { XpResult } from "@/lib/xp";
 
 type PageProps = { params: Promise<{ id: string }> };
+
+const SECTIONS = ["comic", "dialogue", "grammar", "vocab", "quiz"] as const;
+type SectionKey = (typeof SECTIONS)[number];
+
+const SECTION_LABELS: Record<SectionKey, string> = {
+  comic: "만화",
+  dialogue: "대화",
+  grammar: "문법",
+  vocab: "어휘",
+  quiz: "퀴즈",
+};
+
+const CATEGORY_BG: Record<string, string> = {
+  business: "bg-grape-punch text-white",
+  hospitality: "bg-sakura-pink text-black",
+  social: "bg-matcha-green text-black",
+};
 
 export default function LessonDetailPage({ params }: PageProps) {
   const { id } = use(params);
@@ -22,76 +43,58 @@ export default function LessonDetailPage({ params }: PageProps) {
   const lesson = lessons.find((l) => l.id === id);
   const completeLocal = useProgressStore((s) => s.completeLesson);
 
-  if (!lesson) {
-    notFound();
-  }
-  // TypeScript narrowing: lesson is guaranteed non-null after notFound() throws
-  const lessonId = lesson!.id;
-  const [activeSection, setActiveSection] = useState<"comic" | "dialogue" | "grammar" | "vocab" | "quiz">("comic");
+  if (!lesson) notFound();
+
+  const lessonId = lesson.id;
+  const [activeSection, setActiveSection] = useState<SectionKey>("comic");
+
+  const vocabSegments = useMemo(
+    () =>
+      lesson.vocab.map((v) => {
+        const reading = VOCAB_READINGS[v.word];
+        return reading ? buildRubySegments(v.word, reading) : [{ text: v.word }];
+      }),
+    [lesson.vocab]
+  );
   const [quizDone, setQuizDone] = useState(false);
   const [xpResult, setXpResult] = useState<(XpResult & { quizScore: number; quizTotal: number }) | null>(null);
-
-  const SECTIONS = ["comic", "dialogue", "grammar", "vocab", "quiz"] as const;
-  const SECTION_LABELS = {
-    comic: "만화",
-    dialogue: "대화",
-    grammar: "문법",
-    vocab: "어휘",
-    quiz: "퀴즈",
-  };
+  const [guestScore, setGuestScore] = useState<{ score: number; total: number } | null>(null);
 
   async function handleQuizComplete(score: number, total: number) {
     setQuizDone(true);
-
-    // Save to localStorage
     completeLocal(lessonId);
-
-    // Save to DB (server action)
     try {
       const result = await completeKeigoLesson(lessonId, score, total);
       if (result) {
         setXpResult({ ...result, quizScore: score, quizTotal: total });
       } else {
-        // Not logged in - just show basic result
-        setXpResult({
-          xpGained: 15,
-          stampsGained: 1,
-          newXp: 15,
-          newLevel: 1,
-          leveledUp: false,
-          quizScore: score,
-          quizTotal: total,
-        });
+        setGuestScore({ score, total });
       }
     } catch {
-      setXpResult({
-        xpGained: 0,
-        stampsGained: 0,
-        newXp: 0,
-        newLevel: 1,
-        leveledUp: false,
-        quizScore: score,
-        quizTotal: total,
-      });
+      setGuestScore({ score, total });
     }
   }
 
   return (
-    <div className="min-h-screen bg-bg-light dark:bg-bg-dark">
+    <div className="min-h-screen bg-sakura-blush">
       {/* Header */}
-      <div className="bg-white dark:bg-surface-dark px-5 pt-12 pb-4 shadow-sm">
+      <div className="bg-canvas-almond border-b-4 border-black px-5 pt-12 pb-0">
         <div className="flex items-center gap-3 mb-3">
           <button
             onClick={() => router.back()}
-            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-text-main dark:text-text-main-dark -ml-2"
+            className="p-2 rounded-full border-2 border-black bg-paper-white shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all text-type-black -ml-1"
           >
             <span className="material-symbols-outlined">arrow_back</span>
           </button>
           <div className="flex-1">
-            <span className="text-xs text-keigo-hover font-medium">
+            <span
+              className={`text-xs font-black px-2 py-0.5 rounded-full border-2 border-black ${
+                CATEGORY_BG[lesson.category] ?? "bg-canvas-almond text-black"
+              }`}
+            >
               {CATEGORY_LABELS[lesson.category]}
             </span>
-            <h1 className="text-base font-bold text-text-main dark:text-text-main-dark leading-snug">
+            <h1 className="text-base font-black text-type-black leading-snug mt-0.5">
               {lesson.title}
             </h1>
           </div>
@@ -99,15 +102,15 @@ export default function LessonDetailPage({ params }: PageProps) {
         </div>
 
         {/* Section tabs */}
-        <div className="flex border-b border-gray-100 dark:border-border-dark -mx-5 px-5 mt-3">
+        <div className="flex border-t-2 border-black -mx-5 px-5">
           {SECTIONS.map((sec) => (
             <button
               key={sec}
               onClick={() => setActiveSection(sec)}
-              className={`flex-1 py-2.5 text-xs font-medium transition-colors ${
+              className={`flex-1 py-2.5 text-xs font-black transition-colors ${
                 activeSection === sec
-                  ? "text-keigo-hover border-b-2 border-keigo-hover"
-                  : "text-text-sub dark:text-text-sub-dark"
+                  ? "text-grape-punch border-b-2 border-grape-punch"
+                  : "text-type-black/50"
               }`}
             >
               {SECTION_LABELS[sec]}
@@ -130,14 +133,14 @@ export default function LessonDetailPage({ params }: PageProps) {
         {/* Grammar */}
         {activeSection === "grammar" && (
           <div className="flex flex-col gap-3">
-            <h2 className="font-bold text-text-main dark:text-text-main-dark">문법 포인트</h2>
+            <h2 className="font-black text-type-black">문법 포인트</h2>
             {lesson.grammarPoints.map((gp, i) => (
               <div
                 key={i}
-                className="bg-white dark:bg-surface-dark rounded-2xl p-4 shadow-sm border border-orange-50 dark:border-border-dark"
+                className="bg-paper-white rounded-[15px] p-4 border-2 border-black shadow-[4px_4px_0px_0px_#000]"
               >
-                <p className="font-bold text-keigo-hover font-japanese mb-1">{gp.rule}</p>
-                <p className="text-sm text-text-sub dark:text-text-sub-dark">{gp.explanation}</p>
+                <p className="font-black text-grape-punch mb-1">{gp.rule}</p>
+                <p className="text-sm text-type-black/80">{gp.explanation}</p>
               </div>
             ))}
           </div>
@@ -146,18 +149,16 @@ export default function LessonDetailPage({ params }: PageProps) {
         {/* Vocabulary */}
         {activeSection === "vocab" && (
           <div className="flex flex-col gap-3">
-            <h2 className="font-bold text-text-main dark:text-text-main-dark">어휘</h2>
+            <h2 className="font-black text-type-black">어휘</h2>
             {lesson.vocab.map((v, i) => (
               <div
                 key={i}
-                className="bg-white dark:bg-surface-dark rounded-2xl px-4 py-3 shadow-sm border border-orange-50 dark:border-border-dark flex items-center gap-3"
+                className="bg-paper-white rounded-[15px] px-4 py-3 border-2 border-black shadow-[4px_4px_0px_0px_#000] flex items-center gap-3"
               >
-                <span className="font-bold text-text-main dark:text-text-main-dark font-japanese flex-1">
-                  {v.word}
+                <span className="font-black text-type-black flex-1 leading-loose">
+                  <RubyText segments={vocabSegments[i]} showRuby={true} />
                 </span>
-                <span className="text-sm text-text-sub dark:text-text-sub-dark">
-                  {v.meaning}
-                </span>
+                <span className="text-sm text-grape-punch font-black">{v.meaning}</span>
               </div>
             ))}
           </div>
@@ -165,10 +166,8 @@ export default function LessonDetailPage({ params }: PageProps) {
 
         {/* Quiz */}
         {activeSection === "quiz" && !quizDone && (
-          <div className="bg-white dark:bg-surface-dark rounded-2xl p-5 shadow-sm border border-orange-50 dark:border-border-dark">
-            <h2 className="font-bold text-text-main dark:text-text-main-dark mb-4">
-              확인 퀴즈 🎯
-            </h2>
+          <div className="bg-paper-white rounded-[15px] p-5 border-2 border-black shadow-[4px_4px_0px_0px_#000]">
+            <h2 className="font-black text-type-black mb-4">확인 퀴즈 🎯</h2>
             <QuizSection quiz={lesson.quiz} onComplete={handleQuizComplete} />
           </div>
         )}
@@ -179,18 +178,14 @@ export default function LessonDetailPage({ params }: PageProps) {
             {activeSection === "vocab" ? (
               <button
                 onClick={() => setActiveSection("quiz")}
-                className="w-full bg-keigo hover:bg-keigo-hover text-white font-bold py-4 rounded-2xl transition-all active:scale-95"
+                className="w-full bg-grape-punch text-white font-black py-4 rounded-[15px] border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all active:scale-95"
               >
                 퀴즈 풀기 →
               </button>
             ) : (
               <button
-                onClick={() =>
-                  setActiveSection(
-                    SECTIONS[SECTIONS.indexOf(activeSection) + 1]
-                  )
-                }
-                className="w-full bg-keigo-soft hover:bg-keigo/20 text-keigo-hover font-bold py-3 rounded-2xl transition-all text-sm"
+                onClick={() => setActiveSection(SECTIONS[SECTIONS.indexOf(activeSection) + 1])}
+                className="w-full bg-canvas-almond text-type-black font-black py-3 rounded-[15px] border-2 border-black shadow-[3px_3px_0px_0px_#000] hover:shadow-[1px_1px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all text-sm"
               >
                 다음: {SECTION_LABELS[SECTIONS[SECTIONS.indexOf(activeSection) + 1]]} →
               </button>
@@ -198,6 +193,15 @@ export default function LessonDetailPage({ params }: PageProps) {
           </div>
         )}
       </div>
+
+      {/* Guest upsell modal */}
+      {guestScore && (
+        <GuestUpsellModal
+          quizScore={guestScore.score}
+          quizTotal={guestScore.total}
+          onClose={() => setGuestScore(null)}
+        />
+      )}
 
       {/* Completion banner */}
       {xpResult && (

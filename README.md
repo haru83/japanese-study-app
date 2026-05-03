@@ -22,6 +22,8 @@
 - 비즈니스·접객·사회 상황별 경어 레슨
 - **카테고리**: 비즈니스 · 서비스/접객 · 사교
 - 만화 → 대화 → 문법 → 어휘 → 퀴즈 순서로 구성
+- **대화 탭**: 요미가나 토글 ON 시 한자 위에 루비 문자(furigana) 인라인 표시
+- **어휘 탭**: 한자 포함 단어에 루비 문자 기본 표시 (`src/data/vocabReadings.ts` 매핑 기반)
 
 ### ⭐ 게임화 시스템
 - **XP**: 일기 +10 XP / 경어 레슨 최초 완료 +15 XP / 퀴즈 만점 +5 XP
@@ -182,9 +184,10 @@ src/
 ├── actions/                 # 서버 액션 (diary, keigo, learningDiary, user, wardrobe)
 ├── data/
 │   ├── lessons.ts           # 경어 레슨 데이터 (30개)
+│   ├── vocabReadings.ts     # 경어 어휘 루비 문자 읽기 매핑
 │   └── learningDiaries.ts   # 100개 학습 일기 (ld_p1~p10)
 ├── store/                   # Zustand 스토어
-├── lib/                     # auth, db, xp, streak, wardrobe, admin-auth 유틸리티
+├── lib/                     # auth, db, xp, streak, wardrobe, admin-auth, rubyParser 유틸리티
 └── types/                   # TypeScript 타입 정의
 ```
 
