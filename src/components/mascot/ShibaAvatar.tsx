@@ -36,7 +36,8 @@ const ITEM_LEVEL_FALLBACKS: Record<string, number> = {
 };
 
 /**
- * 레벨별 합성 이미지 (오버레이 폴백용)
+ * 레벨별 합성 이미지 (오버레이 PNG가 없을 때의 폴백용)
+ * 옷장 시스템에서는 아이템 착용 시에만 사용됨
  */
 const LEVEL_IMAGES: Record<number, string> = {
   1: "/mascot/shiba-base.png",
@@ -188,7 +189,14 @@ function shouldUseOverlayMode(equippedItemIds?: string[]): boolean {
   return equippedItemIds.some((id) => ITEM_OVERLAYS[id] && !missingOverlays.has(id));
 }
 
-function getFallbackLevelImage(level: number, equippedItemIds?: string[]): string {
+/**
+ * 아이템 착용 상태에 따른 이미지 결정
+ * - 아이템 착용 + 오버레이 PNG 있음 → 기본 시바견 + 오버레이 레이어 (shouldUseOverlayMode에서 처리)
+ * - 아이템 착용 + 오버레이 PNG 없음 → 레벨 폴백 합성 이미지
+ * - 아이템 미착용 → 항상 기본 시바견 (shiba-base.png)
+ *   ※ 옷장 시스템 도입 후, 착용 아이템이 없으면 레벨과 무관하게 기본 이미지만 표시
+ */
+function getFallbackLevelImage(_level: number, equippedItemIds?: string[]): string {
   if (equippedItemIds && equippedItemIds.length > 0) {
     let maxLevel = 0;
     for (const itemId of equippedItemIds) {
@@ -201,8 +209,8 @@ function getFallbackLevelImage(level: number, equippedItemIds?: string[]): strin
       return LEVEL_IMAGES[maxLevel] ?? LEVEL_IMAGES[1];
     }
   }
-  const clampedLevel = Math.max(1, Math.min(6, level));
-  return LEVEL_IMAGES[clampedLevel];
+  // 아이템 미착용 시 항상 기본 시바견
+  return BASE_IMAGE;
 }
 
 // ─── 메인 컴포넌트 ──────────────────────────────────────────
@@ -391,10 +399,10 @@ export function ShibaAvatar({
 }
 
 /**
- * ShibaAvatar의 레벨에 해당하는 이미지 경로를 반환하는 유틸리티
+ * 기본 시바견 이미지 경로를 반환하는 유틸리티
  * 서버 컴포넌트에서 <img> 태그로 직접 사용할 때 활용
+ * ※ 옷장 시스템 도입 후, 아이템 미착용 시 항상 기본 이미지만 표시
  */
-export function getShibaMascotSrc(level: number): string {
-  const clampedLevel = Math.max(1, Math.min(6, level));
-  return LEVEL_IMAGES[clampedLevel];
+export function getShibaMascotSrc(_level?: number): string {
+  return BASE_IMAGE;
 }
