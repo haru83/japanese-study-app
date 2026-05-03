@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { ShibaAvatar } from "@/components/mascot/ShibaAvatar";
 
 function LoginForm() {
   const router = useRouter();
@@ -81,12 +82,12 @@ function LoginForm() {
     <div className="flex flex-col min-h-screen bg-sakura-blush">
       {/* Logo header */}
       <header className="flex items-center justify-center pt-12 pb-2 px-6">
-        <div className="flex items-center gap-2 border-2 border-black bg-paper-white px-4 py-2 rounded-full shadow-[3px_3px_0px_0px_#000]">
-          <span className="text-xl">🐕</span>
-          <span className="text-type-black font-bold text-base tracking-tight">
-            사쿠라 시바
-          </span>
-        </div>
+    <div className="flex items-center gap-2 border-2 border-black bg-paper-white px-4 py-2 rounded-full shadow-[3px_3px_0px_0px_#000]">
+      <ShibaAvatar level={1} size={24} />
+      <span className="text-type-black font-bold text-base tracking-tight">
+        사쿠라 시바
+      </span>
+    </div>
       </header>
 
       <div className="flex flex-1 flex-col px-6 pt-8 pb-10">

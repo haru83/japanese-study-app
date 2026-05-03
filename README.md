@@ -1,4 +1,4 @@
-# 사쿠라 시바 🐕🌸
+# 사쿠라 시바 🌸
 
 일기 쓰기와 경어(敬語) 레슨을 하나로 합친 통합 일본어 학습 앱입니다. 
 **Sakura Shiba (Sticker Bomb Edition)** 디자인 시스템 적용.
@@ -6,6 +6,23 @@
 ---
 
 ## 주요 기능
+
+### 🐕 시바견 마스코트 시스템
+- AI로 생성한 **Whimsical Sticker Bomb** 스타일 시바견 캐릭터를 앱 전체 마스코트로 사용
+- **레벨별 아바타 변신**: 사용자 레벨에 따라 자동으로 외형이 바뀜
+  - **Lv.1** (초보 학습자): 아이템 없음 (기본 시바견)
+  - **Lv.2** (입문자): 하치마키 (일본 머리띠)
+  - **Lv.3** (기초 완료): 사쿠라 핑크 스카프
+  - **Lv.4** (중급자): 포도색 기모노
+  - **Lv.5** (상급자): 안경 + 책
+  - **Lv.6** (경어 마스터): 마스터 복장 (왕관 + 망토)
+- **`ShibaAvatar` 컴포넌트**: `level`, `size`, `sticker`, `wobble`, `circular`, `triggerLevelUp` prop 제어
+- **레벨업 애니메이션** (Framer Motion):
+  - 16개 컬러 파티클 360° 폭발 이펙트
+  - 바운스 + 황금빛 글로우 스케일 애니메이션
+  - `Lv.N!` 배지 팝업
+  - 원형 모드 시 확장 링 이펙트
+- **LessonCompleteBanner 연동**: 레벨업 시 이모지 대신 아바타 변신 연출
 
 ### 📔 개인 일기
 - 매일 주제를 선택해 일본어 일기 작성
@@ -175,12 +192,13 @@ src/
 │   ├── admin/               # 어드민 패널 (middleware 권한 검증)
 │   └── api/                 # NextAuth, 회원가입, 경어 동기화
 ├── components/
-│   ├── keigo/               # 경어 전용 컴포넌트
-│   ├── learningDiary/       # 학습 일기 컴포넌트 (RubyText, Filter, Card)
-│   ├── wardrobe/            # PurchaseButton (클라이언트)
-│   ├── guest/               # GuestSignupBanner, GuestUpsellModal
-│   ├── ui/                  # 공유 UI (Button, Card, ProgressBar)
-│   └── layout/              # BottomNav, AdminBottomNav
+│ ├── keigo/ # 경어 전용 컴포넌트
+│ ├── learningDiary/ # 학습 일기 컴포넌트 (RubyText, Filter, Card)
+│ ├── mascot/ # ShibaAvatar (레벨별 아바타 + 레벨업 애니메이션)
+│ ├── wardrobe/ # PurchaseButton (클라이언트)
+│ ├── guest/ # GuestSignupBanner, GuestUpsellModal
+│ ├── ui/ # 공유 UI (Button, Card, ProgressBar)
+│ └── layout/ # BottomNav, AdminBottomNav
 ├── actions/                 # 서버 액션 (diary, keigo, learningDiary, user, wardrobe)
 ├── data/
 │   ├── lessons.ts           # 경어 레슨 데이터 (30개)
@@ -210,7 +228,7 @@ src/
 ## 보안
 
 - **Admin 경로 보호**: Next.js middleware에서 JWT 토큰의 role 검증 → 비관리자 접근 시 `/home` 리다이렉트
-- **이미지 도메인 제한**: `next.config.ts`에서 `lh3.googleusercontent.com`만 허용
+- **이미지 도메인 제한**: `next.config.ts`에서 `lh3.googleusercontent.com`만 허용 (마스코트는 `/public/mascot/` 로컬 경로 사용)
 - **스트릭 무결성**: 같은 날 중복 학습 시 `streakDays`가 증가하지 않음
 
 ---

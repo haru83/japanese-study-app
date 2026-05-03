@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { updateUserName } from "@/actions/user";
+import { ShibaAvatar } from "@/components/mascot/ShibaAvatar";
 
 export default function OnboardingPage() {
   const { data: session } = useSession();
@@ -29,7 +30,7 @@ export default function OnboardingPage() {
     <div className="flex flex-col min-h-screen bg-sakura-blush px-6">
       <div className="flex flex-1 flex-col items-center justify-center gap-6">
         {/* Mascot sticker */}
-        <div className="text-8xl wobbly-2 sticker inline-block">🐕</div>
+        <ShibaAvatar level={1} size={96} sticker wobble="wobbly-2" />
 
         {/* Title */}
         <div className="text-center">

@@ -13,7 +13,7 @@ export function RubyText({ segments, showRuby, className = "" }: RubyTextProps) 
         seg.ruby && showRuby ? (
           <ruby key={i}>
             {seg.text}
-            <rt className="text-[0.55em] text-text-sub dark:text-text-sub-dark">{seg.ruby}</rt>
+            <rt className="text-[0.55em] text-type-black/60">{seg.ruby}</rt>
           </ruby>
         ) : (
           <span key={i}>{seg.text}</span>

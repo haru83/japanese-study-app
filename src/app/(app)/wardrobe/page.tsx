@@ -1,6 +1,7 @@
 import { getUserProfile } from "@/actions/user";
 import { getWardrobeItems } from "@/actions/wardrobe";
 import { PurchaseButton } from "@/components/wardrobe/PurchaseButton";
+import { ShibaAvatar } from "@/components/mascot/ShibaAvatar";
 
 export default async function WardrobePage() {
   const profile = await getUserProfile();
@@ -20,10 +21,10 @@ export default async function WardrobePage() {
         </p>
       </div>
 
-      {/* Mascot preview */}
-      <div className="bg-primary/10 mx-5 mt-4 rounded-3xl p-8 flex items-center justify-center">
-        <span className="text-8xl">🐕</span>
-      </div>
+  {/* Mascot preview */}
+  <div className="bg-primary/10 mx-5 mt-4 rounded-3xl p-8 flex items-center justify-center">
+    <ShibaAvatar level={level} size={96} />
+  </div>
 
       <div className="px-5 py-4">
         <h2 className="text-base font-bold text-text-main dark:text-text-main-dark mb-3">

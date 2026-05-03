@@ -1,9 +1,11 @@
 import Link from "next/link";
-import Image from "next/image";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { getDiaries } from "@/actions/diary";
 import { getCompletedLearningDiaries } from "@/actions/learningDiary";
 import { learningDiaries } from "@/data/learningDiaries";
 import { ProgressBar } from "@/components/ui/ProgressBar";
+import { ShibaAvatar } from "@/components/mascot/ShibaAvatar";
 
 function formatDate(date: Date) {
   return new Date(date).toLocaleDateString("ko-KR", {
@@ -23,6 +25,51 @@ const MOOD_EMOJI: Record<string, string> = {
 
 const WOBBLES = ["wobbly-1", "wobbly-2", "wobbly-3", "wobbly-4", "wobbly-5"];
 
+// ─── 게스트: 내 일기 탭 ───────────────────────────────────────
+function GuestMyDiaryView() {
+  return (
+    <div className="flex flex-col items-center gap-5 py-8">
+      <div className="text-6xl sticker wobbly-1 inline-block">🔒</div>
+      <div className="text-center">
+        <p className="font-black text-type-black text-base">일기 쓰기는 회원 전용 기능이에요</p>
+        <p className="text-sm text-type-black/60 font-bold mt-2">
+          가입하면 매일 일본어 일기를 쓰고<br />XP와 스탬프를 모을 수 있어요 ✨
+        </p>
+      </div>
+
+      <div className="w-full flex flex-col gap-2">
+        <Link
+          href="/login?mode=signup"
+          className="w-full flex items-center justify-center gap-2 bg-sakura-pink text-type-black font-black py-4 rounded-[15px] border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+        >
+          무료로 가입하기 →
+        </Link>
+        <Link
+          href="/login"
+          className="w-full flex items-center justify-center bg-canvas-almond text-type-black font-black py-3.5 rounded-[15px] border-2 border-black shadow-[3px_3px_0px_0px_#000] hover:shadow-[1px_1px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all"
+        >
+          로그인하기
+        </Link>
+      </div>
+
+      {/* 학습 일기 유도 */}
+      <div className="w-full bg-paper-white rounded-[15px] border-2 border-black shadow-[4px_4px_0px_0px_#000] p-4 wobbly-3">
+        <p className="font-black text-type-black text-sm mb-1">학습 일기는 무료예요! 📖</p>
+        <p className="text-xs text-type-black/60 font-bold">
+          100개의 일본어 학습 일기를 로그인 없이 읽을 수 있어요.
+        </p>
+        <Link
+          href="/diary?tab=learn"
+          className="inline-block mt-3 text-xs font-black text-grape-punch underline underline-offset-2"
+        >
+          학습 일기 보러가기 →
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+// ─── 멤버: 내 일기 탭 ─────────────────────────────────────────
 async function MyDiaries() {
   const diaries = await getDiaries();
   return (
@@ -86,7 +133,6 @@ async function LearnDiariesPreview() {
   const recent = learningDiaries.slice(0, 5);
   return (
     <div className="flex flex-col gap-3">
-      {/* Progress summary */}
       <div className="bg-paper-white rounded-2xl p-4 border-2 border-black shadow-[4px_4px_0px_0px_#000]">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-black text-type-black">전체 진행률</span>
@@ -135,17 +181,20 @@ export default async function DiaryPage({
 }: {
   searchParams: Promise<{ tab?: string }>;
 }) {
-  const { tab } = await searchParams;
+  const [{ tab }, session] = await Promise.all([
+    searchParams,
+    getServerSession(authOptions),
+  ]);
   const isLearn = tab === "learn";
 
   return (
     <main className="flex-1 overflow-y-auto px-5 pt-4 pb-24 space-y-4 bg-sakura-blush min-h-screen">
       {/* Mascot header */}
       <header className="flex flex-col items-center justify-center text-center gap-3 mb-2">
-        <div className="text-7xl wobbly-2 sticker inline-block">🐕</div>
-        <div>
-          <h1 className="text-2xl font-black text-type-black tracking-tight leading-tight">일기</h1>
-          <p className="text-sm text-type-black/60 font-bold mt-1">오늘도 참 잘했어요! 🐕</p>
+    <ShibaAvatar level={1} size={72} sticker wobble="wobbly-2" />
+    <div>
+      <h1 className="text-2xl font-black text-type-black tracking-tight leading-tight">일기</h1>
+      <p className="text-sm text-type-black/60 font-bold mt-1">오늘도 참 잘했어요! 🎉</p>
         </div>
       </header>
 
@@ -173,7 +222,13 @@ export default async function DiaryPage({
         </Link>
       </div>
 
-      {isLearn ? <LearnDiariesPreview /> : <MyDiaries />}
+      {isLearn ? (
+        <LearnDiariesPreview />
+      ) : session?.user?.id ? (
+        <MyDiaries />
+      ) : (
+        <GuestMyDiaryView />
+      )}
     </main>
   );
 }

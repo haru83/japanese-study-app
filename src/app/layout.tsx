@@ -18,7 +18,7 @@ const notoSansKR = Noto_Sans_KR({
 });
 
 export const metadata: Metadata = {
-  title: "다이어리 일본어",
+  title: "시바 일본어",
   description: "일기 쓰기와 경어 학습을 한 번에",
 };
 

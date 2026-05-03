@@ -1,11 +1,10 @@
 import Link from "next/link";
-import Image from "next/image";
-import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getUserProfile } from "@/actions/user";
 import { xpProgress, xpForNextLevel, LEVEL_THRESHOLDS, MAX_LEVEL } from "@/lib/xp";
 import { ProgressBar } from "@/components/ui/ProgressBar";
+import { ShibaAvatar } from "@/components/mascot/ShibaAvatar";
 
 const LEVEL_TITLES = [
   "초보 학습자",
@@ -16,12 +15,91 @@ const LEVEL_TITLES = [
   "경어 마스터",
 ];
 
-const FALLBACK_AVATAR =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuAGwOcxC8d-qDmbHcfaSkGb0g9yCg4VybW6npBHBXeQyvDzi4h03eicKMKGEx4uG5g7j97IyArLz9HZgUnTD0VlLqFGKX6dL0DNJE3vS9XT_3uwT7uybVa4QnWGk5VKu43-E-jNRE3tFpxMx_bewI4l-m8Z-B0zsNu8TN3Hks6mdB4XZHoNBtXeVUZBCTqhcCR8rUV8_3LhL9cvU4vR8YfG5H43UrKLIRmtZdTwyVNbgqo8udbHaEImoEsXssW4vygE3TeB0f7iCYFT";
+// ─── 게스트 프로필 ────────────────────────────────────────────
+function GuestProfileView() {
+  return (
+    <main className="flex flex-col gap-5 w-full overflow-hidden pt-4 pb-6 bg-sakura-blush min-h-screen">
+      <header className="flex items-center justify-center px-4">
+        <h1 className="text-lg font-black text-type-black">프로필</h1>
+      </header>
 
+  {/* Guest avatar */}
+  <section className="flex flex-col items-center px-6">
+    <div className="w-28 h-28 rounded-full border-4 border-black shadow-[6px_6px_0px_0px_#000] bg-canvas-almond flex items-center justify-center overflow-hidden">
+      <ShibaAvatar level={1} size={104} circular />
+    </div>
+        <div className="mt-3 text-center">
+          <h2 className="text-xl font-black text-type-black">게스트 학습자</h2>
+          <p className="text-type-black/60 text-sm font-bold mt-1">
+            아직 계정이 없어요
+          </p>
+        </div>
+      </section>
+
+      {/* Benefits */}
+      <section className="px-5">
+        <p className="text-center text-sm font-bold text-type-black/70 mb-4">
+          가입하면 이런 기능을 이용할 수 있어요!
+        </p>
+        <div className="grid grid-cols-3 gap-3">
+          {[
+            { icon: "📈", label: "레벨 UP", desc: "학습할수록\n레벨이 올라요", bg: "bg-sakura-pink", wobble: "wobbly-1" },
+            { icon: "⭐", label: "스탬프", desc: "레슨 완료마다\n획득해요", bg: "bg-shiba-orange", wobble: "wobbly-3" },
+            { icon: "👗", label: "아바타", desc: "스탬프로\n시바 코디", bg: "bg-grape-punch", wobble: "wobbly-5" },
+          ].map((item) => (
+            <div
+              key={item.label}
+              className={`${item.bg} ${item.wobble} p-3 rounded-[15px] border-2 border-black shadow-[4px_4px_0px_0px_#000] flex flex-col items-center gap-1.5`}
+            >
+              <div className="text-2xl">{item.icon}</div>
+              <p className="text-xs font-black text-type-black">{item.label}</p>
+              <p className="text-[10px] font-bold text-type-black/70 text-center whitespace-pre-line leading-tight">
+                {item.desc}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Also: diary feature */}
+      <section className="px-5">
+        <div className="bg-paper-white rounded-[15px] border-2 border-black shadow-[4px_4px_0px_0px_#000] p-5 flex items-center gap-4 wobbly-2">
+          <span className="text-4xl">📝</span>
+          <div>
+            <p className="font-black text-type-black">일기 쓰기</p>
+            <p className="text-xs text-type-black/60 font-bold mt-0.5">
+              매일 일본어 일기를 쓰고 XP를 모아요
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* CTAs */}
+      <section className="px-5 flex flex-col gap-3">
+        <Link
+          href="/login?mode=signup"
+          className="w-full flex items-center justify-center gap-2 bg-sakura-pink text-type-black font-black py-4 rounded-[15px] border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+        >
+          무료로 가입하기 →
+        </Link>
+        <Link
+          href="/login"
+          className="w-full flex items-center justify-center gap-2 bg-canvas-almond text-type-black font-black py-3.5 rounded-[15px] border-2 border-black shadow-[3px_3px_0px_0px_#000] hover:shadow-[1px_1px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all"
+        >
+          로그인하기
+        </Link>
+      </section>
+    </main>
+  );
+}
+
+// ─── 멤버 프로필 ──────────────────────────────────────────────
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.id) redirect("/login");
+
+  if (!session?.user?.id) {
+    return <GuestProfileView />;
+  }
 
   const profile = await getUserProfile();
   const progress = profile?.progress;
@@ -32,10 +110,9 @@ export default async function ProfilePage() {
   const stamps = progress?.totalStamps ?? 0;
   const xpPercent = xpProgress(xp, level);
   const nextXp = xpForNextLevel(level);
-  const displayName = profile?.name ?? session.user.name ?? "학습자";
-  const displayImage = session.user.image ?? FALLBACK_AVATAR;
+ const displayName = profile?.name ?? session.user.name ?? "학습자";
 
-  return (
+ return (
     <main className="flex flex-col gap-5 w-full overflow-hidden pt-4 pb-6 bg-sakura-blush min-h-screen">
       {/* Header */}
       <header className="flex items-center justify-between px-4">
@@ -60,13 +137,13 @@ export default async function ProfilePage() {
         </div>
       </header>
 
-      {/* Avatar sticker */}
-      <section className="flex flex-col items-center px-6">
-        <div className="relative">
-          <div className="w-28 h-28 rounded-full border-4 border-black shadow-[6px_6px_0px_0px_#000] bg-canvas-almond overflow-hidden relative z-10">
-            <Image src={displayImage} alt="Avatar" fill className="object-cover" />
-          </div>
-        </div>
+  {/* Avatar sticker */}
+  <section className="flex flex-col items-center px-6">
+    <div className="relative">
+      <div className="w-28 h-28 rounded-full border-4 border-black shadow-[6px_6px_0px_0px_#000] bg-canvas-almond overflow-hidden relative z-10">
+        <ShibaAvatar level={level} size={112} circular />
+      </div>
+    </div>
         <div className="mt-3 text-center">
           <h2 className="text-xl font-black text-type-black flex items-center justify-center gap-1">
             {displayName}
