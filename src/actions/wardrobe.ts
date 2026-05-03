@@ -52,6 +52,7 @@ export async function purchaseWardrobeItem(wardrobeItemId: string) {
   ]);
 
   revalidatePath("/wardrobe");
+  revalidatePath("/shop");
   revalidatePath("/profile");
 
   return { success: true };
@@ -59,7 +60,7 @@ export async function purchaseWardrobeItem(wardrobeItemId: string) {
 
 export async function getWardrobeItems() {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.id) return { items: [], ownedIds: [] };
+  if (!session?.user?.id) return { items: [], ownedIds: [], equippedIds: [] };
 
   const userId = session.user.id;
 
@@ -67,12 +68,70 @@ export async function getWardrobeItems() {
     prisma.wardrobeItem.findMany({ orderBy: { stampCost: "asc" } }),
     prisma.userWardrobeItem.findMany({
       where: { userId },
-      select: { wardrobeItemId: true },
+      select: { wardrobeItemId: true, equippedAt: true },
     }),
   ]);
 
+  const ownedIds = ownedItems.map((oi) => oi.wardrobeItemId);
+  const equippedIds = ownedItems
+    .filter((oi) => oi.equippedAt !== null)
+    .map((oi) => oi.wardrobeItemId);
+
   return {
     items,
-    ownedIds: ownedItems.map((oi) => oi.wardrobeItemId),
+    ownedIds,
+    equippedIds,
   };
+}
+
+/** 아이템 착용 */
+export async function equipItem(wardrobeItemId: string) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) throw new Error("로그인이 필요합니다.");
+
+  const userId = session.user.id;
+
+  // 소유 확인
+  const owned = await prisma.userWardrobeItem.findUnique({
+    where: { userId_wardrobeItemId: { userId, wardrobeItemId } },
+  });
+  if (!owned) throw new Error("보유하지 않은 아이템입니다.");
+
+  // 착용 처리 (equippedAt 설정)
+  await prisma.userWardrobeItem.update({
+    where: { userId_wardrobeItemId: { userId, wardrobeItemId } },
+    data: { equippedAt: new Date() },
+  });
+
+  revalidatePath("/wardrobe");
+  revalidatePath("/profile");
+  revalidatePath("/");
+
+  return { success: true };
+}
+
+/** 아이템 착용 해제 */
+export async function unequipItem(wardrobeItemId: string) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) throw new Error("로그인이 필요합니다.");
+
+  const userId = session.user.id;
+
+  // 소유 확인
+  const owned = await prisma.userWardrobeItem.findUnique({
+    where: { userId_wardrobeItemId: { userId, wardrobeItemId } },
+  });
+  if (!owned) throw new Error("보유하지 않은 아이템입니다.");
+
+  // 착용 해제 (equippedAt null로 설정)
+  await prisma.userWardrobeItem.update({
+    where: { userId_wardrobeItemId: { userId, wardrobeItemId } },
+    data: { equippedAt: null },
+  });
+
+  revalidatePath("/wardrobe");
+  revalidatePath("/profile");
+  revalidatePath("/");
+
+  return { success: true };
 }

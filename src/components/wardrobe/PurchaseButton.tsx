@@ -28,10 +28,10 @@ export function PurchaseButton({
     <button
       disabled={!available || isPending}
       onClick={handlePurchase}
-      className={`mt-2 text-xs px-3 py-1.5 rounded-xl font-medium transition-all ${
+      className={`text-xs font-black px-4 py-1.5 rounded-[10px] border-2 border-black transition-all ${
         available
-          ? "bg-primary text-text-main hover:bg-primary-hover"
-          : "bg-gray-100 text-text-sub cursor-not-allowed"
+          ? "bg-sakura-pink text-type-black shadow-[2px_2px_0px_0px_#000] hover:shadow-[1px_1px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]"
+          : "bg-gray-200 text-type-black/40 cursor-not-allowed shadow-[2px_2px_0px_0px_#000]"
       }`}
     >
       {isPending ? "구매 중..." : label}

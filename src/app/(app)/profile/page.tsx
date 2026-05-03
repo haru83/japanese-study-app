@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getUserProfile } from "@/actions/user";
+import { getWardrobeItems } from "@/actions/wardrobe";
 import { xpProgress, xpForNextLevel, LEVEL_THRESHOLDS, MAX_LEVEL } from "@/lib/xp";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { ShibaAvatar } from "@/components/mascot/ShibaAvatar";
@@ -101,9 +102,10 @@ export default async function ProfilePage() {
     return <GuestProfileView />;
   }
 
-  const profile = await getUserProfile();
-  const progress = profile?.progress;
-  const keigoCount = profile?.keigoProgress?.length ?? 0;
+ const profile = await getUserProfile();
+ const { equippedIds } = await getWardrobeItems();
+ const progress = profile?.progress;
+ const keigoCount = profile?.keigoProgress?.length ?? 0;
 
   const level = progress?.level ?? 1;
   const xp = progress?.xp ?? 0;
@@ -141,7 +143,7 @@ export default async function ProfilePage() {
   <section className="flex flex-col items-center px-6">
     <div className="relative">
       <div className="w-28 h-28 rounded-full border-4 border-black shadow-[6px_6px_0px_0px_#000] bg-canvas-almond overflow-hidden relative z-10">
-        <ShibaAvatar level={level} size={112} circular />
+        <ShibaAvatar level={level} size={112} circular equippedItemIds={equippedIds} />
       </div>
     </div>
         <div className="mt-3 text-center">
@@ -203,7 +205,7 @@ export default async function ProfilePage() {
         <div className="bg-paper-white rounded-2xl overflow-hidden border-2 border-black shadow-[4px_4px_0px_0px_#000]">
           {[
             { href: "/wardrobe", icon: "checkroom", label: "옷장", desc: "시바견 코디하기" },
-            { href: "/sticker-board", icon: "stars", label: "스티커 보드", desc: `${stamps}개 보유` },
+            { href: "/shop", icon: "storefront", label: "상점", desc: `⭐ ${stamps} 스탬프로 구매` },
             { href: "/learning/grammar", icon: "menu_book", label: "문법 정리", desc: "경어 문법 모음" },
             { href: "/learning/vocabulary", icon: "translate", label: "어휘 목록", desc: "경어 필수 어휘" },
           ].map((item, i, arr) => (

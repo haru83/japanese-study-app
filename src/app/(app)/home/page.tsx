@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getUserProfile } from "@/actions/user";
+import { getWardrobeItems } from "@/actions/wardrobe";
 import { getDiaries } from "@/actions/diary";
 import { xpProgress, xpForNextLevel, MAX_LEVEL, LEVEL_THRESHOLDS } from "@/lib/xp";
 import { ProgressBar } from "@/components/ui/ProgressBar";
@@ -117,10 +118,11 @@ export default async function HomePage() {
     return <GuestHomeView />;
   }
 
-  const [profile, diaries] = await Promise.all([
-    getUserProfile(),
-    getDiaries(),
-  ]);
+ const [profile, diaries, { equippedIds }] = await Promise.all([
+ getUserProfile(),
+ getDiaries(),
+ getWardrobeItems(),
+ ]);
 
   const progress = profile?.progress;
   const level = progress?.level ?? 1;
@@ -143,7 +145,7 @@ export default async function HomePage() {
  시바 일본어
  </h1>
  </div>
- <ShibaAvatar level={level} size={56} sticker wobble="wobbly-3" className="-mt-3 -ml-6 relative z-10" />
+ <ShibaAvatar level={level} size={56} sticker wobble="wobbly-3" className="-mt-3 -ml-6 relative z-10" equippedItemIds={equippedIds} />
  </div>
 
  <div className="mb-4">
@@ -175,7 +177,7 @@ export default async function HomePage() {
         <div className="grid grid-cols-3 gap-3">
           {[
             { label: "일기", value: diaries.length, icon: "📖", href: "/diary", bg: "bg-sakura-pink", wobble: "wobbly-1" },
-            { label: "스탬프", value: progress?.totalStamps ?? 0, icon: "⭐", href: "/sticker-board", bg: "bg-shiba-orange", wobble: "wobbly-3" },
+            { label: "스탬프", value: progress?.totalStamps ?? 0, icon: "⭐", href: "/shop", bg: "bg-shiba-orange", wobble: "wobbly-3" },
             { label: "경어", value: keigoCount, icon: "🎯", href: "/keigo", bg: "bg-grape-punch", wobble: "wobbly-5" },
           ].map((stat) => (
             <Link
