@@ -6,15 +6,39 @@ import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 
 /**
- * 레벨별 시바견 마스코트 이미지 매핑
- * Lv.1 (초보 학습자): 아이템 없음 (기본)
- * Lv.2 (입문자): 하치마키 (일본 머리띠)
- * Lv.3 (기초 완료): 사쿠라 핑크 스카프
- * Lv.4 (중급자): 포도색 기모노
- * Lv.5 (상급자): 안경 + 책
- * Lv.6 (경어 마스터): 마스터 복장 (왕관 + 망토)
+ * 레벨별 시바견 마스코트 기본 이미지 (아이템 미착용)
  */
-const MASCOT_IMAGES: Record<number, string> = {
+const BASE_IMAGE = "/mascot/shiba-base.png";
+
+/**
+ * 아이템별 오버레이 이미지 매핑
+ * 기본 시바견 위에 투명 PNG 레이어로 겹쳐서 착용 효과를 냅니다.
+ * 오버레이 이미지가 없는 아이템은 레벨 이미지로 폴백합니다.
+ */
+const ITEM_OVERLAYS: Record<string, string> = {
+  "hat-cap": "/mascot/overlay-hat-cap.png",
+  "scarf": "/mascot/overlay-scarf.png",
+  "hat-santa": "/mascot/overlay-hat-santa.png",
+  "glasses": "/mascot/overlay-glasses.png",
+  "crown": "/mascot/overlay-crown.png",
+};
+
+/**
+ * 오버레이가 없는 아이템의 레벨 이미지 폴백 매핑
+ * 오버레이 PNG가 아직 없을 때, 기존 레벨별 합성 이미지를 대신 사용
+ */
+const ITEM_LEVEL_FALLBACKS: Record<string, number> = {
+  "hat-cap": 2,    // shiba-lv2-hachimaki.png
+  "scarf": 3,      // shiba-lv3-scarf.png
+  "glasses": 5,    // shiba-lv5-glasses.png
+  "crown": 6,      // shiba-lv6-master.png
+  "hat-santa": 2,  // closest visual: hachimaki
+};
+
+/**
+ * 레벨별 합성 이미지 (오버레이 폴백용)
+ */
+const LEVEL_IMAGES: Record<number, string> = {
   1: "/mascot/shiba-base.png",
   2: "/mascot/shiba-lv2-hachimaki.png",
   3: "/mascot/shiba-lv3-scarf.png",
@@ -24,11 +48,23 @@ const MASCOT_IMAGES: Record<number, string> = {
 };
 
 /**
- * 장착 아이템별 오버라이드 (wardrobe 시스템용)
+ * 아이템별 z-index (위→아래: 머리 > 목 > 몸)
+ * 높을수록 위에 렌더링됨
  */
-const ITEM_OVERRIDES: Record<string, number> = {
-  // TODO: wardrobe 아이템 ID가 확정되면 매핑
+const ITEM_Z_INDEX: Record<string, number> = {
+  "crown": 30,
+  "hat-cap": 25,
+  "hat-santa": 25,
+  "glasses": 20,
+  "scarf": 15,
 };
+
+/**
+ * 어떤 오버레이 PNG가 실제로 존재하는지 런타임에 체크
+ * (존재하지 않으면 레벨 폴백 사용)
+ */
+const checkedOverlays = new Set<string>();
+const missingOverlays = new Set<string>();
 
 // ─── 레벨업 파티클 데이터 ──────────────────────────────────────
 interface Particle {
@@ -141,21 +177,32 @@ interface ShibaAvatarProps {
   triggerLevelUp?: boolean;
 }
 
-function getMascotImage(level: number, equippedItemIds?: string[]): string {
+/**
+ * 착용 아이템이 있는지, 오버레이 PNG가 존재하는지 판단
+ * → 오버레이 모드: 기본 시바견 + 아이템 오버레이 레이어
+ * → 폴백 모드: 기존 레벨 합성 이미지 (오버레이 PNG가 없을 때)
+ */
+function shouldUseOverlayMode(equippedItemIds?: string[]): boolean {
+  if (!equippedItemIds || equippedItemIds.length === 0) return false;
+  // 하나라도 오버레이가 있으면 오버레이 모드
+  return equippedItemIds.some((id) => ITEM_OVERLAYS[id] && !missingOverlays.has(id));
+}
+
+function getFallbackLevelImage(level: number, equippedItemIds?: string[]): string {
   if (equippedItemIds && equippedItemIds.length > 0) {
-    let maxOverride = 0;
+    let maxLevel = 0;
     for (const itemId of equippedItemIds) {
-      const override = ITEM_OVERRIDES[itemId];
-      if (override && override > maxOverride) {
-        maxOverride = override;
+      const fallback = ITEM_LEVEL_FALLBACKS[itemId];
+      if (fallback && fallback > maxLevel) {
+        maxLevel = fallback;
       }
     }
-    if (maxOverride > 0) {
-      return MASCOT_IMAGES[maxOverride] ?? MASCOT_IMAGES[1];
+    if (maxLevel > 0) {
+      return LEVEL_IMAGES[maxLevel] ?? LEVEL_IMAGES[1];
     }
   }
   const clampedLevel = Math.max(1, Math.min(6, level));
-  return MASCOT_IMAGES[clampedLevel];
+  return LEVEL_IMAGES[clampedLevel];
 }
 
 // ─── 메인 컴포넌트 ──────────────────────────────────────────
@@ -169,41 +216,71 @@ export function ShibaAvatar({
   circular = false,
   triggerLevelUp,
 }: ShibaAvatarProps) {
-  const src = getMascotImage(level, equippedItemIds);
+  const useOverlay = shouldUseOverlayMode(equippedItemIds);
+  const src = useOverlay ? BASE_IMAGE : getFallbackLevelImage(level, equippedItemIds);
   const prevLevel = usePrevious(level);
   const prevTrigger = usePrevious(triggerLevelUp);
+  const prevEquipped = usePrevious(equippedItemIds);
 
   // 레벨업 감지
   const isLevelUp = (prevLevel != null && level > prevLevel) ||
     (triggerLevelUp && !prevTrigger);
 
+  // 착용 아이템 변경 감지
+  const isEquipChanged = prevEquipped !== undefined &&
+    equippedItemIds !== undefined &&
+    JSON.stringify(prevEquipped) !== JSON.stringify(equippedItemIds);
+
   const [showLevelUpEffect, setShowLevelUpEffect] = useState(false);
+  const [showEquipEffect, setShowEquipEffect] = useState(false);
   const [particles, setParticles] = useState<Particle[]>([]);
-  const [imageKey, setImageKey] = useState(src);
+  const [imageKey, setImageKey] = useState(src + JSON.stringify(equippedItemIds));
 
   // 레벨업 이펙트 트리거
   useEffect(() => {
     if (isLevelUp) {
       setParticles(generateParticles(16));
       setShowLevelUpEffect(true);
-      setImageKey(src);
+      setImageKey(src + JSON.stringify(equippedItemIds));
 
       const timer = setTimeout(() => {
         setShowLevelUpEffect(false);
       }, 1200);
       return () => clearTimeout(timer);
     }
-  }, [isLevelUp, src]);
+  }, [isLevelUp, src, equippedItemIds]);
 
-  // 레벨이 바뀌면 이미지 키 갱신 (AnimatePresence 전환용)
+  // 착용 변경 이펙트 (작은 바운스)
   useEffect(() => {
-    setImageKey(src);
-  }, [src]);
+    if (isEquipChanged) {
+      setShowEquipEffect(true);
+      setImageKey(src + JSON.stringify(equippedItemIds));
+      const timer = setTimeout(() => {
+        setShowEquipEffect(false);
+      }, 600);
+      return () => clearTimeout(timer);
+    }
+  }, [isEquipChanged, src, equippedItemIds]);
 
-  // 이미지 전환 완료 콜백
-  const handleImageExitComplete = useCallback(() => {
-    // 퇴장 애니메이션 완료 후 처리 (필요시)
+  // src나 equippedItemIds가 바뀌면 imageKey 갱신
+  useEffect(() => {
+    setImageKey(src + JSON.stringify(equippedItemIds));
+  }, [src, equippedItemIds]);
+
+  // 오버레이할 아이템 정렬 (z-index 낮→높은 순으로 렌더링)
+  const overlayItems = (equippedItemIds ?? [])
+    .filter((id) => ITEM_OVERLAYS[id] && !missingOverlays.has(id))
+    .sort((a, b) => (ITEM_Z_INDEX[a] ?? 10) - (ITEM_Z_INDEX[b] ?? 10));
+
+  // 오버레이 이미지 로드 실패 처리
+  const handleOverlayError = useCallback((itemId: string) => {
+    missingOverlays.add(itemId);
   }, []);
+
+  // 착용 효과 애니메이션 설정
+  const equipAnimate = showEquipEffect
+    ? { scale: [1, 1.15, 1], filter: ["brightness(1)", "brightness(1.2)", "brightness(1)"] }
+    : { scale: 1, filter: "brightness(1)" };
 
   return (
     <div
@@ -246,7 +323,7 @@ export function ShibaAvatar({
                   "brightness(1)",
                 ],
               }
-            : { scale: 1, filter: "brightness(1)" }
+            : equipAnimate
         }
         transition={
           showLevelUpEffect
@@ -254,15 +331,16 @@ export function ShibaAvatar({
             : { duration: 0.3 }
         }
       >
-        <AnimatePresence mode="wait" onExitComplete={handleImageExitComplete}>
+        <AnimatePresence mode="wait">
           <motion.div
             key={imageKey}
             initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             exit={{ opacity: 0, scale: 0.9, rotate: 5 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="w-full h-full"
+            className="w-full h-full relative"
           >
+            {/* 기본 시바견 이미지 */}
             <Image
               src={src}
               alt={`시바견 마스코트 Lv.${level}`}
@@ -272,6 +350,24 @@ export function ShibaAvatar({
               priority={size >= 96}
               unoptimized
             />
+
+            {/* 아이템 오버레이 레이어들 */}
+            {useOverlay && overlayItems.map((itemId) => (
+              <Image
+                key={itemId}
+                src={ITEM_OVERLAYS[itemId]}
+                alt={itemId}
+                width={size}
+                height={size}
+                className={clsx(
+                  "absolute inset-0 object-contain pointer-events-none",
+                  circular && "object-cover rounded-full"
+                )}
+                style={{ zIndex: ITEM_Z_INDEX[itemId] ?? 10 }}
+                onError={() => handleOverlayError(itemId)}
+                unoptimized
+              />
+            ))}
           </motion.div>
         </AnimatePresence>
       </motion.div>
@@ -300,5 +396,5 @@ export function ShibaAvatar({
  */
 export function getShibaMascotSrc(level: number): string {
   const clampedLevel = Math.max(1, Math.min(6, level));
-  return MASCOT_IMAGES[clampedLevel];
+  return LEVEL_IMAGES[clampedLevel];
 }
