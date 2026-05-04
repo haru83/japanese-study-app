@@ -16,11 +16,28 @@ const BASE_IMAGE = "/mascot/shiba-base.png";
  * 오버레이 이미지가 없는 아이템은 레벨 이미지로 폴백합니다.
  */
 const ITEM_OVERLAYS: Record<string, string> = {
-  "hat-cap": "/mascot/overlay-hat-cap.png",
-  "scarf": "/mascot/overlay-scarf.png",
-  "hat-santa": "/mascot/overlay-hat-santa.png",
-  "glasses": "/mascot/overlay-glasses.png",
-  "crown": "/mascot/overlay-crown.png",
+ // ─── 기존 아이템 (5개) ───
+ "hat-cap": "/mascot/overlay-hat-cap.png",
+ "scarf": "/mascot/overlay-scarf.png",
+ "hat-santa": "/mascot/overlay-hat-santa.png",
+ "glasses": "/mascot/overlay-glasses.png",
+ "crown": "/mascot/overlay-crown.png",
+ // ─── 신규 아이템 (15개) ───
+ "hachimaki": "/mascot/overlay-hachimaki.png",
+ "horns": "/mascot/overlay-horns.png",
+ "halo": "/mascot/overlay-halo.png",
+ "bow-tie": "/mascot/overlay-bow-tie.png",
+ "necklace-pearl": "/mascot/overlay-necklace-pearl.png",
+ "mask-fox": "/mascot/overlay-mask-fox.png",
+ "mask-oni": "/mascot/overlay-mask-oni.png",
+ "earring-gold": "/mascot/overlay-earring-gold.png",
+ "flower-crown": "/mascot/overlay-flower-crown.png",
+ "muffler": "/mascot/overlay-muffler.png",
+ "hakama": "/mascot/overlay-hakama.png",
+ "armor-samurai": "/mascot/overlay-armor-samurai.png",
+ "cape": "/mascot/overlay-cape.png",
+ "bandana": "/mascot/overlay-bandana.png",
+ "stud-ear": "/mascot/overlay-stud-ear.png",
 };
 
 /**
@@ -53,12 +70,32 @@ const LEVEL_IMAGES: Record<number, string> = {
  * 높을수록 위에 렌더링됨
  */
 const ITEM_Z_INDEX: Record<string, number> = {
-  "crown": 30,
-  "hat-cap": 25,
-  "hat-santa": 25,
-  "glasses": 20,
-  "scarf": 15,
-};
+ // ─── 머리 위 (최상위) ───
+ "crown": 30,
+ "flower-crown": 30,
+ "halo": 28,
+ "horns": 27,
+ "hat-cap": 25,
+ "hat-santa": 25,
+ "hachimaki": 25,
+ "bandana": 24,
+ // ─── 얼굴 ───
+ "mask-fox": 22,
+ "mask-oni": 22,
+ "glasses": 20,
+ // ─── 귀 ───
+ "earring-gold": 18,
+ "stud-ear": 18,
+ // ─── 목 ───
+ "bow-tie": 16,
+ "necklace-pearl": 15,
+ "scarf": 14,
+ "muffler": 14,
+ // ─── 몸통 ───
+ "cape": 10,
+ "hakama": 8,
+ "armor-samurai": 6,
+ };
 
 /**
  * 어떤 오버레이 PNG가 실제로 존재하는지 런타임에 체크
