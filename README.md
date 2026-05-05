@@ -50,6 +50,11 @@
 
 ### 📔 개인 일기
 - 매일 주제를 선택해 일본어 일기 작성
+- **일본어 전용 입력**: 히라가나·가타카나·한자·일본어 구두점만 입력 가능 (한글·영문·숫자 등 자동 차단)
+- **AI 튜터 리뷰**: 작성한 일기를 Gemini AI가 문법·어휘·표현 자연성 검토 → 문장별 수정 포인트 + 개선안 제시
+  - 종합 점수(0~100점) + 레벨 뱃지
+  - 문장별 원문 ↔ 개선안 비교, 「개선안 적용」 원클릭 반영
+  - Gemini API 키 없으면 규칙 기반 검사(시제·경어체·조사)로 자동 폴백
 - 완료 시 XP와 스탬프 획득
 
 ### 📚 학습 일기
@@ -124,7 +129,8 @@
 | Auth | NextAuth.js v4 (Credentials Provider, JWT) |
 | State | Zustand (경어 진행상황 persist) |
 | Animation | Framer Motion |
-| Testing | Vitest (14 tests) |
+| Testing | Vitest (112 tests) |
+| AI Tutor | Gemini 3.1 Flash Lite Preview (Google AI Studio OpenAI-compat API) |
 | Font | Zen Maru Gothic + Noto Sans KR |
 
 ---
@@ -195,6 +201,10 @@ npx vitest run src/lib/__tests__/wardrobe.test.ts
 DATABASE_URL="file:./dev.db"
 NEXTAUTH_SECRET="your-secret-key"
 NEXTAUTH_URL="http://localhost:3000" # 실제 실행 URL과 일치해야 함
+
+# Gemini API — 일기 AI 튜터 리뷰용 (없으면 규칙 기반 검사로 동작)
+GOOGLE_API_KEY=your_google_ai_studio_key
+# GEMINI_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai  # 기본값, 필요시 오버라이드
 ```
 
 ---
@@ -220,18 +230,19 @@ src/
 ├── components/
 │ ├── keigo/ # 경어 전용 컴포넌트
 │ ├── learningDiary/ # 학습 일기 컴포넌트 (RubyText, Filter, Card)
+│ ├── diary/ # 일기 AI 튜터 리뷰 컴포넌트
 │ ├── mascot/ # ShibaAvatar (오버레이 레이어 시스템 + 레벨업/착용 애니메이션)
 │ ├── wardrobe/ # PurchaseButton, EquipButton (클라이언트)
 │ ├── guest/ # GuestSignupBanner, GuestUpsellModal
 │ ├── ui/ # 공유 UI (Button, Card, ProgressBar)
 │ └── layout/ # BottomNav, AdminBottomNav
-├── actions/                 # 서버 액션 (diary, keigo, learningDiary, user, wardrobe)
+├── actions/ # 서버 액션 (diary, diaryTutor, keigo, learningDiary, user, wardrobe)
 ├── data/
 │   ├── lessons.ts           # 경어 레슨 데이터 (30개)
 │   ├── vocabReadings.ts     # 경어 어휘 루비 문자 읽기 매핑
 │   └── learningDiaries.ts   # 100개 학습 일기 (ld_p1~p10)
 ├── store/                   # Zustand 스토어
-├── lib/                     # auth, db, xp, streak, wardrobe, admin-auth, rubyParser 유틸리티
+├── lib/ # auth, db, xp, streak, wardrobe, admin-auth, rubyParser, japaneseInput 유틸리티
 └── types/                   # TypeScript 타입 정의
 ```
 

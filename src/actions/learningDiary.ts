@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { computeXpResult, XP_REWARDS } from "@/lib/xp";
+import { shouldIncrementStreak } from "@/lib/streak";
 
 export async function completeLearningDiary(
   diaryId: string,
@@ -50,6 +51,8 @@ export async function completeLearningDiary(
 
   const result = computeXpResult(userProgress.xp, xpToAdd, stampsToAdd);
 
+  const incrementStreak = shouldIncrementStreak(userProgress.lastStudyAt);
+
   await prisma.userProgress.update({
     where: { userId },
     data: {
@@ -57,6 +60,7 @@ export async function completeLearningDiary(
       level: result.newLevel,
       totalStamps: { increment: stampsToAdd },
       lastStudyAt: new Date(),
+      ...(incrementStreak ? { streakDays: { increment: 1 } } : {}),
     },
   });
 

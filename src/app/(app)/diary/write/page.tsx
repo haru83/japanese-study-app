@@ -1,9 +1,12 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { saveDiary } from "@/actions/diary";
+import { reviewDiary, type TutorReviewResult } from "@/actions/diaryTutor";
+import { filterJapaneseOnly, hasNonJapanese } from "@/lib/japaneseInput";
 import { Button } from "@/components/ui/Button";
+import { TutorReview } from "@/components/diary/TutorReview";
 
 const MOODS = [
   { id: "happy", emoji: "😊", label: "행복" },
@@ -25,7 +28,57 @@ function DiaryWriteForm() {
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [xpGained, setXpGained] = useState(0);
+  // 일본어 아님 경고
+  const [titleWarning, setTitleWarning] = useState(false);
+  const [contentWarning, setContentWarning] = useState(false);
+  // 튜터 리뷰 상태
+  const [reviewResult, setReviewResult] = useState<TutorReviewResult | null>(null);
+  const [reviewLoading, setReviewLoading] = useState(false);
+  const [showReview, setShowReview] = useState(false);
 
+  /** 일본어만 허용하는 입력 핸들러 */
+  const handleTitleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const raw = e.target.value;
+      const filtered = filterJapaneseOnly(raw);
+      setTitle(filtered);
+      setTitleWarning(raw !== filtered);
+    },
+    []
+  );
+
+  const handleContentChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      const raw = e.target.value;
+      const filtered = filterJapaneseOnly(raw);
+      setContent(filtered);
+      setContentWarning(raw !== filtered);
+    },
+    []
+  );
+
+  /** AI 튜터 리뷰 요청 */
+  async function handleReview() {
+    if (!content.trim()) return;
+    setReviewLoading(true);
+    setShowReview(true);
+    setReviewResult(null);
+    try {
+      const result = await reviewDiary({ title, content });
+      setReviewResult(result);
+    } catch {
+      setReviewResult({
+        overallScore: 0,
+        overallComment: "리뷰를 불러오지 못했습니다. 다시 시도해주세요.",
+        reviews: [],
+        improvedText: content,
+      });
+    } finally {
+      setReviewLoading(false);
+    }
+  }
+
+  /** 일기 저장 */
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!content.trim()) return;
@@ -46,6 +99,7 @@ function DiaryWriteForm() {
     }
   }
 
+  // ─── 완료 화면 ───────────────────────────────────────────
   if (done) {
     return (
       <div className="min-h-screen bg-sakura-blush flex flex-col items-center justify-center px-6 gap-6">
@@ -62,6 +116,7 @@ function DiaryWriteForm() {
     );
   }
 
+  // ─── 작성 화면 ───────────────────────────────────────────
   return (
     <div className="min-h-screen bg-sakura-blush">
       <div className="bg-canvas-almond px-5 pt-12 pb-5 border-b-4 border-black">
@@ -76,17 +131,24 @@ function DiaryWriteForm() {
       </div>
 
       <form onSubmit={handleSubmit} className="px-5 py-4 flex flex-col gap-4">
+        {/* 제목 */}
         <div>
           <label className="block text-sm font-black text-type-black mb-1.5">제목</label>
           <input
             type="text"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder={`${topicKo} 일기`}
-            className="w-full px-4 py-3 rounded-2xl border-2 border-black bg-paper-white text-type-black focus:outline-none focus:ring-2 focus:ring-sakura-pink font-bold"
+            onChange={handleTitleChange}
+            placeholder="今日の出来事"
+            className={`w-full px-4 py-3 rounded-2xl border-2 border-black bg-paper-white text-type-black focus:outline-none focus:ring-2 focus:ring-sakura-pink font-bold ${
+              titleWarning ? "ring-2 ring-red-400" : ""
+            }`}
           />
+          {titleWarning && (
+            <p className="text-xs text-red-500 font-bold mt-1">🚫 일본어(히라가나·가타카나·한자)만 입력 가능합니다</p>
+          )}
         </div>
 
+        {/* 기분 */}
         <div>
           <label className="block text-sm font-black text-type-black mb-2">오늘의 기분</label>
           <div className="flex gap-2">
@@ -108,21 +170,61 @@ function DiaryWriteForm() {
           </div>
         </div>
 
+        {/* 일기 내용 */}
         <div>
           <label className="block text-sm font-black text-type-black mb-1.5">
             일기 내용 (일본어로 써보세요 🇯🇵)
           </label>
           <textarea
             value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="今日は..."
+            onChange={handleContentChange}
+            placeholder="今日はいい天気でした。朝ごはんを食べて、公園へ行きました..."
             rows={8}
             required
-            className="w-full px-4 py-3 rounded-2xl border-2 border-black bg-paper-white text-type-black focus:outline-none focus:ring-2 focus:ring-sakura-pink resize-none font-bold"
+            className={`w-full px-4 py-3 rounded-2xl border-2 border-black bg-paper-white text-type-black focus:outline-none focus:ring-2 focus:ring-sakura-pink resize-none font-bold ${
+              contentWarning ? "ring-2 ring-red-400" : ""
+            }`}
           />
-          <p className="text-xs text-type-black/60 font-bold mt-1 text-right">{content.length}자</p>
+          <div className="flex items-center justify-between mt-1">
+            <p className="text-xs text-type-black/60 font-bold">
+              🇯🇵 일본어만 입력 가능 (히라가나·가타카나·한자)
+            </p>
+            <p className="text-xs text-type-black/60 font-bold">{content.length}자</p>
+          </div>
+          {contentWarning && (
+            <p className="text-xs text-red-500 font-bold mt-0.5">🚫 일본어가 아닌 문자는 자동으로 제거됩니다</p>
+          )}
         </div>
 
+        {/* AI 튜터 리뷰 버튼 */}
+        <Button
+          type="button"
+          variant="grape"
+          size="lg"
+          disabled={reviewLoading || !content.trim()}
+          onClick={handleReview}
+        >
+          {reviewLoading ? "AI 선생님이 검토 중... 🤔" : "AI 선생님에게 검토받기 🎓"}
+        </Button>
+
+        {/* AI 튜터 리뷰 결과 */}
+        {showReview && (
+          <TutorReview
+            result={reviewResult}
+            loading={reviewLoading}
+            onApplySuggestion={(improved) => {
+              setContent(improved);
+              setShowReview(false);
+              setReviewResult(null);
+            }}
+            onClose={() => {
+              setShowReview(false);
+              setReviewResult(null);
+            }}
+          />
+        )}
+
+        {/* 저장 버튼 */}
         <Button type="submit" size="lg" disabled={loading || !content.trim()}>
           {loading ? "저장 중..." : "일기 완성! (+10 XP)"}
         </Button>
