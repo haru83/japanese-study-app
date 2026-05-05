@@ -92,37 +92,33 @@ async function MyDiaries() {
           </p>
         </div>
       ) : (
-        diaries.map((diary, i) => {
-          const w = WOBBLES[i % WOBBLES.length];
-          return (
-            <div
-              key={diary.id}
-              className={`relative flex items-center gap-4 bg-paper-white p-4 rounded-[15px] border-2 border-black shadow-[4px_4px_0px_0px_#000] ${w}`}
-            >
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <h3 className="text-base font-black text-type-black truncate">{diary.title}</h3>
-                  {diary.mood && (
-                    <span className="text-lg shrink-0">{MOOD_EMOJI[diary.mood] ?? "😊"}</span>
-                  )}
-                </div>
-                <p className="text-sm text-type-black/60 line-clamp-1 mb-1">{diary.content}</p>
-                <div className="flex items-center gap-1 text-xs font-bold text-sakura-pink">
-                  <span className="material-symbols-outlined text-[14px]">calendar_today</span>
-                  <span>{formatDate(diary.createdAt)} 학습 완료</span>
-                </div>
-              </div>
-              <div className="shrink-0 flex flex-col items-center gap-1">
-                <div className="relative flex items-center justify-center size-10 bg-matcha-green border-2 border-black rounded-full text-white rotate-12">
-                  <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
-                    verified
-                  </span>
-                </div>
-                <span className="text-[10px] font-black text-type-black">완료!</span>
-              </div>
-            </div>
-          );
-        })
+ diaries.map((diary, i) => {
+ const w = WOBBLES[i % WOBBLES.length];
+ return (
+ <Link
+ key={diary.id}
+ href={`/diary/${diary.id}`}
+ className={`relative flex items-center gap-4 bg-paper-white p-4 rounded-[15px] border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all ${w}`}
+ >
+ <div className="flex-1 min-w-0">
+ <div className="flex items-center gap-2 mb-1">
+ <h3 className="text-base font-black text-type-black truncate">{diary.title}</h3>
+ {diary.mood && (
+ <span className="text-lg shrink-0">{MOOD_EMOJI[diary.mood] ?? "😊"}</span>
+ )}
+ </div>
+ <p className="text-sm text-type-black/60 line-clamp-1 mb-1">{diary.content}</p>
+ <div className="flex items-center gap-1 text-xs font-bold text-sakura-pink">
+ <span className="material-symbols-outlined text-[14px]">calendar_today</span>
+ <span>{formatDate(diary.createdAt)} 작성</span>
+ </div>
+ </div>
+ <div className="shrink-0 flex flex-col items-center gap-1">
+ <span className="material-symbols-outlined text-type-black/40 text-xl">chevron_right</span>
+ </div>
+ </Link>
+ );
+ })
       )}
     </div>
   );
