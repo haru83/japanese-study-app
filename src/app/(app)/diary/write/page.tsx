@@ -4,7 +4,11 @@ import { useState, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { saveDiary } from "@/actions/diary";
 import { reviewDiary, type TutorReviewResult } from "@/actions/diaryTutor";
-import { filterJapaneseOnly, hasNonJapanese } from "@/lib/japaneseInput";
+import {
+  filterRomajiInput,
+  filterJapaneseOnly,
+  hasUnconvertedRomaji,
+} from "@/lib/japaneseInput";
 import { Button } from "@/components/ui/Button";
 import { TutorReview } from "@/components/diary/TutorReview";
 
@@ -28,21 +32,23 @@ function DiaryWriteForm() {
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [xpGained, setXpGained] = useState(0);
-  // 일본어 아님 경고
-  const [titleWarning, setTitleWarning] = useState(false);
-  const [contentWarning, setContentWarning] = useState(false);
+  // 한글 입력 차단 경고
+  const [titleBlocked, setTitleBlocked] = useState(false);
+  const [contentBlocked, setContentBlocked] = useState(false);
   // 튜터 리뷰 상태
-  const [reviewResult, setReviewResult] = useState<TutorReviewResult | null>(null);
+  const [reviewResult, setReviewResult] = useState<TutorReviewResult | null>(
+    null
+  );
   const [reviewLoading, setReviewLoading] = useState(false);
   const [showReview, setShowReview] = useState(false);
 
-  /** 일본어만 허용하는 입력 핸들러 */
+  /** 입력 핸들러: 영문(로마지) + 일본어 허용, 한글 등은 차단 */
   const handleTitleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const raw = e.target.value;
-      const filtered = filterJapaneseOnly(raw);
+      const filtered = filterRomajiInput(raw);
       setTitle(filtered);
-      setTitleWarning(raw !== filtered);
+      setTitleBlocked(raw !== filtered);
     },
     []
   );
@@ -50,9 +56,9 @@ function DiaryWriteForm() {
   const handleContentChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       const raw = e.target.value;
-      const filtered = filterJapaneseOnly(raw);
+      const filtered = filterRomajiInput(raw);
       setContent(filtered);
-      setContentWarning(raw !== filtered);
+      setContentBlocked(raw !== filtered);
     },
     []
   );
@@ -64,30 +70,34 @@ function DiaryWriteForm() {
     setShowReview(true);
     setReviewResult(null);
     try {
-      const result = await reviewDiary({ title, content });
+      // 리뷰 시에는 일본어만 전달
+      const jpContent = filterJapaneseOnly(content);
+      const jpTitle = filterJapaneseOnly(title);
+      const result = await reviewDiary({ title: jpTitle, content: jpContent });
       setReviewResult(result);
     } catch {
       setReviewResult({
         overallScore: 0,
         overallComment: "리뷰를 불러오지 못했습니다. 다시 시도해주세요.",
         reviews: [],
-        improvedText: content,
+        improvedText: filterJapaneseOnly(content),
       });
     } finally {
       setReviewLoading(false);
     }
   }
 
-  /** 일기 저장 */
+  /** 일기 저장 — 저장 시 영문/숫자는 제거 */
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!content.trim()) return;
+    const jpContent = filterJapaneseOnly(content);
+    if (!jpContent.trim()) return;
     setLoading(true);
 
     try {
       const result = await saveDiary({
-        title: title || `${topicKo} 일기`,
-        content,
+        title: filterJapaneseOnly(title) || `${topicKo} 일기`,
+        content: jpContent,
         mood,
       });
       setXpGained(result.xpResult.xpGained);
@@ -99,17 +109,30 @@ function DiaryWriteForm() {
     }
   }
 
+  const hasRomajiInTitle = hasUnconvertedRomaji(title);
+  const hasRomajiInContent = hasUnconvertedRomaji(content);
+
   // ─── 완료 화면 ───────────────────────────────────────────
   if (done) {
     return (
       <div className="min-h-screen bg-sakura-blush flex flex-col items-center justify-center px-6 gap-6">
-        <div className="text-8xl animate-bounce wobbly-2 sticker inline-block">⭐</div>
+        <div className="text-8xl animate-bounce wobbly-2 sticker inline-block">
+          ⭐
+        </div>
         <h2 className="text-3xl font-black text-type-black">일기 완성!</h2>
         <div className="bg-paper-white border-2 border-black rounded-2xl px-6 py-4 text-center shadow-[4px_4px_0px_0px_#000]">
-          <p className="text-grape-punch font-black text-2xl">+{xpGained} XP</p>
-          <p className="text-type-black/60 font-bold text-sm mt-1">+1 스탬프 획득!</p>
+          <p className="text-grape-punch font-black text-2xl">
+            +{xpGained} XP
+          </p>
+          <p className="text-type-black/60 font-bold text-sm mt-1">
+            +1 스탬프 획득!
+          </p>
         </div>
-        <Button size="lg" onClick={() => router.push("/home")} className="w-full max-w-xs">
+        <Button
+          size="lg"
+          onClick={() => router.push("/home")}
+          className="w-full max-w-xs"
+        >
           홈으로
         </Button>
       </div>
@@ -127,30 +150,45 @@ function DiaryWriteForm() {
           <span className="material-symbols-outlined">arrow_back</span>
         </button>
         <h1 className="text-xl font-black text-type-black">{topicKo}</h1>
-        {topicJp && <p className="text-sm text-type-black/60 font-bold mt-0.5">{topicJp}</p>}
+        {topicJp && (
+          <p className="text-sm text-type-black/60 font-bold mt-0.5">
+            {topicJp}
+          </p>
+        )}
       </div>
 
       <form onSubmit={handleSubmit} className="px-5 py-4 flex flex-col gap-4">
         {/* 제목 */}
         <div>
-          <label className="block text-sm font-black text-type-black mb-1.5">제목</label>
+          <label className="block text-sm font-black text-type-black mb-1.5">
+            제목
+          </label>
           <input
             type="text"
             value={title}
             onChange={handleTitleChange}
-            placeholder="今日の出来事"
+            placeholder="kyou no dekigoto (今日の出来事)"
             className={`w-full px-4 py-3 rounded-2xl border-2 border-black bg-paper-white text-type-black focus:outline-none focus:ring-2 focus:ring-sakura-pink font-bold ${
-              titleWarning ? "ring-2 ring-red-400" : ""
+              titleBlocked ? "ring-2 ring-red-400" : ""
             }`}
           />
-          {titleWarning && (
-            <p className="text-xs text-red-500 font-bold mt-1">🚫 일본어(히라가나·가타카나·한자)만 입력 가능합니다</p>
+          {titleBlocked && (
+            <p className="text-xs text-red-500 font-bold mt-1">
+              🚫 한글 등 일본어·로마지 외 문자는 입력할 수 없습니다
+            </p>
+          )}
+          {hasRomajiInTitle && !titleBlocked && (
+            <p className="text-xs text-amber-500 font-bold mt-1">
+              ✏️ 로마지가 포함되어 있습니다 — 저장 시 자동 제거됩니다
+            </p>
           )}
         </div>
 
         {/* 기분 */}
         <div>
-          <label className="block text-sm font-black text-type-black mb-2">오늘의 기분</label>
+          <label className="block text-sm font-black text-type-black mb-2">
+            오늘의 기분
+          </label>
           <div className="flex gap-2">
             {MOODS.map((m) => (
               <button
@@ -178,21 +216,31 @@ function DiaryWriteForm() {
           <textarea
             value={content}
             onChange={handleContentChange}
-            placeholder="今日はいい天気でした。朝ごはんを食べて、公園へ行きました..."
+            placeholder="kyou wa ii tenki deshita. asagohan o tabete, kouen e ikimashita...&#10;今日はいい天気でした。朝ごはんを食べて、公園へ行きました..."
             rows={8}
             required
             className={`w-full px-4 py-3 rounded-2xl border-2 border-black bg-paper-white text-type-black focus:outline-none focus:ring-2 focus:ring-sakura-pink resize-none font-bold ${
-              contentWarning ? "ring-2 ring-red-400" : ""
+              contentBlocked ? "ring-2 ring-red-400" : ""
             }`}
           />
           <div className="flex items-center justify-between mt-1">
             <p className="text-xs text-type-black/60 font-bold">
-              🇯🇵 일본어만 입력 가능 (히라가나·가타카나·한자)
+              🇯🇵 일본어 + 로마지 입력 가능 · 한글은 차단
             </p>
-            <p className="text-xs text-type-black/60 font-bold">{content.length}자</p>
+            <p className="text-xs text-type-black/60 font-bold">
+              {content.length}자
+            </p>
           </div>
-          {contentWarning && (
-            <p className="text-xs text-red-500 font-bold mt-0.5">🚫 일본어가 아닌 문자는 자동으로 제거됩니다</p>
+          {contentBlocked && (
+            <p className="text-xs text-red-500 font-bold mt-0.5">
+              🚫 한글 등 일본어·로마지 외 문자는 입력할 수 없습니다
+            </p>
+          )}
+          {hasRomajiInContent && !contentBlocked && (
+            <p className="text-xs text-amber-500 font-bold mt-0.5">
+              ✏️ 로마지가 포함되어 있습니다 — 저장 시 영문은 자동 제거되니
+              미리 히라가나/한자로 변환해주세요
+            </p>
           )}
         </div>
 
@@ -204,7 +252,9 @@ function DiaryWriteForm() {
           disabled={reviewLoading || !content.trim()}
           onClick={handleReview}
         >
-          {reviewLoading ? "AI 선생님이 검토 중... 🤔" : "AI 선생님에게 검토받기 🎓"}
+          {reviewLoading
+            ? "AI 선생님이 검토 중... 🤔"
+            : "AI 선생님에게 검토받기 🎓"}
         </Button>
 
         {/* AI 튜터 리뷰 결과 */}
@@ -225,8 +275,18 @@ function DiaryWriteForm() {
         )}
 
         {/* 저장 버튼 */}
-        <Button type="submit" size="lg" disabled={loading || !content.trim()}>
-          {loading ? "저장 중..." : "일기 완성! (+10 XP)"}
+        <Button
+          type="submit"
+          size="lg"
+          disabled={
+            loading || !filterJapaneseOnly(content).trim()
+          }
+        >
+          {loading
+            ? "저장 중..."
+            : hasRomajiInContent
+            ? "일기 완성! (영문 자동 제거) (+10 XP)"
+            : "일기 완성! (+10 XP)"}
         </Button>
       </form>
     </div>
@@ -235,7 +295,13 @@ function DiaryWriteForm() {
 
 export default function DiaryWritePage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-sakura-blush flex items-center justify-center"><span className="text-type-black font-bold">로딩 중...</span></div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-sakura-blush flex items-center justify-center">
+          <span className="text-type-black font-bold">로딩 중...</span>
+        </div>
+      }
+    >
       <DiaryWriteForm />
     </Suspense>
   );

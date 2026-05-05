@@ -1,7 +1,11 @@
 /**
- * 일본어 전용 입력 필터링 유틸리티
+ * 일본어 전용 입력 유틸리티
  *
- * 허용 문자 범위:
+ * 입력 모드:
+ * - 작성 중: 일본어 + 영문(로마지) + 숫자 허용 (IME 로마지 입력 지원)
+ * - 저장 시: 일본어만 허용 (영문/숫자 등은 제거)
+ *
+ * 허용 문자 범위 (일본어):
  * - 히라가나: U+3040~U+309F
  * - 가타카나: U+30A0~U+30FF
  * - 한자 (CJK 통합 한자): U+4E00~U+9FFF
@@ -41,14 +45,40 @@ export function isJapaneseChar(char: string): boolean {
   return JP_RANGES.some(([lo, hi]) => code >= lo && code <= hi);
 }
 
-/** 문자열에서 일본어가 아닌 문자를 제거하고 반환 */
+/** 단일 문자가 로마지 입력에 허용되는 문자인지 확인 (영문 + 숫자 + 일본어) */
+export function isRomajiInputAllowed(char: string): boolean {
+  const code = char.codePointAt(0);
+  if (code === undefined) return false;
+
+  // 공백
+  if (code === 0x0020 || code === 0x3000) return true;
+  // 개행
+  if (code === 0x000a || code === 0x000d) return true;
+  // 영문 (a-z, A-Z)
+  if ((code >= 0x0041 && code <= 0x005a) || (code >= 0x0061 && code <= 0x007a))
+    return true;
+  // 숫자 (0-9)
+  if (code >= 0x0030 && code <= 0x0039) return true;
+
+  // 일본어
+  return JP_RANGES.some(([lo, hi]) => code >= lo && code <= hi);
+}
+
+/** 문자열에서 일본어가 아닌 문자를 제거하고 반환 (저장용) */
 export function filterJapaneseOnly(text: string): string {
   return Array.from(text)
     .filter((char) => isJapaneseChar(char))
     .join("");
 }
 
-/** 문자열에 일본어가 아닌 문자가 포함되어 있는지 확인 */
+/** 문자열에서 로마지 입력에 허용되지 않는 문자를 제거 (입력중용: 한글 등 차단) */
+export function filterRomajiInput(text: string): string {
+  return Array.from(text)
+    .filter((char) => isRomajiInputAllowed(char))
+    .join("");
+}
+
+/** 문자열에 일본어가 아닌 문자가 포함되어 있는지 확인 (영문/숫자 포함, 저장 시 검사용) */
 export function hasNonJapanese(text: string): boolean {
   return Array.from(text).some(
     (char) => !isJapaneseChar(char) && char !== "\n"
@@ -63,4 +93,9 @@ export function findFirstNonJapanese(text: string): number {
     pos += char.length; // 서로게이트 페어 대응
   }
   return -1;
+}
+
+/** 텍스트에 영문/숫자가 포함되어 있는지 확인 (로마지 변환 안 된 부분 검사) */
+export function hasUnconvertedRomaji(text: string): boolean {
+  return /[a-zA-Z0-9]/.test(text);
 }
