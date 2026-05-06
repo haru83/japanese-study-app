@@ -41,6 +41,8 @@ function DiaryWriteForm() {
   );
   const [reviewLoading, setReviewLoading] = useState(false);
   const [showReview, setShowReview] = useState(false);
+  const [isPublic, setIsPublic] = useState(false);
+  const [isTutorPublic, setIsTutorPublic] = useState(false);
 
   /** 입력 핸들러: 영문(로마지) + 일본어 허용, 한글 등은 차단 */
   const handleTitleChange = useCallback(
@@ -99,6 +101,12 @@ function DiaryWriteForm() {
         title: filterJapaneseOnly(title) || `${topicKo} 일기`,
         content: jpContent,
         mood,
+        isPublic,
+        isTutorPublic,
+        tutorReview:
+          isTutorPublic && reviewResult
+            ? JSON.stringify(reviewResult)
+            : undefined,
       });
       setXpGained(result.xpResult.xpGained);
       setDone(true);
@@ -241,6 +249,59 @@ function DiaryWriteForm() {
               ✏️ 로마지가 포함되어 있습니다 — 저장 시 영문은 자동 제거되니
               미리 히라가나/한자로 변환해주세요
             </p>
+          )}
+        </div>
+
+        {/* 공개 설정 */}
+        <div className="bg-paper-white rounded-2xl border-2 border-black p-4 flex flex-col gap-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex-1">
+              <p className="font-black text-sm text-type-black">🌸 이 일기 공개하기</p>
+              <p className="text-xs text-type-black/50 font-bold">
+                커뮤니티에서 다른 학습자가 볼 수 있어요
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                const next = !isPublic;
+                setIsPublic(next);
+                if (!next) setIsTutorPublic(false);
+              }}
+              className={`relative w-12 h-6 rounded-full border-2 border-black transition-colors shrink-0 ${
+                isPublic ? "bg-sakura-pink" : "bg-canvas-almond"
+              }`}
+            >
+              <div
+                className={`absolute top-0.5 w-4 h-4 bg-white border border-black rounded-full transition-transform ${
+                  isPublic ? "translate-x-6" : "translate-x-0.5"
+                }`}
+              />
+            </button>
+          </div>
+
+          {isPublic && reviewResult && (
+            <div className="flex items-center justify-between gap-3 border-t border-black/10 pt-3">
+              <div className="flex-1">
+                <p className="font-black text-sm text-type-black">📝 AI 튜터 리뷰도 공개</p>
+                <p className="text-xs text-type-black/50 font-bold">
+                  다른 학습자가 리뷰 내용도 볼 수 있어요
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsTutorPublic(!isTutorPublic)}
+                className={`relative w-12 h-6 rounded-full border-2 border-black transition-colors shrink-0 ${
+                  isTutorPublic ? "bg-grape-punch" : "bg-canvas-almond"
+                }`}
+              >
+                <div
+                  className={`absolute top-0.5 w-4 h-4 bg-white border border-black rounded-full transition-transform ${
+                    isTutorPublic ? "translate-x-6" : "translate-x-0.5"
+                  }`}
+                />
+              </button>
+            </div>
           )}
         </div>
 
