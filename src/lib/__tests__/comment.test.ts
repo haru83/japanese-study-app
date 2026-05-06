@@ -18,6 +18,16 @@ describe("validateCommentContent", () => {
   it("일본어 댓글도 통과한다", () => {
     expect(validateCommentContent("いいですね！")).toBe("いいですね！");
   });
+
+  it("500자 초과 시 에러를 던진다", () => {
+    expect(() => validateCommentContent("a".repeat(501))).toThrow(
+      "댓글은 500자 이하로 써주세요"
+    );
+  });
+
+  it("500자는 통과한다", () => {
+    expect(() => validateCommentContent("a".repeat(500))).not.toThrow();
+  });
 });
 
 describe("assertCommentOwner", () => {

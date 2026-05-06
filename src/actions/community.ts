@@ -20,19 +20,28 @@ const USER_SELECT = {
 export async function getPublicDiaries() {
   const session = await getServerSession(authOptions);
 
-  let blockedIds: string[] = [];
+  let excludedUserIds: string[] = [];
   if (session?.user?.id) {
-    const blocks = await prisma.userBlock.findMany({
-      where: { blockerId: session.user.id },
-      select: { blockedId: true },
-    });
-    blockedIds = blocks.map((b) => b.blockedId);
+    const [iBlocked, blockedMe] = await Promise.all([
+      prisma.userBlock.findMany({
+        where: { blockerId: session.user.id },
+        select: { blockedId: true },
+      }),
+      prisma.userBlock.findMany({
+        where: { blockedId: session.user.id },
+        select: { blockerId: true },
+      }),
+    ]);
+    excludedUserIds = [
+      ...iBlocked.map((b) => b.blockedId),
+      ...blockedMe.map((b) => b.blockerId),
+    ];
   }
 
   return prisma.diary.findMany({
     where: {
       isPublic: true,
-      ...(blockedIds.length > 0 ? { userId: { notIn: blockedIds } } : {}),
+      ...(excludedUserIds.length > 0 ? { userId: { notIn: excludedUserIds } } : {}),
     },
     include: {
       user: { select: USER_SELECT },
@@ -64,12 +73,12 @@ export async function getPublicDiary(diaryId: string) {
   if (!diary) return null;
 
   if (session?.user?.id) {
-    const block = await prisma.userBlock.findUnique({
+    const block = await prisma.userBlock.findFirst({
       where: {
-        blockerId_blockedId: {
-          blockerId: session.user.id,
-          blockedId: diary.userId,
-        },
+        OR: [
+          { blockerId: session.user.id, blockedId: diary.userId },
+          { blockerId: diary.userId, blockedId: session.user.id },
+        ],
       },
     });
     if (block) return null;

@@ -14,9 +14,13 @@ export function filterBlockedUsers<T extends { userId: string }>(
   return items.filter((item) => !blockedIds.includes(item.userId));
 }
 
+const MAX_COMMENT_LENGTH = 500;
+
 export function validateCommentContent(content: string): string {
   const trimmed = content.trim();
   if (!trimmed) throw new Error("댓글 내용을 입력해주세요");
+  if (trimmed.length > MAX_COMMENT_LENGTH)
+    throw new Error(`댓글은 ${MAX_COMMENT_LENGTH}자 이하로 써주세요`);
   return trimmed;
 }
 
