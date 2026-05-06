@@ -81,6 +81,19 @@ export default async function DiaryDetailPage({
             <h1 className="text-xl font-black text-type-black truncate">
               {diary.title}
             </h1>
+            {diary.isPublic && (
+              <div className="flex items-center gap-2 mt-1">
+                <span className="bg-sakura-pink text-type-black text-[10px] font-black px-2 py-0.5 rounded-full border border-black">
+                  🌸 공개 중
+                </span>
+                <Link
+                  href={`/community/${diary.id}`}
+                  className="text-xs text-type-black/50 font-bold underline"
+                >
+                  커뮤니티에서 보기
+                </Link>
+              </div>
+            )}
             <div className="flex items-center gap-2 mt-0.5">
               <span className="text-xs font-bold text-type-black/60">
                 {formatDate(diary.createdAt)} {formatTime(diary.createdAt)}
