@@ -15,12 +15,16 @@ const REASONS = ["욕설/비하", "스팸", "부적절한 내용", "기타"];
 export function ReportModal({ targetType, targetId, onClose }: ModalProps) {
   const [reason, setReason] = useState(REASONS[0]);
   const [done, setDone] = useState(false);
-  const [, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
 
   function handleSubmit() {
     startTransition(async () => {
-      await reportContent(targetType, targetId, reason);
-      setDone(true);
+      try {
+        await reportContent(targetType, targetId, reason);
+        setDone(true);
+      } catch {
+        // silent — server action already logs; keep modal open
+      }
     });
   }
 
@@ -75,7 +79,8 @@ export function ReportModal({ targetType, targetId, onClose }: ModalProps) {
               </button>
               <button
                 onClick={handleSubmit}
-                className="flex-1 py-3 rounded-xl border-2 border-black font-black text-sm bg-sakura-pink"
+                disabled={isPending}
+                className="flex-1 py-3 rounded-xl border-2 border-black font-black text-sm bg-sakura-pink disabled:opacity-50"
               >
                 신고
               </button>

@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import { addComment } from "@/actions/community";
 import { CommentItem } from "./CommentItem";
 
@@ -33,8 +34,12 @@ export function CommentSection({ diaryId, comments, currentUserId }: Props) {
     if (!text.trim()) return;
     const value = text;
     startTransition(async () => {
-      await addComment(diaryId, value);
-      setText("");
+      try {
+        await addComment(diaryId, value);
+        setText("");
+      } catch {
+        // keep text so user can retry
+      }
     });
   }
 
@@ -75,9 +80,9 @@ export function CommentSection({ diaryId, comments, currentUserId }: Props) {
       ) : (
         <p className="text-sm text-center text-type-black/50 font-bold py-3">
           댓글을 쓰려면{" "}
-          <a href="/login" className="text-sakura-pink underline">
+          <Link href="/login" className="text-sakura-pink underline">
             로그인
-          </a>
+          </Link>
           이 필요해요
         </p>
       )}

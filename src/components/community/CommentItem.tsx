@@ -1,7 +1,7 @@
 // src/components/community/CommentItem.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { deleteComment } from "@/actions/community";
 import { ReportModal } from "./ReportModal";
 
@@ -23,7 +23,18 @@ type Props = {
 
 export function CommentItem({ comment, currentUserId }: Props) {
   const [showReport, setShowReport] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const isOwn = comment.userId === currentUserId;
+
+  function handleDelete() {
+    startTransition(async () => {
+      try {
+        await deleteComment(comment.id);
+      } catch {
+        // server logs; comment will remain visible until next refresh
+      }
+    });
+  }
   const level = comment.user.progress?.level ?? 1;
 
   return (
@@ -44,14 +55,13 @@ export function CommentItem({ comment, currentUserId }: Props) {
       </div>
       <div className="flex flex-col gap-1 shrink-0">
         {isOwn && (
-          <form action={deleteComment.bind(null, comment.id)}>
-            <button
-              type="submit"
-              className="text-[10px] text-red-400 font-bold"
-            >
-              삭제
-            </button>
-          </form>
+          <button
+            onClick={handleDelete}
+            disabled={isPending}
+            className="text-[10px] text-red-400 font-bold disabled:opacity-50"
+          >
+            삭제
+          </button>
         )}
         {!isOwn && currentUserId && (
           <button
