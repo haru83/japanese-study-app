@@ -22,6 +22,9 @@ export async function saveDiary(data: {
   content: string;
   mood?: string;
   topicId?: string;
+  isPublic?: boolean;
+  isTutorPublic?: boolean;
+  tutorReview?: string;
 }) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) throw new Error("로그인이 필요합니다.");
@@ -29,7 +32,16 @@ export async function saveDiary(data: {
   const userId = session.user.id;
 
   const diary = await prisma.diary.create({
-    data: { ...data, userId },
+    data: {
+      title: data.title,
+      content: data.content,
+      mood: data.mood,
+      topicId: data.topicId,
+      isPublic: data.isPublic ?? false,
+      isTutorPublic: data.isTutorPublic ?? false,
+      tutorReview: data.tutorReview,
+      userId,
+    },
   });
 
   // Award XP and stamp
@@ -61,6 +73,10 @@ export async function saveDiary(data: {
   revalidatePath("/diary");
   revalidatePath("/home");
   revalidatePath("/profile");
+
+  if (data.isPublic) {
+    revalidatePath("/community");
+  }
 
   return { diary, xpResult: result };
 }
