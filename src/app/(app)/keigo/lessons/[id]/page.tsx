@@ -4,7 +4,6 @@ import { use, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { notFound } from "next/navigation";
 import { lessons } from "@/data/lessons";
-import { ComicViewer } from "@/components/keigo/ComicViewer";
 import { DialoguePlayer } from "@/components/keigo/DialoguePlayer";
 import { QuizSection } from "@/components/keigo/QuizSection";
 import { LessonCompleteBanner } from "@/components/keigo/LessonCompleteBanner";
@@ -19,11 +18,10 @@ import type { XpResult } from "@/lib/xp";
 
 type PageProps = { params: Promise<{ id: string }> };
 
-const SECTIONS = ["comic", "dialogue", "grammar", "vocab", "quiz"] as const;
+const SECTIONS = ["dialogue", "grammar", "vocab", "quiz"] as const;
 type SectionKey = (typeof SECTIONS)[number];
 
 const SECTION_LABELS: Record<SectionKey, string> = {
-  comic: "만화",
   dialogue: "대화",
   grammar: "문법",
   vocab: "어휘",
@@ -46,7 +44,7 @@ export default function LessonDetailPage({ params }: PageProps) {
   if (!lesson) notFound();
 
   const lessonId = lesson.id;
-  const [activeSection, setActiveSection] = useState<SectionKey>("comic");
+  const [activeSection, setActiveSection] = useState<SectionKey>("dialogue");
 
   const vocabSegments = useMemo(
     () =>
@@ -120,11 +118,6 @@ export default function LessonDetailPage({ params }: PageProps) {
       </div>
 
       <div className="px-5 py-5">
-        {/* Comic */}
-        {activeSection === "comic" && (
-          <ComicViewer frames={lesson.comicFrames} title={lesson.title} />
-        )}
-
         {/* Dialogue */}
         {activeSection === "dialogue" && (
           <DialoguePlayer dialogue={lesson.dialogue} />

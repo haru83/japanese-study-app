@@ -12,8 +12,8 @@ import { LessonCompleteBanner } from "@/components/keigo/LessonCompleteBanner";
 import { GuestUpsellModal } from "@/components/guest/GuestUpsellModal";
 import type { XpResult } from "@/lib/xp";
 
-type Section = "원문" | "해석" | "어휘" | "문법" | "퀴즈";
-const SECTIONS: Section[] = ["원문", "해석", "어휘", "문법", "퀴즈"];
+type Section = "원문" | "어휘" | "문법" | "퀴즈";
+const SECTIONS: Section[] = ["원문", "어휘", "문법", "퀴즈"];
 
 const LEVEL_COLORS: Record<string, string> = {
   초급: "bg-matcha-green text-black border-2 border-black",
@@ -32,7 +32,7 @@ export default function LearnDiaryDetailPage({
 
   const router = useRouter();
   const [section, setSection] = useState<Section>("원문");
-  const [showRuby, setShowRuby] = useState(true);
+  const [showRuby, setShowRuby] = useState(false);
   const [showKorean, setShowKorean] = useState(false);
   const [xpResult, setXpResult] = useState<XpResult | null>(null);
   const [quizScore, setQuizScore] = useState(0);
@@ -153,13 +153,6 @@ export default function LearnDiaryDetailPage({
                     </p>
                   </motion.div>
                 )}
-              </div>
-            )}
-
-            {/* 해석 */}
-            {section === "해석" && (
-              <div className="bg-paper-white rounded-[15px] p-5 border-2 border-black shadow-[4px_4px_0px_0px_#000]">
-                <p className="text-sm leading-relaxed text-type-black">{diary.contentKo}</p>
               </div>
             )}
 

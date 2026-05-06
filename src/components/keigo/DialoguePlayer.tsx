@@ -16,8 +16,8 @@ interface DialoguePlayerProps {
 }
 
 export function DialoguePlayer({ dialogue }: DialoguePlayerProps) {
-  const [showPronunciation, setShowPronunciation] = useState(true);
-  const [showTranslation, setShowTranslation] = useState(true);
+  const [showPronunciation, setShowPronunciation] = useState(false);
+  const [showTranslation, setShowTranslation] = useState(false);
 
   const rubySegments = useMemo(
     () => dialogue.map((line) => buildRubySegments(line.text, line.pronunciation)),
@@ -53,7 +53,8 @@ export function DialoguePlayer({ dialogue }: DialoguePlayerProps) {
       {/* Dialogue lines */}
       <div className="flex flex-col gap-3">
         {dialogue.map((line, i) => {
-          const isLeft = i % 2 === 0;
+          const isRabbit = line.speaker.includes("토끼");
+          const isLeft = isRabbit;
           return (
             <div
               key={i}
@@ -65,7 +66,7 @@ export function DialoguePlayer({ dialogue }: DialoguePlayerProps) {
                   isLeft ? "bg-canvas-almond" : "bg-sakura-pink"
                 }`}
               >
-                {isLeft ? "🐰" : "🐻"}
+                {isRabbit ? "🐰" : "🐻"}
               </div>
 
               {/* Bubble */}
