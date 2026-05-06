@@ -67,6 +67,11 @@ model User {
   wardrobeItems         UserWardrobeItem[]
   keigoProgress         KeigoLessonProgress[]
   learningDiaryProgress LearningDiaryProgress[]
+  likes         Like[]
+  comments      Comment[]
+  blocking      UserBlock[] @relation("BlockerRelation")
+  blockedBy     UserBlock[] @relation("BlockedRelation")
+  reports       Report[]
 }
 
 // ── Diary ─────────────────────────────────────────────────────────────────────
@@ -81,6 +86,11 @@ model Diary {
   updatedAt DateTime @updatedAt
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  isPublic       Boolean   @default(false)
+  isTutorPublic  Boolean   @default(false)
+  tutorReview    String?
+  likes          Like[]
+  comments       Comment[]
 }
 
 // ── Gamification ──────────────────────────────────────────────────────────────
@@ -170,4 +180,49 @@ model Topic {
   isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+// ── Community Models ──────────────────────────────────────────────────────────
+
+model Like {
+  id        String   @id @default(cuid())
+  userId    String
+  diaryId   String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  diary     Diary    @relation(fields: [diaryId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, diaryId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  userId    String
+  diaryId   String
+  content   String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  diary     Diary    @relation(fields: [diaryId], references: [id], onDelete: Cascade)
+}
+
+model UserBlock {
+  id        String   @id @default(cuid())
+  blockerId String
+  blockedId String
+  createdAt DateTime @default(now())
+  blocker   User     @relation("BlockerRelation", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked   User     @relation("BlockedRelation", fields: [blockedId], references: [id], onDelete: Cascade)
+
+  @@unique([blockerId, blockedId])
+}
+
+model Report {
+  id         String   @id @default(cuid())
+  reporterId String
+  targetType String
+  targetId   String
+  reason     String?
+  resolved   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  reporter   User     @relation(fields: [reporterId], references: [id], onDelete: Cascade)
 }
