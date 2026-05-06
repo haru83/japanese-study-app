@@ -55,7 +55,18 @@
   - 종합 점수(0~100점) + 레벨 뱃지
   - 문장별 원문 ↔ 개선안 비교, 「개선안 적용」 원클릭 반영
   - Gemini API 키 없으면 규칙 기반 검사(시제·경어체·조사)로 자동 폴백
+- **공개 설정**: 일기마다 커뮤니티 공개 여부 선택 (기본 비공개) + AI 튜터 리뷰 별도 공개 토글
 - 완료 시 XP와 스탬프 획득
+
+### 🌸 커뮤니티
+- 공개된 일기를 피드 형태로 열람 — 다른 학습자의 시바 아바타 + 레벨 + 일기 내용 카드
+- **공감(🌸)**: 즉각 반응하는 optimistic update 적용 — 서버 응답 전에 UI 즉시 반영
+- **댓글**: 자유 댓글 작성 (500자 이하), 본인 댓글 삭제 가능
+- **AI 튜터 리뷰 공개**: 작성자가 허용한 경우 상세 페이지에서 AI 첨삭 결과 함께 열람
+- **받은 반응 탭**: 내 공개 일기에 달린 공감·댓글 타임라인
+- **하단 네비 배지**: 최근 7일 이내 새 반응이 있을 때 커뮤니티 탭에 빨간 점 표시
+- **신고 & 차단**: 부적절한 일기·댓글 신고 / 사용자 차단 (양방향 피드 필터링)
+- 게스트도 피드·상세 읽기 가능, 공감·댓글 시도 시 로그인 유도
 
 ### 📚 학습 일기
 - 100개의 카테고리별 학습 일기 (10개 카테고리 × 10개 엔트리)
@@ -81,6 +92,7 @@
 
 ### 🛡️ 어드민 패널
 - 사용자 관리, 콘텐츠(토픽) 관리, 레벨·보상 설정
+- **신고 관리** (`/admin/reports`): 미처리 신고 목록 → 무시 또는 콘텐츠 삭제 처리
 - Next.js middleware + layout 이중 권한 검증 (role === "admin")
 
 ---
@@ -129,7 +141,7 @@
 | Auth | NextAuth.js v4 (Credentials Provider, JWT) |
 | State | Zustand (경어 진행상황 persist) |
 | Animation | Framer Motion |
-| Testing | Vitest (112 tests) |
+| Testing | Vitest (144 tests) |
 | AI Tutor | Gemini 3.1 Flash Lite Preview (Google AI Studio OpenAI-compat API) |
 | Font | Zen Maru Gothic + Noto Sans KR |
 
@@ -221,6 +233,7 @@ src/
 │   │   ├── home/            # 통합 허브 대시보드
 │   │   ├── diary/           # 일기 목록, 토픽 선택, 작성 + 학습일기
 │   │   ├── keigo/           # 경어 레슨 목록 + 상세
+│   │   ├── community/       # 커뮤니티 피드 + 받은 반응 탭 + 일기 상세
 │   │   ├── profile/         # 프로필, XP, 통계
 │ │ ├── wardrobe/ # 옷장 (DB 기반, 스탬프 구매, 착용/해제)
 │ │ ├── shop/ # 상점 (스탬프로 아이템 구매)
@@ -231,12 +244,13 @@ src/
 │ ├── keigo/ # 경어 전용 컴포넌트
 │ ├── learningDiary/ # 학습 일기 컴포넌트 (RubyText, Filter, Card)
 │ ├── diary/ # 일기 AI 튜터 리뷰 컴포넌트
+│ ├── community/ # 커뮤니티 컴포넌트 (PublicDiaryCard, LikeButton, CommentSection, ReportModal)
 │ ├── mascot/ # ShibaAvatar (오버레이 레이어 시스템 + 레벨업/착용 애니메이션)
 │ ├── wardrobe/ # PurchaseButton, EquipButton (클라이언트)
 │ ├── guest/ # GuestSignupBanner, GuestUpsellModal
 │ ├── ui/ # 공유 UI (Button, Card, ProgressBar)
 │ └── layout/ # BottomNav, AdminBottomNav
-├── actions/ # 서버 액션 (diary, diaryTutor, keigo, learningDiary, user, wardrobe)
+├── actions/ # 서버 액션 (diary, diaryTutor, keigo, learningDiary, user, wardrobe, community)
 ├── data/
 │   ├── lessons.ts           # 경어 레슨 데이터 (30개)
 │   ├── vocabReadings.ts     # 경어 어휘 루비 문자 읽기 매핑
@@ -252,13 +266,17 @@ src/
 
 - `User` — 사용자 계정 (role: "user" | "admin")
 - `Account` / `Session` — NextAuth 인증
-- `Diary` — 개인 일기 항목
+- `Diary` — 개인 일기 (`isPublic`, `isTutorPublic`, `tutorReview` 필드 포함)
 - `UserProgress` — XP, 레벨, 스탬프, 연속 학습일
 - `KeigoLessonProgress` — 경어 레슨 완료 기록
 - `LearningDiaryProgress` — 학습 일기 완료 기록 (퀴즈 점수, XP)
 - `WardrobeItem` — 옷장 아이템 (스탬프 비용, 필요 레벨)
 - `UserWardrobeItem` — 사용자 보유 아이템
 - `Topic` — 일기 토픽 (어드민 관리)
+- `Like` — 공개 일기 공감 (userId + diaryId 복합 유니크)
+- `Comment` — 공개 일기 댓글 (500자 제한, 작성자만 삭제 가능)
+- `UserBlock` — 사용자 차단 (양방향 피드 필터링)
+- `Report` — 일기·댓글 신고 (어드민 검토 후 처리)
 
 ---
 
@@ -267,6 +285,8 @@ src/
 - **Admin 경로 보호**: Next.js middleware에서 JWT 토큰의 role 검증 → 비관리자 접근 시 `/home` 리다이렉트
 - **이미지 도메인 제한**: `next.config.ts`에서 `lh3.googleusercontent.com`만 허용 (마스코트는 `/public/mascot/` 로컬 경로 사용)
 - **스트릭 무결성**: 같은 날 중복 학습 시 `streakDays`가 증가하지 않음
+- **커뮤니티 접근 제어**: 비공개 일기 URL 직접 접근 → `notFound()` / 차단 관계 양방향 검사 → 피드·상세 모두 필터링
+- **댓글 소유권 검증**: 서버 액션에서 `assertCommentOwner` 검사 → 타인 댓글 삭제 불가
 
 ---
 
