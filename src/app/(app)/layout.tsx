@@ -9,7 +9,7 @@ export default async function AppLayout({
   children: React.ReactNode;
 }) {
   const session = await getServerSession(authOptions);
-  const unreadCount = session?.user?.id ? await getUnreadCount() : 0;
+  const unreadCount = session?.user?.id ? await getUnreadCount().catch(() => 0) : 0;
 
   return (
     <div className="flex flex-col min-h-screen">
