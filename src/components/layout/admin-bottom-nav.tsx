@@ -6,9 +6,9 @@ import { usePathname } from "next/navigation";
 const ADMIN_NAV_ITEMS = [
   { href: "/admin/dashboard", icon: "dashboard", label: "대시보드" },
   { href: "/admin/users", icon: "group", label: "사용자" },
-  { href: "/admin/topics", icon: "edit_note", label: "콘텐츠" },
+  { href: "/admin/keigo", icon: "school", label: "경어" },
+  { href: "/admin/diary", icon: "book_2", label: "학습일기" },
   { href: "/admin/reports", icon: "flag", label: "신고" },
-  { href: "/admin/settings", icon: "settings", label: "설정" },
 ];
 
 export function AdminBottomNav() {

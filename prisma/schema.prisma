@@ -182,6 +182,41 @@ model Topic {
   updatedAt    DateTime @updatedAt
 }
 
+// ── Learning Content Models ───────────────────────────────────────────────────
+
+model KeigoLesson {
+  id            String   @id
+  title         String
+  category      String
+  thumbnail     String
+  dialogue      String   // JSON: DialogueLine[]
+  grammarPoints String   // JSON: GrammarPoint[]
+  vocab         String   // JSON: VocabItem[] (word, reading, meaning)
+  quiz          String   // JSON: QuizItem[]
+  isActive      Boolean  @default(true)
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model LearningDiaryEntry {
+  id            String   @id
+  title         String
+  titleKo       String
+  category      String
+  level         String
+  thumbnail     String
+  contentJp     String   // JSON: RubySegment[]
+  contentKo     String
+  vocabulary    String   // JSON: VocabEntry[]
+  grammarPoints String   // JSON: GrammarPoint[]
+  quiz          String   // JSON: QuizItem[]
+  isActive      Boolean  @default(true)
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
 // ── Community Models ──────────────────────────────────────────────────────────
 
 model Like {
