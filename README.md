@@ -101,7 +101,9 @@
 - 사용자 관리, 콘텐츠(토픽) 관리
 - **경어 레슨 관리** (`/admin/keigo`): 레슨 목록·검색·필터, 활성/비활성 토글, 신규 추가·편집·삭제
 - **학습 일기 관리** (`/admin/diary`): 일기 목록·레벨/카테고리 필터, 활성/비활성 토글, 신규 추가·편집·삭제
+- **JSON 실시간 유효성 검사**: 대화·문법·어휘·퀴즈 JSON 편집 시 오류 즉각 표시 (저장 전 피드백)
 - **신고 관리** (`/admin/reports`): 미처리 신고 목록 → 무시 또는 콘텐츠 삭제 처리
+- 콘텐츠 변경 시 사용자 페이지 (`/keigo`, `/diary/learn`, `/diary`) 자동 revalidate
 - Next.js middleware + layout 이중 권한 검증 (role === "admin")
 
 ---
@@ -150,7 +152,7 @@
 | Auth | NextAuth.js v4 (Credentials Provider, JWT) |
 | State | Zustand (경어 진행상황 persist) |
 | Animation | Framer Motion |
-| Testing | Vitest (144 tests) |
+| Testing | Vitest (149 tests) |
 | AI Tutor | Gemini 3.1 Flash Lite Preview (Google AI Studio OpenAI-compat API) |
 | Font | Zen Maru Gothic + Noto Sans KR |
 
@@ -179,7 +181,7 @@ npx prisma db push
 # 옷장 아이템 시드 (21개 기본 아이템)
 npx tsx prisma/seed-wardrobe.ts
 
-# 학습 콘텐츠 시드 (경어 레슨 100개 + 학습 일기 100개)
+# 학습 콘텐츠 확인 (경어 레슨 100개 + 학습 일기 100개 — 이미 DB에 포함)
 npm run seed:learning
 ```
 
@@ -247,29 +249,26 @@ src/
 │   │   ├── keigo/           # 경어 레슨 목록 + 상세
 │   │   ├── community/       # 커뮤니티 피드 + 받은 반응 탭 + 일기 상세
 │   │   ├── profile/         # 프로필, XP, 통계
-│ │ ├── wardrobe/ # 옷장 (DB 기반, 스탬프 구매, 착용/해제)
-│ │ ├── shop/ # 상점 (스탬프로 아이템 구매)
+│   │   ├── wardrobe/        # 옷장 (DB 기반, 스탬프 구매, 착용/해제)
+│   │   ├── shop/            # 상점 (스탬프로 아이템 구매)
 │   │   └── learning/        # 문법·어휘 정리
 │   ├── admin/               # 어드민 패널 (middleware 권한 검증)
 │   └── api/                 # NextAuth, 회원가입, 경어 동기화
 ├── components/
-│ ├── keigo/ # 경어 전용 컴포넌트
-│ ├── learningDiary/ # 학습 일기 컴포넌트 (RubyText, Filter, Card)
-│ ├── diary/ # 일기 AI 튜터 리뷰 컴포넌트
-│ ├── community/ # 커뮤니티 컴포넌트 (PublicDiaryCard, LikeButton, CommentSection, ReportModal)
-│ ├── mascot/ # ShibaAvatar (오버레이 레이어 시스템 + 레벨업/착용 애니메이션)
-│ ├── wardrobe/ # PurchaseButton, EquipButton (클라이언트)
-│ ├── guest/ # GuestSignupBanner, GuestUpsellModal
-│ ├── ui/ # 공유 UI (Button, Card, ProgressBar)
-│ └── layout/ # BottomNav, AdminBottomNav
-├── actions/ # 서버 액션 (diary, diaryTutor, keigo, learningDiary, user, wardrobe, community, learning, admin-content)
-├── data/
-│   ├── lessons.ts           # 경어 레슨 정적 데이터 (시드용, 앱에서 직접 사용 안 함)
-│   ├── vocabReadings.ts     # 경어 어휘 reading 매핑 (시드 시 vocab에 병합)
-│   └── learningDiaries.ts   # 학습 일기 정적 데이터 (시드용, 앱에서 직접 사용 안 함)
+│   ├── keigo/               # 경어 전용 컴포넌트 (LessonCard, DialoguePlayer 등)
+│   ├── learningDiary/       # 학습 일기 컴포넌트 (RubyText, DiaryList, LearningDiaryCard)
+│   ├── diary/               # 일기 AI 튜터 리뷰 컴포넌트
+│   ├── community/           # 커뮤니티 컴포넌트 (PublicDiaryCard, LikeButton, CommentSection, ReportModal)
+│   ├── admin/               # 어드민 전용 컴포넌트 (JsonTextarea — 실시간 JSON 유효성 검사)
+│   ├── mascot/              # ShibaAvatar (오버레이 레이어 시스템 + 레벨업/착용 애니메이션)
+│   ├── wardrobe/            # PurchaseButton, EquipButton (클라이언트)
+│   ├── guest/               # GuestSignupBanner, GuestUpsellModal
+│   ├── ui/                  # 공유 UI (Button, Card, ProgressBar)
+│   └── layout/              # BottomNav, AdminBottomNav
+├── actions/                 # 서버 액션 (diary, diaryTutor, keigo, learningDiary, user, wardrobe, community, learning, admin-content)
 ├── store/                   # Zustand 스토어
-├── lib/ # auth, db, xp, streak, wardrobe, admin-auth, rubyParser, japaneseInput, lessonUtils 유틸리티
-└── types/                   # TypeScript 타입 정의
+├── lib/                     # auth, db, xp, streak, wardrobe, admin-auth, rubyParser, japaneseInput, lessonUtils 유틸리티
+└── types/                   # TypeScript 타입 정의 (DIARY_CATEGORIES 상수 포함)
 ```
 
 ---
@@ -280,9 +279,9 @@ src/
 - `Account` / `Session` — NextAuth 인증
 - `Diary` — 개인 일기 (`isPublic`, `isTutorPublic`, `tutorReview` 필드 포함)
 - `UserProgress` — XP, 레벨, 스탬프, 연속 학습일
-- `KeigoLesson` — 경어 레슨 콘텐츠 (100개, 어드민 CRUD 가능)
-- `LearningDiaryEntry` — 학습 일기 콘텐츠 (100개, 어드민 CRUD 가능)
-- `KeigoLessonProgress` — 경어 레슨 완료 기록
+- `KeigoLesson` — 경어 레슨 콘텐츠 (100개, 어드민 CRUD 가능) · `@@index([isActive, sortOrder])`
+- `LearningDiaryEntry` — 학습 일기 콘텐츠 (100개, 어드민 CRUD 가능) · `@@index([isActive, sortOrder])`
+- `KeigoLessonProgress` — 경어 레슨 완료 기록 · `@@index([userId, completed])`
 - `LearningDiaryProgress` — 학습 일기 완료 기록 (퀴즈 점수, XP)
 - `WardrobeItem` — 옷장 아이템 (스탬프 비용, 필요 레벨)
 - `UserWardrobeItem` — 사용자 보유 아이템
