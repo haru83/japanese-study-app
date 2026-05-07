@@ -4,10 +4,19 @@ import { useState } from "react";
 import { LessonCard } from "@/components/keigo/LessonCard";
 import { CategoryFilter } from "@/components/keigo/CategoryFilter";
 import { ProgressBar } from "@/components/ui/ProgressBar";
-import type { Lesson, LessonCategory } from "@/types/lesson";
+import type { LessonCategory } from "@/types/lesson";
+
+export interface LessonSummary {
+  id: string;
+  title: string;
+  category: string;
+  thumbnail: string;
+  dialogueCount: number;
+  quizCount: number;
+}
 
 interface Props {
-  lessons: Lesson[];
+  lessons: LessonSummary[];
   completedIds: string[];
   totalCount: number;
 }

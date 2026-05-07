@@ -1,9 +1,9 @@
 import Link from "next/link";
-import type { Lesson } from "@/types/lesson";
 import { CATEGORY_LABELS } from "@/types/lesson";
+import type { LessonSummary } from "@/components/keigo/KeigoLessonList";
 
 interface LessonCardProps {
-  lesson: Lesson;
+  lesson: LessonSummary;
   completed?: boolean;
 }
 
@@ -38,7 +38,7 @@ export function LessonCard({ lesson, completed }: LessonCardProps) {
           <span
             className={`text-xs px-2 py-0.5 rounded-full font-bold border-2 border-black ${CATEGORY_BG[lesson.category] ?? "bg-canvas-almond text-black"}`}
           >
-            {CATEGORY_LABELS[lesson.category]}
+            {CATEGORY_LABELS[lesson.category as keyof typeof CATEGORY_LABELS] ?? lesson.category}
           </span>
           {completed && (
             <span className="text-xs bg-matcha-green text-black px-2 py-0.5 rounded-full font-bold border-2 border-black">
@@ -50,7 +50,7 @@ export function LessonCard({ lesson, completed }: LessonCardProps) {
           {lesson.title}
         </p>
         <p className="text-xs text-type-black/60 mt-1">
-          대화 {lesson.dialogue.length}줄 · 퀴즈 {lesson.quiz.length}문제
+          대화 {lesson.dialogueCount}줄 · 퀴즈 {lesson.quizCount}문제
         </p>
       </div>
 
