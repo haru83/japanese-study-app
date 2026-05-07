@@ -82,14 +82,13 @@
 - **카테고리**: 비즈니스 · 서비스/접객 · 사교
 - 대화 → 문법 → 어휘 → 퀴즈 순서로 구성
 - **대화 탭**: 요미가나·한국어 해석 토글 (기본 OFF) — 화자 이름 기반으로 🐰/🐻 아이콘 정확 매칭
-- **어휘 탭**: 한자 포함 단어에 루비 문자 기본 표시 (`src/data/vocabReadings.ts` 매핑 기반)
+- **어휘 탭**: 한자 포함 단어에 루비 문자 기본 표시 (vocab에 reading 필드 포함)
 
 ### 🗂️ 문법·어휘 단어장
 - 홈 메뉴에서 접근 가능한 `/learning/grammar` · `/learning/vocabulary` 페이지
 - **연계 학습**: 유저가 퀴즈까지 완료한 경어 레슨 + 학습 일기에서 문법 포인트·어휘를 자동 수집
 - rule/word 기준 **중복 제거** — 같은 항목이 여러 레슨에 등장해도 한 번만 표시
 - 각 항목에 **출처 레슨/일기 제목** 표시
-- 경어 레슨 어휘는 `vocabReadings.ts` 매핑으로 reading 자동 보완
 - 완료한 레슨이 없으면 빈 상태 안내 + 경어·학습 일기 바로가기 링크
 
 ### ⭐ 게임화 시스템
@@ -99,7 +98,9 @@
 - **옷장**: 스탬프로 아이템 구매, 레벨 조건 충족 시 착용 가능
 
 ### 🛡️ 어드민 패널
-- 사용자 관리, 콘텐츠(토픽) 관리, 레벨·보상 설정
+- 사용자 관리, 콘텐츠(토픽) 관리
+- **경어 레슨 관리** (`/admin/keigo`): 레슨 목록·검색·필터, 활성/비활성 토글, 신규 추가·편집·삭제
+- **학습 일기 관리** (`/admin/diary`): 일기 목록·레벨/카테고리 필터, 활성/비활성 토글, 신규 추가·편집·삭제
 - **신고 관리** (`/admin/reports`): 미처리 신고 목록 → 무시 또는 콘텐츠 삭제 처리
 - Next.js middleware + layout 이중 권한 검증 (role === "admin")
 
@@ -177,6 +178,9 @@ npx prisma db push
 
 # 옷장 아이템 시드 (21개 기본 아이템)
 npx tsx prisma/seed-wardrobe.ts
+
+# 학습 콘텐츠 시드 (경어 레슨 100개 + 학습 일기 100개)
+npm run seed:learning
 ```
 
 ### 개발 서버 실행
@@ -258,13 +262,13 @@ src/
 │ ├── guest/ # GuestSignupBanner, GuestUpsellModal
 │ ├── ui/ # 공유 UI (Button, Card, ProgressBar)
 │ └── layout/ # BottomNav, AdminBottomNav
-├── actions/ # 서버 액션 (diary, diaryTutor, keigo, learningDiary, user, wardrobe, community)
+├── actions/ # 서버 액션 (diary, diaryTutor, keigo, learningDiary, user, wardrobe, community, learning, admin-content)
 ├── data/
-│   ├── lessons.ts           # 경어 레슨 데이터 (30개)
-│   ├── vocabReadings.ts     # 경어 어휘 루비 문자 읽기 매핑
-│   └── learningDiaries.ts   # 100개 학습 일기 (ld_p1~p10)
+│   ├── lessons.ts           # 경어 레슨 정적 데이터 (시드용, 앱에서 직접 사용 안 함)
+│   ├── vocabReadings.ts     # 경어 어휘 reading 매핑 (시드 시 vocab에 병합)
+│   └── learningDiaries.ts   # 학습 일기 정적 데이터 (시드용, 앱에서 직접 사용 안 함)
 ├── store/                   # Zustand 스토어
-├── lib/ # auth, db, xp, streak, wardrobe, admin-auth, rubyParser, japaneseInput 유틸리티
+├── lib/ # auth, db, xp, streak, wardrobe, admin-auth, rubyParser, japaneseInput, lessonUtils 유틸리티
 └── types/                   # TypeScript 타입 정의
 ```
 
@@ -276,6 +280,8 @@ src/
 - `Account` / `Session` — NextAuth 인증
 - `Diary` — 개인 일기 (`isPublic`, `isTutorPublic`, `tutorReview` 필드 포함)
 - `UserProgress` — XP, 레벨, 스탬프, 연속 학습일
+- `KeigoLesson` — 경어 레슨 콘텐츠 (100개, 어드민 CRUD 가능)
+- `LearningDiaryEntry` — 학습 일기 콘텐츠 (100개, 어드민 CRUD 가능)
 - `KeigoLessonProgress` — 경어 레슨 완료 기록
 - `LearningDiaryProgress` — 학습 일기 완료 기록 (퀴즈 점수, XP)
 - `WardrobeItem` — 옷장 아이템 (스탬프 비용, 필요 레벨)
