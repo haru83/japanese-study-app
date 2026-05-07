@@ -1,58 +1,60 @@
-const VOCABULARY = [
-  { word: "申し訳ありません", reading: "もうしわけありません", meaning: "대단히 죄송합니다", category: "경어" },
-  { word: "よろしくお願いします", reading: "よろしくおねがいします", meaning: "잘 부탁드립니다", category: "경어" },
-  { word: "ご連絡", reading: "ごれんらく", meaning: "연락 (경어)", category: "비즈니스" },
-  { word: "おっしゃる", reading: "おっしゃる", meaning: "말씀하시다 (존경어)", category: "경어" },
-  { word: "いただく", reading: "いただく", meaning: "받다/먹다 (겸양어)", category: "경어" },
-  { word: "拝見する", reading: "はいけんする", meaning: "봐드리다 (겸양어)", category: "경어" },
-  { word: "恐れ入ります", reading: "おそれいります", meaning: "황송합니다", category: "경어" },
-  { word: "お世話になっております", reading: "おせわになっております", meaning: "신세를 지고 있습니다", category: "비즈니스" },
-  { word: "承知いたしました", reading: "しょうちいたしました", meaning: "알겠습니다 (정중)", category: "경어" },
-  { word: "かしこまりました", reading: "かしこまりました", meaning: "알겠습니다 (격식)", category: "경어" },
-  { word: "ご来店", reading: "ごらいてん", meaning: "방문해 주심 (경어)", category: "서비스" },
-  { word: "お待ちしております", reading: "おまちしております", meaning: "기다리고 있겠습니다", category: "서비스" },
-];
+import Link from "next/link";
+import { getCompletedVocab } from "@/actions/learning";
 
-const CATEGORY_COLORS: Record<string, string> = {
-  경어: "bg-primary/10 text-amber-700",
-  비즈니스: "bg-blue-100 text-blue-700",
-  서비스: "bg-keigo-soft text-pink-600",
-};
+export default async function VocabularyPage() {
+  const vocab = await getCompletedVocab();
 
-export default function VocabularyPage() {
   return (
-    <div className="min-h-screen bg-bg-light dark:bg-bg-dark">
-      <div className="bg-white dark:bg-surface-dark px-5 pt-12 pb-5 shadow-sm">
-        <h1 className="text-xl font-bold text-text-main dark:text-text-main-dark">
-          어휘 목록 📝
-        </h1>
-        <p className="text-sm text-text-sub dark:text-text-sub-dark mt-0.5">
-          경어 필수 어휘 모음
+    <div className="min-h-screen bg-sakura-blush">
+      <div className="bg-canvas-almond border-b-4 border-black px-5 pt-12 pb-5">
+        <h1 className="text-xl font-black text-type-black">어휘 목록 📝</h1>
+        <p className="text-sm text-type-black/60 font-bold mt-0.5">
+          완료한 레슨·일기에서 수집된 단어
         </p>
       </div>
 
-      <div className="px-5 py-4 flex flex-col gap-3">
-        {VOCABULARY.map((v) => (
-          <div
-            key={v.word}
-            className="bg-white dark:bg-surface-dark rounded-2xl p-4 shadow-sm border border-orange-50 dark:border-border-dark"
-          >
-            <div className="flex items-center justify-between mb-1">
-              <span className="font-bold text-lg text-text-main dark:text-text-main-dark font-japanese">
-                {v.word}
-              </span>
-              <span
-                className={`text-xs px-2 py-0.5 rounded-full font-medium ${CATEGORY_COLORS[v.category] ?? "bg-gray-100 text-gray-700"}`}
-              >
-                {v.category}
-              </span>
-            </div>
-            <p className="text-sm text-text-sub dark:text-text-sub-dark">{v.reading}</p>
-            <p className="text-sm text-text-main dark:text-text-main-dark mt-1 font-medium">
-              {v.meaning}
+      <div className="px-5 py-4 flex flex-col gap-3 pb-24">
+        {vocab.length === 0 ? (
+          <div className="bg-paper-white rounded-[15px] p-6 border-2 border-black shadow-[4px_4px_0px_0px_#000] text-center flex flex-col gap-3">
+            <p className="text-4xl">📝</p>
+            <p className="font-black text-type-black">아직 수집된 단어가 없어요</p>
+            <p className="text-sm text-type-black/60 font-bold">
+              경어 레슨이나 학습 일기를 완료하면 단어장이 여기에 쌓여요!
             </p>
+            <div className="flex gap-2 mt-1">
+              <Link
+                href="/keigo"
+                className="flex-1 py-2.5 bg-grape-punch text-white text-sm font-black rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_#000] text-center"
+              >
+                경어 레슨 →
+              </Link>
+              <Link
+                href="/diary/learn"
+                className="flex-1 py-2.5 bg-sakura-pink text-black text-sm font-black rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_#000] text-center"
+              >
+                학습 일기 →
+              </Link>
+            </div>
           </div>
-        ))}
+        ) : (
+          vocab.map((v, i) => (
+            <div
+              key={i}
+              className="bg-paper-white rounded-[15px] p-4 border-2 border-black shadow-[4px_4px_0px_0px_#000]"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <span className="font-black text-type-black text-base">{v.word}</span>
+                <span className="text-[10px] text-type-black/50 font-bold shrink-0 mt-0.5">
+                  {v.source}
+                </span>
+              </div>
+              {v.reading && (
+                <p className="text-xs text-type-black/50 font-bold mt-0.5">{v.reading}</p>
+              )}
+              <p className="text-sm text-grape-punch font-black mt-1">{v.meaning}</p>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
