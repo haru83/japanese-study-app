@@ -149,6 +149,7 @@ model KeigoLessonProgress {
   updatedAt   DateTime  @updatedAt
 
   @@unique([userId, lessonId])
+  @@index([userId, completed])
 }
 
 // ── Learning Diary Progress ───────────────────────────────────────────────────
@@ -197,6 +198,8 @@ model KeigoLesson {
   sortOrder     Int      @default(0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  @@index([isActive, sortOrder])
 }
 
 model LearningDiaryEntry {
@@ -215,6 +218,8 @@ model LearningDiaryEntry {
   sortOrder     Int      @default(0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  @@index([isActive, sortOrder])
 }
 
 // ── Community Models ──────────────────────────────────────────────────────────

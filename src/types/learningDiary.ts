@@ -3,17 +3,12 @@ export type RubySegment = {
   ruby?: string
 }
 
-export type DiaryCategory =
-  | "일상"
-  | "음식"
-  | "여행"
-  | "계절"
-  | "감정"
-  | "학교"
-  | "직장"
-  | "취미"
-  | "쇼핑"
-  | "건강"
+export const DIARY_CATEGORIES = [
+  "일상", "음식", "여행", "계절", "감정",
+  "학교", "직장", "취미", "쇼핑", "건강",
+] as const;
+
+export type DiaryCategory = typeof DIARY_CATEGORIES[number]
 
 export type DiaryLevel = "초급" | "중급" | "고급"
 

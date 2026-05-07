@@ -1,6 +1,8 @@
 import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { upsertLearningDiaryEntry, deleteLearningDiaryEntry } from "@/actions/admin-content";
+import { DIARY_CATEGORIES } from "@/types/learningDiary";
+import { JsonTextarea } from "@/components/admin/JsonTextarea";
 
 export default async function AdminDiaryEditPage({
   params,
@@ -52,7 +54,7 @@ export default async function AdminDiaryEditPage({
     }
   };
 
-  const CATEGORIES = ["일상","음식","여행","계절","감정","학교","직장","취미","쇼핑","건강"];
+  const CATEGORIES = DIARY_CATEGORIES;
 
   return (
     <div className="min-h-screen bg-sakura-blush">
@@ -143,10 +145,18 @@ export default async function AdminDiaryEditPage({
           />
         </Field>
 
-        <JsonField label="일본어 본문 (contentJp) — RubySegment[]" name="contentJp" value={entry?.contentJp ?? "[]"} pretty={pretty} rows={10} />
-        <JsonField label="어휘 (vocabulary)" name="vocabulary" value={entry?.vocabulary ?? "[]"} pretty={pretty} rows={8} />
-        <JsonField label="문법 포인트 (grammarPoints)" name="grammarPoints" value={entry?.grammarPoints ?? "[]"} pretty={pretty} rows={6} />
-        <JsonField label="퀴즈 (quiz)" name="quiz" value={entry?.quiz ?? "[]"} pretty={pretty} rows={8} />
+        <JsonLabeledField label="일본어 본문 (contentJp) — RubySegment[]">
+          <JsonTextarea name="contentJp" defaultValue={pretty(entry?.contentJp ?? "[]")} rows={10} />
+        </JsonLabeledField>
+        <JsonLabeledField label="어휘 (vocabulary)">
+          <JsonTextarea name="vocabulary" defaultValue={pretty(entry?.vocabulary ?? "[]")} rows={8} />
+        </JsonLabeledField>
+        <JsonLabeledField label="문법 포인트 (grammarPoints)">
+          <JsonTextarea name="grammarPoints" defaultValue={pretty(entry?.grammarPoints ?? "[]")} rows={6} />
+        </JsonLabeledField>
+        <JsonLabeledField label="퀴즈 (quiz)">
+          <JsonTextarea name="quiz" defaultValue={pretty(entry?.quiz ?? "[]")} rows={8} />
+        </JsonLabeledField>
 
         <div className="flex gap-3 mt-2">
           <button
@@ -180,24 +190,11 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
-function JsonField({
-  label, name, value, pretty, rows = 8,
-}: {
-  label: string;
-  name: string;
-  value: string;
-  pretty: (v: string) => string;
-  rows?: number;
-}) {
+function JsonLabeledField({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-1">
       <label className="text-xs font-black text-type-black/70">{label}</label>
-      <textarea
-        name={name}
-        defaultValue={pretty(value)}
-        rows={rows}
-        className="w-full px-3 py-2 border-2 border-black rounded-xl bg-paper-white font-mono text-xs resize-y"
-      />
+      {children}
     </div>
   );
 }

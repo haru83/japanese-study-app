@@ -3,7 +3,6 @@ export interface Lesson {
   title: string;
   category: "business" | "hospitality" | "social";
   thumbnail: string;
-  comicFrames: string[];
   dialogue: Array<{
     speaker: string;
     text: string;
@@ -16,6 +15,7 @@ export interface Lesson {
   }>;
   vocab: Array<{
     word: string;
+    reading?: string;
     meaning: string;
   }>;
   quiz: Array<{

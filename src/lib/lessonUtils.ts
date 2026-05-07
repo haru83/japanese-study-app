@@ -8,7 +8,6 @@ export function parseKeigoLesson(row: KeigoLesson): Lesson {
     title: row.title,
     category: row.category as Lesson["category"],
     thumbnail: row.thumbnail,
-    comicFrames: [],
     dialogue: JSON.parse(row.dialogue),
     grammarPoints: JSON.parse(row.grammarPoints),
     vocab: JSON.parse(row.vocab),

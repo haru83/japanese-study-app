@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { toggleLearningDiaryActive } from "@/actions/admin-content";
+import { DIARY_CATEGORIES } from "@/types/learningDiary";
 
 const LEVEL_COLORS: Record<string, string> = {
   초급: "bg-matcha-green text-black",
@@ -76,7 +77,7 @@ export default async function AdminDiaryPage({
             className="px-3 py-2 text-sm border-2 border-black rounded-xl bg-paper-white font-bold"
           >
             <option value="all">전체 카테고리</option>
-            {["일상","음식","여행","계절","감정","학교","직장","취미","쇼핑","건강"].map((c) => (
+            {DIARY_CATEGORIES.map((c) => (
               <option key={c} value={c}>{c}</option>
             ))}
           </select>

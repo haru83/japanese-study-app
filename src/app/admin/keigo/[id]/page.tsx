@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { upsertKeigoLesson, deleteKeigoLesson } from "@/actions/admin-content";
+import { JsonTextarea } from "@/components/admin/JsonTextarea";
 
 export default async function AdminKeigoEditPage({
   params,
@@ -112,10 +113,18 @@ export default async function AdminKeigoEditPage({
         </Field>
 
         {/* JSON fields */}
-        <JsonField label="대화 (dialogue)" name="dialogue" value={lesson?.dialogue ?? "[]"} pretty={pretty} />
-        <JsonField label="문법 포인트 (grammarPoints)" name="grammarPoints" value={lesson?.grammarPoints ?? "[]"} pretty={pretty} />
-        <JsonField label="어휘 (vocab)" name="vocab" value={lesson?.vocab ?? "[]"} pretty={pretty} />
-        <JsonField label="퀴즈 (quiz)" name="quiz" value={lesson?.quiz ?? "[]"} pretty={pretty} />
+        <JsonLabeledField label="대화 (dialogue)">
+          <JsonTextarea name="dialogue" defaultValue={pretty(lesson?.dialogue ?? "[]")} rows={10} />
+        </JsonLabeledField>
+        <JsonLabeledField label="문법 포인트 (grammarPoints)">
+          <JsonTextarea name="grammarPoints" defaultValue={pretty(lesson?.grammarPoints ?? "[]")} rows={6} />
+        </JsonLabeledField>
+        <JsonLabeledField label="어휘 (vocab)">
+          <JsonTextarea name="vocab" defaultValue={pretty(lesson?.vocab ?? "[]")} rows={8} />
+        </JsonLabeledField>
+        <JsonLabeledField label="퀴즈 (quiz)">
+          <JsonTextarea name="quiz" defaultValue={pretty(lesson?.quiz ?? "[]")} rows={8} />
+        </JsonLabeledField>
 
         <div className="flex gap-3 mt-2">
           <button
@@ -152,23 +161,11 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
-function JsonField({
-  label, name, value, pretty,
-}: {
-  label: string;
-  name: string;
-  value: string;
-  pretty: (v: string) => string;
-}) {
+function JsonLabeledField({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-1">
       <label className="text-xs font-black text-type-black/70">{label}</label>
-      <textarea
-        name={name}
-        defaultValue={pretty(value)}
-        rows={8}
-        className="w-full px-3 py-2 border-2 border-black rounded-xl bg-paper-white font-mono text-xs resize-y"
-      />
+      {children}
     </div>
   );
 }

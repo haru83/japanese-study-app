@@ -144,6 +144,7 @@ export async function upsertLearningDiaryEntry(data: {
 
   revalidatePath("/admin/diary");
   revalidatePath("/diary/learn");
+  revalidatePath("/diary");
 }
 
 export async function toggleLearningDiaryActive(id: string) {
@@ -153,6 +154,7 @@ export async function toggleLearningDiaryActive(id: string) {
   await prisma.learningDiaryEntry.update({ where: { id }, data: { isActive: !entry.isActive } });
   revalidatePath("/admin/diary");
   revalidatePath("/diary/learn");
+  revalidatePath("/diary");
 }
 
 export async function deleteLearningDiaryEntry(id: string) {
@@ -160,4 +162,5 @@ export async function deleteLearningDiaryEntry(id: string) {
   await prisma.learningDiaryEntry.delete({ where: { id } });
   revalidatePath("/admin/diary");
   revalidatePath("/diary/learn");
+  revalidatePath("/diary");
 }
