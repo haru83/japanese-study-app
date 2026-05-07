@@ -1,14 +1,14 @@
 import Link from "next/link";
-import type { LearningDiary } from "@/types/learningDiary";
+import type { DiarySummary } from "@/components/learningDiary/DiaryList";
 
-const LEVEL_COLORS = {
+const LEVEL_COLORS: Record<string, string> = {
   초급: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
   중급: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
   고급: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
 };
 
 interface LearningDiaryCardProps {
-  diary: LearningDiary;
+  diary: DiarySummary;
   completed: boolean;
 }
 

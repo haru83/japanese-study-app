@@ -3,10 +3,19 @@
 import { useState } from "react";
 import { DiaryLevelFilter } from "@/components/learningDiary/DiaryLevelFilter";
 import { LearningDiaryCard } from "@/components/learningDiary/LearningDiaryCard";
-import type { LearningDiary, DiaryCategory, DiaryLevel } from "@/types/learningDiary";
+import type { DiaryCategory, DiaryLevel } from "@/types/learningDiary";
+
+export interface DiarySummary {
+  id: string;
+  title: string;
+  titleKo: string;
+  category: string;
+  level: string;
+  thumbnail: string;
+}
 
 interface Props {
-  diaries: LearningDiary[];
+  diaries: DiarySummary[];
   completedIds: string[];
   totalCount: number;
 }

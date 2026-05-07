@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getDiaries } from "@/actions/diary";
 import { getCompletedLearningDiaries } from "@/actions/learningDiary";
-import { learningDiaries } from "@/data/learningDiaries";
+import { prisma } from "@/lib/db";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { ShibaAvatar } from "@/components/mascot/ShibaAvatar";
 
@@ -125,18 +125,26 @@ async function MyDiaries() {
 }
 
 async function LearnDiariesPreview() {
-  const completedIds = await getCompletedLearningDiaries();
-  const recent = learningDiaries.slice(0, 5);
+  const [completedIds, totalCount, recent] = await Promise.all([
+    getCompletedLearningDiaries(),
+    prisma.learningDiaryEntry.count({ where: { isActive: true } }),
+    prisma.learningDiaryEntry.findMany({
+      where: { isActive: true },
+      orderBy: { sortOrder: "asc" },
+      take: 5,
+      select: { id: true, title: true, titleKo: true, thumbnail: true },
+    }),
+  ]);
   return (
     <div className="flex flex-col gap-3">
       <div className="bg-paper-white rounded-2xl p-4 border-2 border-black shadow-[4px_4px_0px_0px_#000]">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-black text-type-black">전체 진행률</span>
           <span className="text-sm font-black text-grape-punch">
-            {completedIds.length} / {learningDiaries.length}
+            {completedIds.length} / {totalCount}
           </span>
         </div>
-        <ProgressBar value={(completedIds.length / learningDiaries.length) * 100} color="grape" />
+        <ProgressBar value={totalCount > 0 ? (completedIds.length / totalCount) * 100 : 0} color="grape" />
       </div>
 
       <Link

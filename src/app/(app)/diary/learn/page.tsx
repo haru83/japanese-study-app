@@ -1,8 +1,8 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { parseLearningDiaryEntry } from "@/lib/lessonUtils";
 import { DiaryList } from "@/components/learningDiary/DiaryList";
+import type { DiarySummary } from "@/components/learningDiary/DiaryList";
 
 export default async function LearnDiaryListPage() {
   const session = await getServerSession(authOptions);
@@ -11,6 +11,7 @@ export default async function LearnDiaryListPage() {
     prisma.learningDiaryEntry.findMany({
       where: { isActive: true },
       orderBy: { sortOrder: "asc" },
+      select: { id: true, title: true, titleKo: true, category: true, level: true, thumbnail: true },
     }),
     session?.user?.id
       ? prisma.learningDiaryProgress.findMany({
@@ -21,7 +22,7 @@ export default async function LearnDiaryListPage() {
     prisma.learningDiaryEntry.count({ where: { isActive: true } }),
   ]);
 
-  const diaries = rows.map(parseLearningDiaryEntry);
+  const diaries: DiarySummary[] = rows;
   const completedIds = progress.map((p) => p.diaryId);
 
   return (
