@@ -6,6 +6,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { computeXpResult, XP_REWARDS } from "@/lib/xp";
 import { shouldIncrementStreak } from "@/lib/streak";
+import { addVocabToReview } from "@/actions/review";
 
 export async function completeLearningDiary(
   diaryId: string,
@@ -70,6 +71,15 @@ export async function completeLearningDiary(
   revalidatePath("/profile");
   revalidatePath("/home");
   revalidatePath("/diary/learn");
+
+  const entry = await prisma.learningDiaryEntry.findUnique({
+    where: { id: diaryId },
+    select: { vocabulary: true, title: true },
+  });
+  if (entry) {
+    const vocab = JSON.parse(entry.vocabulary) as Array<{ word: string; reading?: string; meaning: string }>;
+    await addVocabToReview(userId, vocab, entry.title);
+  }
 
   return result;
 }

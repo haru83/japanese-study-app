@@ -6,6 +6,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { computeXpResult, XP_REWARDS } from "@/lib/xp";
 import { shouldIncrementStreak } from "@/lib/streak";
+import { addVocabToReview } from "@/actions/review";
 
 export async function completeKeigoLesson(
   lessonId: string,
@@ -85,6 +86,15 @@ export async function completeKeigoLesson(
   revalidatePath("/profile");
   revalidatePath("/home");
   revalidatePath("/keigo");
+
+  const lesson = await prisma.keigoLesson.findUnique({
+    where: { id: lessonId },
+    select: { vocab: true, title: true },
+  });
+  if (lesson) {
+    const vocab = JSON.parse(lesson.vocab) as Array<{ word: string; reading?: string; meaning: string }>;
+    await addVocabToReview(userId, vocab, lesson.title);
+  }
 
   return result;
 }
