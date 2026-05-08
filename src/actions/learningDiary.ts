@@ -43,25 +43,28 @@ export async function completeLearningDiary(
     return { xpGained: 0, stampsGained: 0, newXp: 0, newLevel: 1, leveledUp: false };
   }
 
-  const userProgress = await prisma.userProgress.upsert({
-    where: { userId },
-    create: { userId },
-    update: {},
-  });
+  const result = await prisma.$transaction(async (tx) => {
+    const userProgress = await tx.userProgress.upsert({
+      where: { userId },
+      create: { userId },
+      update: {},
+    });
 
-  const result = computeXpResult(userProgress.xp, xpToAdd, stampsToAdd);
+    const result = computeXpResult(userProgress.xp, xpToAdd, stampsToAdd);
+    const incrementStreak = shouldIncrementStreak(userProgress.lastStudyAt);
 
-  const incrementStreak = shouldIncrementStreak(userProgress.lastStudyAt);
+    await tx.userProgress.update({
+      where: { userId },
+      data: {
+        xp: result.newXp,
+        level: result.newLevel,
+        totalStamps: { increment: stampsToAdd },
+        lastStudyAt: new Date(),
+        ...(incrementStreak ? { streakDays: { increment: 1 } } : {}),
+      },
+    });
 
-  await prisma.userProgress.update({
-    where: { userId },
-    data: {
-      xp: result.newXp,
-      level: result.newLevel,
-      totalStamps: { increment: stampsToAdd },
-      lastStudyAt: new Date(),
-      ...(incrementStreak ? { streakDays: { increment: 1 } } : {}),
-    },
+    return result;
   });
 
   revalidatePath("/profile");
