@@ -56,6 +56,7 @@ export async function getReviewItems(): Promise<ReviewItem[]> {
   return items;
 }
 
+// Server-side only — caller must validate and pass authenticated userId
 export async function getDistractors(
   userId: string,
   excludeWord: string,

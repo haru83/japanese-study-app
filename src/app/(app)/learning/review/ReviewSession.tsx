@@ -65,7 +65,7 @@ export function ReviewSession({ items, distractorPool }: Props) {
     }
   }
 
-  const tierLabels = ["신규", "1일", "3일", "7일", "14일"];
+  const tierLabels = ["신규", "1일 뒤", "3일 뒤", "7일 뒤", "마스터"];
   const tierLabel = tierLabels[current.tier] ?? "마스터";
 
   return (

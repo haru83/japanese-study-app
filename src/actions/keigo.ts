@@ -87,13 +87,17 @@ export async function completeKeigoLesson(
   revalidatePath("/home");
   revalidatePath("/keigo");
 
-  const lesson = await prisma.keigoLesson.findUnique({
-    where: { id: lessonId },
-    select: { vocab: true, title: true },
-  });
-  if (lesson) {
-    const vocab = JSON.parse(lesson.vocab) as Array<{ word: string; reading?: string; meaning: string }>;
-    await addVocabToReview(userId, vocab, lesson.title);
+  try {
+    const lesson = await prisma.keigoLesson.findUnique({
+      where: { id: lessonId },
+      select: { vocab: true, title: true },
+    });
+    if (lesson) {
+      const vocab = JSON.parse(lesson.vocab) as Array<{ word: string; reading?: string; meaning: string }>;
+      await addVocabToReview(userId, vocab, lesson.title);
+    }
+  } catch {
+    // vocab enrollment failure should not break lesson completion
   }
 
   return result;

@@ -72,13 +72,17 @@ export async function completeLearningDiary(
   revalidatePath("/home");
   revalidatePath("/diary/learn");
 
-  const entry = await prisma.learningDiaryEntry.findUnique({
-    where: { id: diaryId },
-    select: { vocabulary: true, title: true },
-  });
-  if (entry) {
-    const vocab = JSON.parse(entry.vocabulary) as Array<{ word: string; reading?: string; meaning: string }>;
-    await addVocabToReview(userId, vocab, entry.title);
+  try {
+    const entry = await prisma.learningDiaryEntry.findUnique({
+      where: { id: diaryId },
+      select: { vocabulary: true, title: true },
+    });
+    if (entry) {
+      const vocab = JSON.parse(entry.vocabulary) as Array<{ word: string; reading?: string; meaning: string }>;
+      await addVocabToReview(userId, vocab, entry.title);
+    }
+  } catch {
+    // vocab enrollment failure should not break lesson completion
   }
 
   return result;
