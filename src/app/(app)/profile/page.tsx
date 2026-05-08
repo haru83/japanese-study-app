@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getUserProfile } from "@/actions/user";
 import { getWardrobeItems } from "@/actions/wardrobe";
+import { getUserStats } from "@/actions/stats";
 import { xpProgress, xpForNextLevel, LEVEL_THRESHOLDS, MAX_LEVEL } from "@/lib/xp";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { ShibaAvatar } from "@/components/mascot/ShibaAvatar";
@@ -102,8 +103,11 @@ export default async function ProfilePage() {
     return <GuestProfileView />;
   }
 
- const profile = await getUserProfile();
- const { equippedIds } = await getWardrobeItems();
+ const [profile, { equippedIds }, stats] = await Promise.all([
+   getUserProfile(),
+   getWardrobeItems(),
+   getUserStats(),
+ ]);
  const progress = profile?.progress;
  const keigoCount = profile?.keigoProgress?.length ?? 0;
 
@@ -200,6 +204,42 @@ export default async function ProfilePage() {
         </div>
       </section>
 
+      {/* ── 학습 통계 ─────────────────────────────────── */}
+      {stats && (
+        <section className="px-5">
+          <h2 className="text-xs font-black text-type-black/50 mb-3 tracking-widest uppercase">
+            학습 통계
+          </h2>
+          <div className="grid grid-cols-2 gap-3">
+            <StatCard
+              emoji="📚"
+              label="완료한 레슨"
+              value={`${stats.totalCompleted}개`}
+              sub={`경어 ${stats.completedKeigo} · 일기 ${stats.completedDiary}`}
+            />
+            <StatCard
+              emoji="🎯"
+              label="퀴즈 정답률"
+              value={stats.keigoAccuracy !== null ? `${stats.keigoAccuracy}%` : "—"}
+              sub={stats.diaryAccuracy !== null ? `일기 ${stats.diaryAccuracy}%` : "퀴즈 미완료"}
+            />
+            <StatCard
+              emoji="🔤"
+              label="복습 단어"
+              value={`${stats.vocabTotal}개`}
+              sub={`마스터 ${stats.vocabMastered}개`}
+            />
+            <StatCard
+              emoji="📅"
+              label="오늘 복습"
+              value={`${stats.vocabDueToday}개`}
+              sub={stats.vocabDueToday > 0 ? "복습하러 가기 →" : "다 완료했어요!"}
+              href={stats.vocabDueToday > 0 ? "/learning/review" : undefined}
+            />
+          </div>
+        </section>
+      )}
+
       {/* Menu */}
       <section className="px-5">
         <div className="bg-paper-white rounded-2xl overflow-hidden border-2 border-black shadow-[4px_4px_0px_0px_#000]">
@@ -228,4 +268,33 @@ export default async function ProfilePage() {
       </section>
     </main>
   );
+}
+
+// ─── StatCard 헬퍼 ────────────────────────────────────────────
+function StatCard({
+  emoji,
+  label,
+  value,
+  sub,
+  href,
+}: {
+  emoji: string;
+  label: string;
+  value: string;
+  sub: string;
+  href?: string;
+}) {
+  const content = (
+    <div className="bg-paper-white border-2 border-black rounded-[15px] shadow-[3px_3px_0px_0px_#000] p-4 flex flex-col gap-1">
+      <span className="text-xl">{emoji}</span>
+      <p className="text-xs font-black text-type-black/50">{label}</p>
+      <p className="text-lg font-black text-type-black">{value}</p>
+      <p className="text-[10px] font-bold text-type-black/50">{sub}</p>
+    </div>
+  );
+
+  if (href) {
+    return <Link href={href}>{content}</Link>;
+  }
+  return content;
 }
