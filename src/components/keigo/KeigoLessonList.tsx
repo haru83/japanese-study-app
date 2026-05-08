@@ -23,9 +23,13 @@ interface Props {
 
 export function KeigoLessonList({ lessons, completedIds, totalCount }: Props) {
   const [category, setCategory] = useState<LessonCategory>("all");
+  const [query, setQuery] = useState("");
 
-  const filtered =
-    category === "all" ? lessons : lessons.filter((l) => l.category === category);
+  const filtered = lessons.filter((l) => {
+    const categoryOk = category === "all" || l.category === category;
+    const queryOk = query === "" || l.title.toLowerCase().includes(query.toLowerCase());
+    return categoryOk && queryOk;
+  });
 
   return (
     <div className="min-h-screen bg-sakura-blush">
@@ -40,8 +44,20 @@ export function KeigoLessonList({ lessons, completedIds, totalCount }: Props) {
       </div>
 
       <div className="px-5 py-4">
+        <input
+          type="search"
+          placeholder="레슨 검색..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="w-full px-4 py-2.5 border-2 border-black rounded-xl bg-paper-white font-bold text-sm placeholder:text-type-black/40 mb-3"
+        />
         <CategoryFilter active={category} onChange={setCategory} />
         <div className="mt-4 flex flex-col gap-3 pb-24">
+          {filtered.length === 0 && (
+            <p className="text-center text-sm font-bold text-type-black/50 py-10">
+              검색 결과가 없습니다
+            </p>
+          )}
           {filtered.map((lesson) => (
             <LessonCard
               key={lesson.id}

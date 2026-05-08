@@ -23,11 +23,16 @@ interface Props {
 export function DiaryList({ diaries, completedIds, totalCount }: Props) {
   const [selectedLevel, setSelectedLevel] = useState<DiaryLevel | "전체">("전체");
   const [selectedCategory, setSelectedCategory] = useState<DiaryCategory | "전체">("전체");
+  const [query, setQuery] = useState("");
 
   const filtered = diaries.filter((d) => {
     const levelOk = selectedLevel === "전체" || d.level === selectedLevel;
     const catOk = selectedCategory === "전체" || d.category === selectedCategory;
-    return levelOk && catOk;
+    const queryOk =
+      query === "" ||
+      d.title.toLowerCase().includes(query.toLowerCase()) ||
+      d.titleKo.toLowerCase().includes(query.toLowerCase());
+    return levelOk && catOk && queryOk;
   });
 
   return (
@@ -50,6 +55,14 @@ export function DiaryList({ diaries, completedIds, totalCount }: Props) {
         </div>
       </div>
 
+      <input
+        type="search"
+        placeholder="일기 제목 검색 (日本語 · 한국어)..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        className="w-full px-4 py-2.5 border-2 border-black rounded-xl bg-paper-white font-bold text-sm placeholder:text-type-black/40"
+      />
+
       <DiaryLevelFilter
         selectedLevel={selectedLevel}
         selectedCategory={selectedCategory}
@@ -60,6 +73,11 @@ export function DiaryList({ diaries, completedIds, totalCount }: Props) {
       <p className="text-xs text-text-sub">{filtered.length}개의 일기</p>
 
       <div className="flex flex-col gap-2">
+        {filtered.length === 0 && (
+          <p className="text-center text-sm font-bold text-type-black/50 py-8">
+            검색 결과가 없습니다
+          </p>
+        )}
         {filtered.map((diary) => (
           <LearningDiaryCard
             key={diary.id}
