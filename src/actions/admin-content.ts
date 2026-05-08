@@ -1,14 +1,8 @@
 "use server";
 
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-
-async function requireAdmin() {
-  const session = await getServerSession(authOptions);
-  if (session?.user?.role !== "admin") throw new Error("권한이 없습니다.");
-}
+import { requireAdmin } from "@/lib/admin-auth";
 
 // ── KeigoLesson ───────────────────────────────────────────────────────────────
 
