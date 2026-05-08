@@ -91,11 +91,24 @@
 - 각 항목에 **출처 레슨/일기 제목** 표시
 - 완료한 레슨이 없으면 빈 상태 안내 + 경어·학습 일기 바로가기 링크
 
+### 🔁 단어 복습 (SRS)
+- 레슨·일기 완료 시 어휘가 복습 큐에 **자동 등록** (`/learning/review`)
+- **5단계 간격 반복**: 신규 → 1일 → 3일 → 7일 → 마스터(30일)
+- 객관식 4지선다 퀴즈: 맞으면 티어 상승, 틀리면 티어 하락 (오늘 분량 최대 20개)
+- 동일 단어 재등록 시 기존 진행상황 유지 (idempotent upsert)
+- 프로필 페이지에 **복습 단어 수·마스터 수·오늘 복습 수** 표시 → 바로가기 링크
+
+### 🔍 레슨/일기 검색
+- 경어 레슨 목록·학습 일기 목록에 **제목 검색 인풋** 추가
+- 기존 카테고리·레벨 필터와 AND 조합으로 동작
+- 학습 일기는 일본어 제목·한국어 제목 **동시 검색** 지원
+
 ### ⭐ 게임화 시스템
 - **XP**: 일기 +10 XP / 경어 레슨 최초 완료 +15 XP / 퀴즈 만점 +5 XP
 - **레벨**: 6단계 (0 → 50 → 120 → 210 → 320 → 450 XP)
 - **스탬프 보드**: 활동 완료마다 스탬프 수집
 - **옷장**: 스탬프로 아이템 구매, 레벨 조건 충족 시 착용 가능
+- **학습 통계**: 프로필 페이지에 완료 레슨 수·퀴즈 정답률·복습 단어 현황 표시
 
 ### 🛡️ 어드민 패널
 - 사용자 관리, 콘텐츠(토픽) 관리
@@ -104,6 +117,7 @@
 - **JSON 실시간 유효성 검사**: 대화·문법·어휘·퀴즈 JSON 편집 시 오류 즉각 표시 (저장 전 피드백)
 - **신고 관리** (`/admin/reports`): 미처리 신고 목록 → 무시 또는 콘텐츠 삭제 처리
 - 콘텐츠 변경 시 사용자 페이지 (`/keigo`, `/diary/learn`, `/diary`) 자동 revalidate
+- `requireAdmin()` 중앙화 → `src/lib/admin-auth.ts`에서 단일 관리
 - Next.js middleware + layout 이중 권한 검증 (role === "admin")
 
 ---
@@ -152,7 +166,7 @@
 | Auth | NextAuth.js v4 (Credentials Provider, JWT) |
 | State | Zustand (경어 진행상황 persist) |
 | Animation | Framer Motion |
-| Testing | Vitest (149 tests) |
+| Testing | Vitest (155 tests) |
 | AI Tutor | Gemini 3.1 Flash Lite Preview (Google AI Studio OpenAI-compat API) |
 | Font | Zen Maru Gothic + Noto Sans KR |
 
@@ -251,7 +265,7 @@ src/
 │   │   ├── profile/         # 프로필, XP, 통계
 │   │   ├── wardrobe/        # 옷장 (DB 기반, 스탬프 구매, 착용/해제)
 │   │   ├── shop/            # 상점 (스탬프로 아이템 구매)
-│   │   └── learning/        # 문법·어휘 정리
+│   │   └── learning/        # 문법·어휘 정리, 단어 복습 (/learning/review)
 │   ├── admin/               # 어드민 패널 (middleware 권한 검증)
 │   └── api/                 # NextAuth, 회원가입, 경어 동기화
 ├── components/
@@ -265,7 +279,7 @@ src/
 │   ├── guest/               # GuestSignupBanner, GuestUpsellModal
 │   ├── ui/                  # 공유 UI (Button, Card, ProgressBar)
 │   └── layout/              # BottomNav, AdminBottomNav
-├── actions/                 # 서버 액션 (diary, diaryTutor, keigo, learningDiary, user, wardrobe, community, learning, admin-content)
+├── actions/                 # 서버 액션 (diary, diaryTutor, keigo, learningDiary, user, wardrobe, community, learning, admin-content, review, stats)
 ├── store/                   # Zustand 스토어
 ├── lib/                     # auth, db, xp, streak, wardrobe, admin-auth, rubyParser, japaneseInput, lessonUtils 유틸리티
 └── types/                   # TypeScript 타입 정의 (DIARY_CATEGORIES 상수 포함)
@@ -283,6 +297,7 @@ src/
 - `LearningDiaryEntry` — 학습 일기 콘텐츠 (100개, 어드민 CRUD 가능) · `@@index([isActive, sortOrder])`
 - `KeigoLessonProgress` — 경어 레슨 완료 기록 · `@@index([userId, completed])`
 - `LearningDiaryProgress` — 학습 일기 완료 기록 (퀴즈 점수, XP)
+- `VocabReview` — SRS 복습 큐 (tier 0-4, nextReviewAt) · `@@unique([userId, word])` · `@@index([userId, nextReviewAt])`
 - `WardrobeItem` — 옷장 아이템 (스탬프 비용, 필요 레벨)
 - `UserWardrobeItem` — 사용자 보유 아이템
 - `Topic` — 일기 토픽 (어드민 관리)
@@ -296,6 +311,8 @@ src/
 ## 보안
 
 - **Admin 경로 보호**: Next.js middleware에서 JWT 토큰의 role 검증 → 비관리자 접근 시 `/home` 리다이렉트
+- **Rate Limiting**: `/api/register` IP당 15분에 5회 제한 (인메모리, 서버리스 cold-start 시 리셋)
+- **DB 트랜잭션**: 일기 저장·레슨 완료·회원가입 시 XP 지급과 데이터 생성이 원자적으로 처리 (`prisma.$transaction`)
 - **이미지 도메인 제한**: `next.config.ts`에서 `lh3.googleusercontent.com`만 허용 (마스코트는 `/public/mascot/` 로컬 경로 사용)
 - **스트릭 무결성**: 같은 날 중복 학습 시 `streakDays`가 증가하지 않음
 - **커뮤니티 접근 제어**: 비공개 일기 URL 직접 접근 → `notFound()` / 차단 관계 양방향 검사 → 피드·상세 모두 필터링
