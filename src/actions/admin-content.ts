@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin-auth";
+import { AdminKeigoContentSchema, AdminDiaryContentSchema } from "@/lib/validation";
 
 // ── KeigoLesson ───────────────────────────────────────────────────────────────
 
@@ -20,10 +21,12 @@ export async function upsertKeigoLesson(data: {
 }) {
   await requireAdmin();
 
+  const validated = AdminKeigoContentSchema.parse(data);
+
   // Validate JSON fields
   for (const field of ["dialogue", "grammarPoints", "vocab", "quiz"] as const) {
     try {
-      JSON.parse(data[field]);
+      JSON.parse(validated[field]);
     } catch {
       throw new Error(`${field} 필드의 JSON 형식이 올바르지 않습니다.`);
     }
@@ -95,9 +98,11 @@ export async function upsertLearningDiaryEntry(data: {
 }) {
   await requireAdmin();
 
+  const validated = AdminDiaryContentSchema.parse(data);
+
   for (const field of ["contentJp", "vocabulary", "grammarPoints", "quiz"] as const) {
     try {
-      JSON.parse(data[field]);
+      JSON.parse(validated[field]);
     } catch {
       throw new Error(`${field} 필드의 JSON 형식이 올바르지 않습니다.`);
     }

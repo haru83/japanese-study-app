@@ -5,7 +5,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { validateCommentContent, assertCommentOwner } from "@/lib/community";
+import { assertCommentOwner } from "@/lib/community";
+import { CommentInputSchema, ReportInputSchema } from "@/lib/validation";
 
 const USER_SELECT = {
   id: true,
@@ -112,10 +113,10 @@ export async function addComment(diaryId: string, content: string) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) throw new Error("로그인이 필요합니다.");
 
-  const trimmed = validateCommentContent(content);
+  const validated = CommentInputSchema.parse({ content });
 
   await prisma.comment.create({
-    data: { userId: session.user.id, diaryId, content: trimmed },
+    data: { userId: session.user.id, diaryId, content: validated.content },
   });
 
   revalidatePath(`/community/${diaryId}`);
@@ -160,8 +161,10 @@ export async function reportContent(
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) throw new Error("로그인이 필요합니다.");
 
+  const validated = ReportInputSchema.parse({ targetType, targetId, reason });
+
   await prisma.report.create({
-    data: { reporterId: session.user.id, targetType, targetId, reason },
+    data: { reporterId: session.user.id, targetType: validated.targetType, targetId: validated.targetId, reason: validated.reason },
   });
 }
 

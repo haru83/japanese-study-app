@@ -166,7 +166,8 @@
 | Auth | NextAuth.js v4 (Credentials Provider, JWT) |
 | State | Zustand (경어 진행상황 persist) |
 | Animation | Framer Motion |
-| Testing | Vitest (155 tests) |
+| Validation | Zod (Server Action input validation) |
+| Testing | Vitest (177 tests) |
 | AI Tutor | Gemini 3.1 Flash Lite Preview (Google AI Studio OpenAI-compat API) |
 | Font | Zen Maru Gothic + Noto Sans KR |
 
@@ -239,13 +240,15 @@ npx vitest run src/lib/__tests__/wardrobe.test.ts
 
 ```env
 DATABASE_URL="file:./dev.db"
-NEXTAUTH_SECRET="your-secret-key"
+NEXTAUTH_SECRET="your-secret-key"  # openssl rand -base64 32 로 생성하세요
 NEXTAUTH_URL="http://localhost:3000" # 실제 실행 URL과 일치해야 함
 
 # Gemini API — 일기 AI 튜터 리뷰용 (없으면 규칙 기반 검사로 동작)
 GOOGLE_API_KEY=your_google_ai_studio_key
 # GEMINI_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai  # 기본값, 필요시 오버라이드
 ```
+
+> ⚠️ `.env.example`을 참고하여 `.env` 파일을 생성하세요. `.env` 파일은 `.gitignore`에 포함되어 있으므로 절대 Git에 커밋하지 마세요.
 
 ---
 
@@ -281,7 +284,7 @@ src/
 │   └── layout/              # BottomNav, AdminBottomNav
 ├── actions/                 # 서버 액션 (diary, diaryTutor, keigo, learningDiary, user, wardrobe, community, learning, admin-content, review, stats)
 ├── store/                   # Zustand 스토어
-├── lib/                     # auth, db, xp, streak, wardrobe, admin-auth, rubyParser, japaneseInput, lessonUtils 유틸리티
+├── lib/                     # auth, db, xp, streak, wardrobe, admin-auth, admin-paths, rubyParser, japaneseInput, lessonUtils, jsonUtils, validation 유틸리티
 └── types/                   # TypeScript 타입 정의 (DIARY_CATEGORIES 상수 포함)
 ```
 
@@ -291,7 +294,7 @@ src/
 
 - `User` — 사용자 계정 (role: "user" | "admin")
 - `Account` / `Session` — NextAuth 인증
-- `Diary` — 개인 일기 (`isPublic`, `isTutorPublic`, `tutorReview` 필드 포함)
+- `Diary` — 개인 일기 (`isPublic`, `isTutorPublic`, `tutorReview` 필드 포함) · `@@index([userId, createdAt])` · `@@index([isPublic, createdAt])`
 - `UserProgress` — XP, 레벨, 스탬프, 연속 학습일
 - `KeigoLesson` — 경어 레슨 콘텐츠 (100개, 어드민 CRUD 가능) · `@@index([isActive, sortOrder])`
 - `LearningDiaryEntry` — 학습 일기 콘텐츠 (100개, 어드민 CRUD 가능) · `@@index([isActive, sortOrder])`
@@ -301,16 +304,17 @@ src/
 - `WardrobeItem` — 옷장 아이템 (스탬프 비용, 필요 레벨)
 - `UserWardrobeItem` — 사용자 보유 아이템
 - `Topic` — 일기 토픽 (어드민 관리)
-- `Like` — 공개 일기 공감 (userId + diaryId 복합 유니크)
-- `Comment` — 공개 일기 댓글 (500자 제한, 작성자만 삭제 가능)
-- `UserBlock` — 사용자 차단 (양방향 피드 필터링)
-- `Report` — 일기·댓글 신고 (어드민 검토 후 처리)
+- `Like` — 공개 일기 공감 (userId + diaryId 복합 유니크) · `@@index([diaryId])`
+- `Comment` — 공개 일기 댓글 (500자 제한, 작성자만 삭제 가능) · `@@index([diaryId])` · `@@index([userId])`
+- `UserBlock` — 사용자 차단 (양방향 피드 필터링) · `@@index([blockerId])` · `@@index([blockedId])`
+- `Report` — 일기·댓글 신고 (어드민 검토 후 처리) · `@@index([resolved, targetType])`
 
 ---
 
 ## 보안
 
-- **Admin 경로 보호**: Next.js middleware에서 JWT 토큰의 role 검증 → 비관리자 접근 시 `/home` 리다이렉트
+- **Admin 경로 보호**: Next.js middleware에서 `getToken`으로 JWT 디코딩 후 `role === "admin"` 검증 → 비관리자 접근 시 `/home` 리다이렉트
+- **입력값 검증**: Zod 스키마로 서버 액션 입력값 검증 (일기 제목·본문 길이 제한, 댓글·신고 사유 길이 제한, 관리자 콘텐츠 JSON 크기 제한)
 - **Rate Limiting**: `/api/register` IP당 15분에 5회 제한 (인메모리, 서버리스 cold-start 시 리셋)
 - **DB 트랜잭션**: 일기 저장·레슨 완료·회원가입 시 XP 지급과 데이터 생성이 원자적으로 처리 (`prisma.$transaction`)
 - **이미지 도메인 제한**: `next.config.ts`에서 `lh3.googleusercontent.com`만 허용 (마스코트는 `/public/mascot/` 로컬 경로 사용)

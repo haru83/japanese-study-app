@@ -92,6 +92,9 @@ model Diary {
   tutorReview    String?
   likes          Like[]
   comments       Comment[]
+
+  @@index([userId, createdAt])
+  @@index([isPublic, createdAt])
 }
 
 // ── Gamification ──────────────────────────────────────────────────────────────
@@ -234,6 +237,7 @@ model Like {
   diary     Diary    @relation(fields: [diaryId], references: [id], onDelete: Cascade)
 
   @@unique([userId, diaryId])
+  @@index([diaryId])
 }
 
 model Comment {
@@ -244,6 +248,9 @@ model Comment {
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   diary     Diary    @relation(fields: [diaryId], references: [id], onDelete: Cascade)
+
+  @@index([diaryId])
+  @@index([userId])
 }
 
 model UserBlock {
@@ -255,6 +262,8 @@ model UserBlock {
   blocked   User     @relation("BlockedRelation", fields: [blockedId], references: [id], onDelete: Cascade)
 
   @@unique([blockerId, blockedId])
+  @@index([blockerId])
+  @@index([blockedId])
 }
 
 model Report {
@@ -266,6 +275,8 @@ model Report {
   resolved   Boolean  @default(false)
   createdAt  DateTime @default(now())
   reporter   User     @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+
+  @@index([resolved, targetType])
 }
 
 // ── Vocab Review (SRS) ───────────────────────────────────────────────────────

@@ -6,6 +6,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { XP_REWARDS, computeXpResult } from "@/lib/xp";
 import { shouldIncrementStreak } from "@/lib/streak";
+import { DiaryInputSchema } from "@/lib/validation";
 
 export async function getDiaries() {
   const session = await getServerSession(authOptions);
@@ -26,6 +27,8 @@ export async function saveDiary(data: {
   isTutorPublic?: boolean;
   tutorReview?: string;
 }) {
+  const validated = DiaryInputSchema.parse(data);
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) throw new Error("로그인이 필요합니다.");
 
@@ -34,13 +37,13 @@ export async function saveDiary(data: {
   const { diary, xpResult } = await prisma.$transaction(async (tx) => {
     const diary = await tx.diary.create({
       data: {
-        title: data.title,
-        content: data.content,
-        mood: data.mood,
-        topicId: data.topicId,
-        isPublic: data.isPublic ?? false,
-        isTutorPublic: data.isTutorPublic ?? false,
-        tutorReview: data.tutorReview,
+        title: validated.title,
+        content: validated.content,
+        mood: validated.mood,
+        topicId: validated.topicId,
+        isPublic: validated.isPublic ?? false,
+        isTutorPublic: validated.isTutorPublic ?? false,
+        tutorReview: validated.tutorReview,
         userId,
       },
     });
