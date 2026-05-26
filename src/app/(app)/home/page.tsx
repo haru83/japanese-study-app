@@ -4,11 +4,15 @@ import { authOptions } from "@/lib/auth";
 import { getUserProfile } from "@/actions/user";
 import { getWardrobeItems } from "@/actions/wardrobe";
 import { getDiaries } from "@/actions/diary";
-import { getLearningProgress } from "@/actions/stats";
+import { getLearningProgress, getWordOfTheDay } from "@/actions/stats";
+import { getDailyQuests } from "@/actions/quest";
+import { getChallengeSummary } from "@/actions/dailyChallenge";
 import { xpProgress, xpForNextLevel, MAX_LEVEL, LEVEL_THRESHOLDS } from "@/lib/xp";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { GuestSignupBanner } from "@/components/guest/GuestSignupBanner";
 import { ShibaAvatar } from "@/components/mascot/ShibaAvatar";
+import { DailyQuestPanel } from "@/components/quest/DailyQuestPanel";
+import { WordOfTheDayCard } from "@/components/wotd/WordOfTheDayCard";
 
 const LEVEL_TITLES = [
   "초보 학습자",
@@ -175,11 +179,14 @@ export default async function HomePage() {
     return <GuestHomeView />;
   }
 
-  const [profile, diaries, { equippedIds }, learning] = await Promise.all([
+  const [profile, diaries, { equippedIds }, learning, quests, challengeSummary, wordOfTheDay] = await Promise.all([
     getUserProfile(),
     getDiaries(),
     getWardrobeItems(),
     getLearningProgress(),
+    getDailyQuests(),
+    getChallengeSummary(),
+    getWordOfTheDay(),
   ]);
 
   const progress = profile?.progress;
@@ -231,6 +238,27 @@ export default async function HomePage() {
       </div>
 
       <div className="px-5 py-5 flex flex-col gap-[24px]">
+        {/* ── 오늘의 퀘스트 ── */}
+        {quests.length > 0 && (
+          <section>
+            <DailyQuestPanel quests={quests} summary={challengeSummary} />
+          </section>
+        )}
+
+        {/* ── 오늘의 단어 ── */}
+        {wordOfTheDay && (
+          <section>
+            <WordOfTheDayCard
+              word={wordOfTheDay.word}
+              reading={wordOfTheDay.reading}
+              meaning={wordOfTheDay.meaning}
+              source={wordOfTheDay.source}
+              sourceId={wordOfTheDay.sourceId}
+              sourceType={wordOfTheDay.sourceType}
+            />
+          </section>
+        )}
+
         {/* ── 학습 진행 상황 ── */}
         <section>
           <h2 className="font-black text-type-black text-sm mb-3">학습 진행 상황 📊</h2>

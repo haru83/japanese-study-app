@@ -37,9 +37,9 @@ The plan agent synthesized the **surviving ideas** into a structured roadmap.
 
 | Phase | Features | Why They Survived Cross-Attack |
 |-------|----------|-------------------------------|
-| **Phase 1** (Ship now) | Daily Quests, Word of the Day, Grammar SRS | Low effort, high retention, reuse existing data. Unspecified-high's safe approach + Deep's retention research. |
-| **Phase 2** (Next quarter) | Achievement Badges, Keigo Roast Battle | Badges leverage all existing progress data. Roast Battle is the viral hook that fits existing AI tutor + keigo infra. Artistry's creativity + Ultrabrain's technical feasibility filter. |
-| **Phase 3** (Future) | Leagues | Proven Duolingo mechanic (22% completion boost). Uses daily quest + XP systems already built. Deep's competitive analysis + Unspecified-low's gaming instincts. |
+| **Phase 1** (Ship now) ✅ | Daily Quests, Word of the Day, Grammar SRS | **완료:** 3-tier 퀘스트, 결정론적 생성, XP/스탬프 보상, 오늘의 단어, 문법 SRS 스키마 확장. 237 tests passing. |
+| **Phase 2** (Next quarter) ⏳ | Achievement Badges, Keigo Roast Battle | Badges leverage all existing progress data. Roast Battle is the viral hook that fits existing AI tutor + keigo infra. Artistry's creativity + Ultrabrain's technical feasibility filter. |
+| **Phase 3** (Future) ⏳ | Leagues | Proven Duolingo mechanic (22% completion boost). Uses daily quest + XP systems already built. Deep's competitive analysis + Unspecified-low's gaming instincts. |
 | **Deferred** | Study Squads, Shiba Battle Royale, Pitch Accent | Require social critical mass, real-time infra, or audio infra. Cut by consensus in cross-attack. |
 
 ---

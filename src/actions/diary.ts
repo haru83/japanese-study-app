@@ -7,6 +7,7 @@ import { prisma } from "@/lib/db";
 import { XP_REWARDS, computeXpResult } from "@/lib/xp";
 import { shouldIncrementStreak } from "@/lib/streak";
 import { DiaryInputSchema } from "@/lib/validation";
+import { incrementChallengeProgress } from "@/actions/dailyChallenge";
 
 export async function getDiaries() {
   const session = await getServerSession(authOptions);
@@ -75,6 +76,8 @@ export async function saveDiary(data: {
 
     return { diary, xpResult };
   });
+
+  await incrementChallengeProgress("DIARY", 1);
 
   revalidatePath("/diary");
   revalidatePath("/home");

@@ -7,6 +7,7 @@ import { prisma } from "@/lib/db";
 import { computeXpResult, XP_REWARDS } from "@/lib/xp";
 import { shouldIncrementStreak } from "@/lib/streak";
 import { addVocabToReview } from "@/actions/review";
+import { incrementChallengeProgress } from "@/actions/dailyChallenge";
 
 export async function completeKeigoLesson(
   lessonId: string,
@@ -86,6 +87,11 @@ export async function completeKeigoLesson(
   revalidatePath("/profile");
   revalidatePath("/home");
   revalidatePath("/keigo");
+
+  await incrementChallengeProgress("LESSON", 1);
+  if (isPerfect) {
+    await incrementChallengeProgress("QUIZ", 1);
+  }
 
   try {
     const lesson = await prisma.keigoLesson.findUnique({

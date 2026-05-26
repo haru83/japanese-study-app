@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { computeNewTier, getNextReviewMs } from "@/lib/review-logic";
+import { incrementChallengeProgress } from "@/actions/dailyChallenge";
 
 export interface ReviewItem {
   id: string;
@@ -11,12 +12,13 @@ export interface ReviewItem {
   reading: string;
   meaning: string;
   source: string;
+  itemType: string;
   tier: number;
 }
 
 export async function addVocabToReview(
   userId: string,
-  vocab: Array<{ word: string; reading?: string; meaning: string }>,
+  vocab: Array<{ word: string; reading?: string; meaning: string; itemType?: string }>,
   source: string
 ): Promise<void> {
   if (vocab.length === 0) return;
@@ -24,13 +26,14 @@ export async function addVocabToReview(
   await Promise.all(
     vocab.map((v) =>
       prisma.vocabReview.upsert({
-        where: { userId_word: { userId, word: v.word } },
+        where: { userId_word_itemType: { userId, word: v.word, itemType: v.itemType ?? "vocab" } },
         create: {
           userId,
           word: v.word,
           reading: v.reading ?? "",
           meaning: v.meaning,
           source,
+          itemType: v.itemType ?? "vocab",
         },
         update: {},
       })
@@ -47,10 +50,11 @@ export async function getReviewItems(): Promise<ReviewItem[]> {
     where: {
       userId: session.user.id,
       nextReviewAt: { lte: now },
+      itemType: "vocab",
     },
     orderBy: { nextReviewAt: "asc" },
     take: 20,
-    select: { id: true, word: true, reading: true, meaning: true, source: true, tier: true },
+    select: { id: true, word: true, reading: true, meaning: true, source: true, tier: true, itemType: true },
   });
 
   return items;
@@ -63,7 +67,7 @@ export async function getDistractors(
   count: number
 ): Promise<string[]> {
   const pool = await prisma.vocabReview.findMany({
-    where: { userId, word: { not: excludeWord } },
+    where: { userId, word: { not: excludeWord }, itemType: "vocab" },
     select: { meaning: true },
     take: 50,
   });
@@ -95,4 +99,6 @@ export async function submitReview(reviewId: string, correct: boolean): Promise<
       reviewCount: { increment: 1 },
     },
   });
+
+  await incrementChallengeProgress("REVIEW", 1);
 }

@@ -3,6 +3,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { selectWordOfTheDay, type WotdEntry, type VocabItem } from "@/lib/wotd-logic";
 
 export interface UserStats {
   completedKeigo: number;
@@ -153,4 +154,42 @@ export async function getLearningProgress(): Promise<LearningProgress | null> {
     streakDays: userProgress?.streakDays ?? 0,
     lastStudyAt: userProgress?.lastStudyAt ?? null,
   };
+}
+
+export async function getWordOfTheDay(): Promise<WotdEntry | null> {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) return null;
+
+  const now = new Date();
+
+  const [keigoLessons, learningDiaries] = await Promise.all([
+    prisma.keigoLesson.findMany({
+      where: { isActive: true },
+      select: { id: true, vocab: true },
+    }),
+    prisma.learningDiaryEntry.findMany({
+      where: { isActive: true },
+      select: { id: true, vocabulary: true },
+    }),
+  ]);
+
+  const keigoVocab: VocabItem[] = keigoLessons.flatMap((lesson) => {
+    try {
+      const parsed = JSON.parse(lesson.vocab) as Array<{ word: string; reading?: string; meaning: string }>;
+      return parsed;
+    } catch {
+      return [];
+    }
+  });
+
+  const diaryVocab: VocabItem[] = learningDiaries.flatMap((diary) => {
+    try {
+      const parsed = JSON.parse(diary.vocabulary) as Array<{ word: string; reading?: string; meaning: string }>;
+      return parsed;
+    } catch {
+      return [];
+    }
+  });
+
+  return selectWordOfTheDay(now, keigoVocab, diaryVocab);
 }

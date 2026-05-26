@@ -73,6 +73,9 @@ model User {
   blockedBy     UserBlock[] @relation("BlockedRelation")
   reports       Report[]
   vocabReviews          VocabReview[]
+  dailyChallenges       DailyChallenge[]
+  challengerBattles     RoastBattle[] @relation("ChallengerBattles")
+  userAchievements      UserAchievement[]
 }
 
 // ── Diary ─────────────────────────────────────────────────────────────────────
@@ -135,6 +138,25 @@ model UserWardrobeItem {
   earnedAt       DateTime     @default(now())
 
   @@unique([userId, wardrobeItemId])
+}
+
+model DailyChallenge {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type          String    // "DIARY", "LESSON", "REVIEW", "QUIZ"
+  difficulty    String    @default("MEDIUM") // "EASY" | "MEDIUM" | "HARD"
+  requirement   Int       // e.g., 1 diary, 2 lessons, 10 reviews
+  rewardStamps  Int       @default(1)
+  xpReward      Int       @default(0)
+  completed     Boolean   @default(false)
+  claimedAt     DateTime?
+  progress      Int       @default(0) // current progress toward requirement
+  createdAt     DateTime  @default(now())
+  expiresAt     DateTime  // end of day in user's timezone
+
+  @@index([userId, expiresAt])
+  @@index([userId, completed, expiresAt])
 }
 
 // ── Keigo Lesson Progress ─────────────────────────────────────────────────────
@@ -279,6 +301,42 @@ model Report {
   @@index([resolved, targetType])
 }
 
+// ── Roast Battle ────────────────────────────────────────────────────────────
+
+model RoastBattle {
+  id             String    @id @default(cuid())
+  challengerId   String
+  defenderId     String?
+  scenarioId     String
+  challengerText String?
+  defenderText   String?
+  challengerScore Int?
+  defenderScore   Int?
+  status         String    @default("PENDING")  // PENDING | ACTIVE | JUDGED | EXPIRED
+  winnerId       String?
+  expiresAt      DateTime
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  challenger     User      @relation("ChallengerBattles", fields: [challengerId], references: [id], onDelete: Cascade)
+  scenario       RoastScenario @relation(fields: [scenarioId], references: [id])
+
+  @@index([challengerId, status])
+  @@index([expiresAt])
+}
+
+model RoastScenario {
+  id          String   @id @default(cuid())
+  title       String
+  description String   // Korean scenario description
+  contextJp   String   // Japanese context text
+  difficulty  String   @default("NORMAL")  // EASY | NORMAL | HARD
+  category    String   // "sonkeigo" | "kenjougo" | "teineigo"
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  battles     RoastBattle[]
+}
+
 // ── Vocab Review (SRS) ───────────────────────────────────────────────────────
 
 model VocabReview {
@@ -289,12 +347,43 @@ model VocabReview {
   reading      String   @default("")
   meaning      String
   source       String
+  itemType     String   @default("vocab") // "vocab" | "grammar"
+  context      String?  // JSON string for grammar context
   tier         Int      @default(0)
   nextReviewAt DateTime @default(now())
   reviewCount  Int      @default(0)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  @@unique([userId, word])
+  @@unique([userId, word, itemType])
   @@index([userId, nextReviewAt])
+  @@index([userId, itemType])
+}
+
+// ── Achievements ──────────────────────────────────────────────────────────────
+
+model Achievement {
+  id            String   @id @default(cuid())
+  key           String   @unique
+  nameKo        String
+  nameEn        String
+  descriptionKo String
+  icon          String   // emoji
+  category      String   // "learning" | "streak" | "social" | "quest" | "mastery"
+  tier          String   @default("bronze")  // bronze | silver | gold
+  threshold     Int      @default(1)
+  createdAt     DateTime @default(now())
+  userAchievements UserAchievement[]
+}
+
+model UserAchievement {
+  id            String   @id @default(cuid())
+  userId        String
+  achievementId String
+  earnedAt      DateTime @default(now())
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement   Achievement @relation(fields: [achievementId], references: [id])
+
+  @@unique([userId, achievementId])
+  @@index([userId])
 }

@@ -49,8 +49,26 @@ export const AdminDiaryContentSchema = z.object({
   isActive: z.boolean(),
 });
 
+export const DailyChallengeTypeSchema = z.enum(["DIARY", "LESSON", "REVIEW", "QUIZ"]);
+
+export const QuestDifficultySchema = z.enum(["EASY", "MEDIUM", "HARD"]);
+
+export const QuestClaimSchema = z.object({
+  questId: z.string().min(1, "퀘스트 ID가 필요합니다"),
+});
+
+export const DailyChallengeInputSchema = z.object({
+  type: DailyChallengeTypeSchema,
+  requirement: z.number().int().min(1, "요구량은 1 이상이어야 합니다").max(100, "요구량은 100 이하여야 합니다"),
+  rewardStamps: z.number().int().min(0).max(10).default(1),
+});
+
 export type DiaryInput = z.infer<typeof DiaryInputSchema>;
 export type CommentInput = z.infer<typeof CommentInputSchema>;
 export type ReportInput = z.infer<typeof ReportInputSchema>;
 export type AdminKeigoContent = z.infer<typeof AdminKeigoContentSchema>;
 export type AdminDiaryContent = z.infer<typeof AdminDiaryContentSchema>;
+export type DailyChallengeType = z.infer<typeof DailyChallengeTypeSchema>;
+export type QuestDifficulty = z.infer<typeof QuestDifficultySchema>;
+export type DailyChallengeInput = z.infer<typeof DailyChallengeInputSchema>;
+export type QuestClaim = z.infer<typeof QuestClaimSchema>;

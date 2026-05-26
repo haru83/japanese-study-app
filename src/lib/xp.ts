@@ -9,6 +9,8 @@ export const XP_REWARDS = {
   LEARNING_DIARY_QUIZ_PERFECT: 5,
   STAMP_PER_DIARY: 1,
   STAMP_PER_LESSON: 1,
+  QUEST_COMPLETE: 20,
+  QUEST_CLAIMED_STAMPS: 1,
 } as const;
 
 export function calculateLevel(xp: number): number {

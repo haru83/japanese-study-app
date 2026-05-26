@@ -110,6 +110,21 @@
 - **옷장**: 스탬프로 아이템 구매, 레벨 조건 충족 시 착용 가능
 - **학습 통계**: 프로필 페이지에 완료 레슨 수·퀴즈 정답률·복습 단어 현황 표시
 
+### ⚔️ 오늘의 퀘스트 (Daily Quest)
+- 매일 3개의 난이도별 퀘스트 (쉬움/보통/어려움) 자동 생성
+- **결정론적 생성**: 같은 날짜에는 항상 같은 퀘스트 — 예측 가능한 학습 루틴
+- **실시간 진행 추적**: 퀘스트 완료 시 XP + 스탬프 보상 수령
+- 홈 대시보드에 통합된 퀘스트 패널
+
+### 📅 오늘의 단어 (Word of the Day)
+- 홈 대시보드에 매일 다른 일본어 단어 추천
+- **결정론적 선택**: 날짜 기반으로 단어 풀에서 선택
+- 히라가나 읽기 + 한국어 의미 + 출처 레슨/일기 링크
+
+### 📐 문법 SRS (Grammar SRS)
+- `VocabReview` 모델 확장: `itemType` 필드로 어휘/문법 구분
+- 문법 포인트도 SRS 간격 반복에 포함 가능 (스키마 준비 완료)
+
 ### 🛡️ 어드민 패널
 - 사용자 관리, 콘텐츠(토픽) 관리
 - **경어 레슨 관리** (`/admin/keigo`): 레슨 목록·검색·필터, 활성/비활성 토글, 신규 추가·편집·삭제
@@ -167,7 +182,7 @@
 | State | Zustand (경어 진행상황 persist) |
 | Animation | Framer Motion |
 | Validation | Zod (Server Action input validation) |
-| Testing | Vitest (177 tests) |
+| Testing | Vitest (237 tests) |
 | AI Tutor | Gemini 3.1 Flash Lite Preview (Google AI Studio OpenAI-compat API) |
 | Font | Zen Maru Gothic + Noto Sans KR |
 
@@ -279,10 +294,12 @@ src/
 │   ├── admin/               # 어드민 전용 컴포넌트 (JsonTextarea — 실시간 JSON 유효성 검사)
 │   ├── mascot/              # ShibaAvatar (오버레이 레이어 시스템 + 레벨업/착용 애니메이션)
 │   ├── wardrobe/            # PurchaseButton, EquipButton (클라이언트)
+│   ├── quest/               # DailyQuestCard, DailyQuestPanel
+│   ├── wotd/                # WordOfTheDayCard
 │   ├── guest/               # GuestSignupBanner, GuestUpsellModal
 │   ├── ui/                  # 공유 UI (Button, Card, ProgressBar)
 │   └── layout/              # BottomNav, AdminBottomNav
-├── actions/                 # 서버 액션 (diary, diaryTutor, keigo, learningDiary, user, wardrobe, community, learning, admin-content, review, stats)
+├── actions/                 # 서버 액션 (diary, diaryTutor, keigo, learningDiary, user, wardrobe, community, learning, admin-content, review, stats, quest)
 ├── store/                   # Zustand 스토어
 ├── lib/                     # auth, db, xp, streak, wardrobe, admin-auth, admin-paths, rubyParser, japaneseInput, lessonUtils, jsonUtils, validation 유틸리티
 └── types/                   # TypeScript 타입 정의 (DIARY_CATEGORIES 상수 포함)
@@ -300,7 +317,8 @@ src/
 - `LearningDiaryEntry` — 학습 일기 콘텐츠 (100개, 어드민 CRUD 가능) · `@@index([isActive, sortOrder])`
 - `KeigoLessonProgress` — 경어 레슨 완료 기록 · `@@index([userId, completed])`
 - `LearningDiaryProgress` — 학습 일기 완료 기록 (퀴즈 점수, XP)
-- `VocabReview` — SRS 복습 큐 (tier 0-4, nextReviewAt) · `@@unique([userId, word])` · `@@index([userId, nextReviewAt])`
+- `VocabReview` — SRS 복습 큐 (tier 0-4, nextReviewAt, itemType, context) · `@@unique([userId, word, itemType])` · `@@index([userId, nextReviewAt])` · `@@index([userId, itemType])`
+- `DailyChallenge` — 일일 퀘스트 (difficulty, xpReward, claimedAt) · `@@index([userId, expiresAt])`
 - `WardrobeItem` — 옷장 아이템 (스탬프 비용, 필요 레벨)
 - `UserWardrobeItem` — 사용자 보유 아이템
 - `Topic` — 일기 토픽 (어드민 관리)
