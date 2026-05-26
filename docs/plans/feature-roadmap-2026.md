@@ -33,6 +33,21 @@ The plan agent synthesized the **surviving ideas** into a structured roadmap.
 
 ---
 
+## Current Status
+
+| Wave | Feature | Status | Commit |
+|------|---------|--------|--------|
+| **Wave 1** | Daily Quest System | ✅ Complete | 1288daa |
+| **Wave 1** | Word of the Day | ✅ Complete | 1288daa |
+| **Wave 1** | Grammar SRS Schema | ✅ Schema Complete | 1288daa |
+| **Wave 2** | Achievement/Badge System | ⏳ Ready to start | — |
+| **Wave 2** | Keigo Roast Battle | ⏳ Ready to start | — |
+| **Wave 3** | Leagues | ⏳ Blocked (needs Wave 2) | — |
+
+**Next session:** Resume from Wave 2 (Achievement Badges or Roast Battle).
+
+---
+
 ## Surviving Ideas by Phase
 
 | Phase | Features | Why They Survived Cross-Attack |
@@ -47,12 +62,12 @@ The plan agent synthesized the **surviving ideas** into a structured roadmap.
 ## Task Dependency Graph
 
 ```
-Wave 1 (Start immediately — no dependencies):
-├── 1A: Daily Quest System
-├── 1C: Word of the Day
-└── 1D: Grammar SRS Extension
+Wave 1 (COMPLETED ✅):
+├── 1A: Daily Quest System ✅
+├── 1C: Word of the Day ✅
+└── 1D: Grammar SRS Schema ✅
 
-Wave 2 (After Wave 1 completes):
+Wave 2 (Ready to start):
 ├── 1B: Achievement/Badge System (depends on 1A for quest-triggered achievements)
 └── 2A: Keigo Roast Battle (independent, can start in parallel)
 
@@ -71,7 +86,9 @@ Critical Path: 1A → 1B → 2B → 3A/3B
 
 ## Phase 1 — Ship in 2-3 Sprints
 
-### 1A: Daily Challenge/Quest System
+### 1A: Daily Challenge/Quest System — ✅ COMPLETED
+
+**Status:** `COMMITTED` (1288daa) | **Tests:** 30 passing | **TS:** Clean
 
 **What:** 3 daily quests per day (easy/medium/hard), deterministic selection from existing content pools, with stamp + XP rewards.
 **Effort:** Medium | **Risk:** Low
@@ -99,7 +116,9 @@ Critical Path: 1A → 1B → 2B → 3A/3B
 
 ---
 
-### 1C: Word of the Day
+### 1C: Word of the Day — ✅ COMPLETED
+
+**Status:** `COMMITTED` (1288daa) | **Tests:** 11 passing | **TS:** Clean
 
 **What:** Deterministic "word of the day" on home dashboard, drawn from existing vocab pool. No schema changes.
 **Effort:** Small | **Risk:** Low
@@ -120,9 +139,13 @@ Critical Path: 1A → 1B → 2B → 3A/3B
 
 ---
 
-### 1D: Grammar SRS Extension
+### 1D: Grammar SRS Extension — ✅ SCHEMA COMPLETED
+
+**Status:** `COMMITTED` (1288daa) | **Tests:** 5 passing | **TS:** Clean
 
 **What:** Extend `VocabReview` to support grammar points alongside vocabulary. Separate review tab.
+
+**Note:** Schema migration complete (itemType, context, composite key). UI + grammar review tab pending.
 **Effort:** Medium | **Risk:** Low
 
 **Schema:**
