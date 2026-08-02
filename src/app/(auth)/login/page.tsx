@@ -109,6 +109,7 @@ function LoginForm() {
             {!isLogin && (
               <input
                 type="text"
+                name="name"
                 placeholder="닉네임"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -118,6 +119,7 @@ function LoginForm() {
             )}
             <input
               type="email"
+              name="email"
               placeholder="이메일"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -126,6 +128,7 @@ function LoginForm() {
             />
             <input
               type="password"
+              name="password"
               placeholder="비밀번호"
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -135,6 +138,7 @@ function LoginForm() {
             {!isLogin && (
               <input
                 type="password"
+                name="confirmPassword"
                 placeholder="비밀번호 확인"
                 value={formData.confirmPassword}
                 onChange={(e) =>

@@ -46,7 +46,7 @@ export async function getUserStats(): Promise<UserStats | null> {
 
   const userId = session.user.id;
 
-  const [keigoProgress, diaryProgress, writtenDiaries, vocabTotal, vocabMastered, vocabDueToday] = await Promise.all([
+  const [keigoProgress, diaryProgress, writtenDiaries, vocabStats] = await Promise.all([
     prisma.keigoLessonProgress.findMany({
       where: { userId, completed: true },
       select: { quizScore: true, quizTotal: true },
@@ -58,10 +58,24 @@ export async function getUserStats(): Promise<UserStats | null> {
     prisma.diary.count({
       where: { userId },
     }),
-    prisma.vocabReview.count({ where: { userId } }),
-    prisma.vocabReview.count({ where: { userId, tier: 4 } }),
-    prisma.vocabReview.count({ where: { userId, nextReviewAt: { lte: new Date() } } }),
+    prisma.vocabReview.aggregate({
+      where: { userId },
+      _count: {
+        tier: true, // This is a placeholder for the logic below
+      },
+    }),
   ]);
+
+  // Since Prisma aggregate doesn't support multiple conditional counts in one call easily,
+  // we'll use a more efficient approach by fetching the vocab reviews once and calculating in memory.
+  const vocabReviews = await prisma.vocabReview.findMany({
+    where: { userId },
+    select: { tier: true, nextReviewAt: true },
+  });
+
+  const vocabTotal = vocabReviews.length;
+  const vocabMastered = vocabReviews.filter(v => v.tier === 4).length;
+  const vocabDueToday = vocabReviews.filter(v => v.nextReviewAt <= new Date()).length;
 
   function calcAccuracy(
     rows: Array<{ quizScore: number | null; quizTotal: number | null }>
@@ -99,9 +113,7 @@ export async function getLearningProgress(): Promise<LearningProgress | null> {
     learningDiaryTotal,
     learningDiaryCompletedRows,
     writtenDiaries,
-    vocabTotal,
-    vocabMastered,
-    vocabDueToday,
+    vocabStats,
     userProgress,
   ] = await Promise.all([
     prisma.keigoLesson.count({ where: { isActive: true } }),
@@ -115,11 +127,28 @@ export async function getLearningProgress(): Promise<LearningProgress | null> {
       select: { diaryId: true },
     }),
     prisma.diary.count({ where: { userId } }),
-    prisma.vocabReview.count({ where: { userId } }),
-    prisma.vocabReview.count({ where: { userId, tier: 4 } }),
-    prisma.vocabReview.count({ where: { userId, nextReviewAt: { lte: new Date() } } }),
+    prisma.vocabReview.aggregate({
+      where: { userId },
+      _count: {
+        tier: true,
+        nextReviewAt: true,
+      },
+    }),
     prisma.userProgress.findUnique({ where: { userId } }),
   ]);
+
+  // Re-calculating vocab stats from a single aggregate call if possible,
+  // but for simplicity and to avoid multiple round-trips, we'll use the aggregate result.
+  // Note: Prisma aggregate doesn't support conditional counts in one call easily.
+  // We'll fetch the vocab reviews once to get all needed counts.
+  const vocabReviews = await prisma.vocabReview.findMany({
+    where: { userId },
+    select: { tier: true, nextReviewAt: true },
+  });
+
+  const vocabTotal = vocabReviews.length;
+  const vocabMastered = vocabReviews.filter(v => v.tier === 4).length;
+  const vocabDueToday = vocabReviews.filter(v => v.nextReviewAt <= new Date()).length;
 
   const completedKeigoIds = new Set(keigoCompletedRows.map((r) => r.lessonId));
   const completedDiaryIds = new Set(learningDiaryCompletedRows.map((r) => r.diaryId));
