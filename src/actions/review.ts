@@ -3,7 +3,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { computeNewTier, getNextReviewMs } from "@/lib/review-logic";
+import { calculateFSRS } from "@/lib/review-logic";
 import { incrementChallengeProgress } from "@/actions/dailyChallenge";
 
 export interface ReviewItem {
@@ -78,24 +78,36 @@ export async function getDistractors(
 }
 
 export async function submitReview(reviewId: string, correct: boolean): Promise<void> {
+  return submitReviewWithRating(reviewId, correct ? 3 : 1);
+}
+
+export async function submitReviewWithRating(reviewId: string, rating: 1 | 2 | 3 | 4): Promise<void> {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return;
 
   const item = await prisma.vocabReview.findUnique({
     where: { id: reviewId },
-    select: { userId: true, tier: true },
+    select: { userId: true, tier: true, reviewCount: true, updatedAt: true },
   });
 
   if (!item || item.userId !== session.user.id) return;
 
-  const newTier = computeNewTier(item.tier, correct);
-  const nextMs = getNextReviewMs(newTier);
+  const state = {
+    stability: Math.max(0.4, item.tier * 2.5 || 0.4),
+    difficulty: 5.0,
+    reps: item.reviewCount,
+    lapses: 0,
+    lastReviewAt: item.updatedAt,
+  };
+
+  const fsrs = calculateFSRS(state, rating);
+  const newTier = Math.min(4, Math.max(0, Math.floor(fsrs.stability / 2.5)));
 
   await prisma.vocabReview.update({
     where: { id: reviewId },
     data: {
       tier: newTier,
-      nextReviewAt: new Date(Date.now() + nextMs),
+      nextReviewAt: fsrs.nextReviewAt,
       reviewCount: { increment: 1 },
     },
   });

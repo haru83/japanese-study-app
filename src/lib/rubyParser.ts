@@ -6,6 +6,38 @@ function isKanji(char: string): boolean {
   return KANJI_RE.test(char);
 }
 
+export interface MonoRubySegment extends RubySegment {
+  pitch?: "high" | "low";
+}
+
+/**
+ * Parses Mono-Ruby bracket syntax string:
+ * Example: "[漢|かん|high][字|じ|low]を[習|なら|high]う"
+ */
+export function parseMonoRubySegments(input: string): MonoRubySegment[] {
+  const segments: MonoRubySegment[] = [];
+  const regex = /\[([^|]+)\|([^|\n]+)(?:\|(high|low))?\]|([^[\n]+)/g;
+
+  let match: RegExpExecArray | null;
+  while ((match = regex.exec(input)) !== null) {
+    if (match[1]) {
+      // Bracket segment: [text|ruby|pitch]
+      segments.push({
+        text: match[1],
+        ruby: match[2],
+        pitch: (match[3] as "high" | "low") || "high",
+      });
+    } else if (match[4]) {
+      // Plain text segment
+      segments.push({
+        text: match[4],
+      });
+    }
+  }
+
+  return segments;
+}
+
 export function buildRubySegments(text: string, pronunciation: string): RubySegment[] {
   const raw: RubySegment[] = [];
   let ti = 0;
@@ -48,8 +80,7 @@ export function buildRubySegments(text: string, pronunciation: string): RubySegm
         raw.push({ text: ch });
         pi++;
       } else {
-        // Mismatch (e.g., Arabic numeral read differently in pronunciation)
-        // Don't advance pi — let the next kanji block absorb the extra reading
+        // Mismatch
         raw.push({ text: ch });
       }
       ti++;

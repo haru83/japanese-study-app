@@ -71,6 +71,29 @@ export default async function ShopPage() {
         </div>
       </section>
 
+      {/* Special Items */}
+      <section className="px-5 mb-6">
+        <h2 className="text-sm font-black text-type-black mb-3 flex items-center gap-1.5">
+          <span className="material-symbols-outlined text-grape-punch text-base">local_fire_department</span>
+          특별 학습 보조 아이템
+        </h2>
+        <div className="bg-paper-white rounded-[15px] border-2 border-black shadow-[4px_4px_0px_0px_#000] p-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-3xl">🔥</span>
+            <div>
+              <p className="font-black text-type-black text-sm">연속 학습 보호권 (Streak Freeze)</p>
+              <p className="text-xs text-type-black/60 font-bold">하루 출석을 놓쳐도 스트릭을 100% 보존해요</p>
+            </div>
+          </div>
+          <div className="text-right shrink-0">
+            <span className="bg-shiba-orange/30 text-type-black text-xs font-black px-3 py-1 rounded-full border border-black block mb-1">
+              ⭐ 3 스탬프
+            </span>
+            <span className="text-[10px] font-bold text-matcha-green font-black">보유 중</span>
+          </div>
+        </div>
+      </section>
+
       {/* Shop items */}
       <section className="px-5">
         <h2 className="text-sm font-black text-type-black mb-3 flex items-center gap-1.5">

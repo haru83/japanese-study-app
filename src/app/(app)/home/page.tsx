@@ -13,6 +13,8 @@ import { GuestSignupBanner } from "@/components/guest/GuestSignupBanner";
 import { ShibaAvatar } from "@/components/mascot/ShibaAvatar";
 import { DailyQuestPanel } from "@/components/quest/DailyQuestPanel";
 import { WordOfTheDayCard } from "@/components/wotd/WordOfTheDayCard";
+import { getRecommendedAction } from "@/lib/recommendAction";
+import { GuidedPathHero } from "@/components/home/GuidedPathHero";
 
 const LEVEL_TITLES = [
   "초보 학습자",
@@ -198,6 +200,14 @@ export default async function HomePage() {
   const streakDays = learning?.streakDays ?? 0;
   const name = profile?.name ?? session.user.name ?? "학습자";
 
+  const recommendedAction = getRecommendedAction({
+    vocabDueCount: learning?.vocabDueToday ?? 0,
+    keigoNextId: learning?.keigoNextId,
+    keigoNextTitle: learning?.keigoNextTitle,
+    learningDiaryNextId: learning?.learningDiaryNextId,
+    learningDiaryNextTitle: learning?.learningDiaryNextTitle,
+  });
+
   return (
     <div className="min-h-screen bg-sakura-blush">
       {/* Header — 인사 + XP + 스트릭 */}
@@ -238,6 +248,11 @@ export default async function HomePage() {
       </div>
 
       <div className="px-5 py-5 flex flex-col gap-[24px]">
+        {/* ── 오늘의 맞춤 학습 (Single Guided Path) ── */}
+        <section>
+          <GuidedPathHero action={recommendedAction} />
+        </section>
+
         {/* ── 오늘의 퀘스트 ── */}
         {quests.length > 0 && (
           <section>

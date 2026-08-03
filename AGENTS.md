@@ -48,7 +48,9 @@ japanese-study-app/
 | `streak.ts` | Logic | `src/lib/` | Timezone-aware streak calculation |
 | `wardrobe.ts` | Logic | `src/lib/` | Item equip/unequip, z-index layers |
 | `japaneseInput.ts` | Utility | `src/lib/` | IME input filter (hiragana/katakana only) |
-| `rubyParser.ts` | Utility | `src/lib/` | Furigana ruby text parser |
+| `rubyParser.ts` | Utility | `src/lib/` | Furigana ruby text parser & Mono-Ruby parser |
+| `fsrs.ts` | Logic | `src/lib/` | FSRS-4.5 machine learning spaced repetition engine |
+| `recommendAction.ts` | Logic | `src/lib/` | Hick's Law single guided action recommendation engine |
 | `useProgressStore` | Store | `src/store/` | Zustand (persisted) — keigo progress |
 | `ShibaAvatar` | Component | `src/components/mascot/` | Overlay layer system + level-up animation |
 

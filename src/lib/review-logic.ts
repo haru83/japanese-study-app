@@ -1,4 +1,9 @@
 // src/lib/review-logic.ts
+import { calculateFSRS, FSRSRating, FSRSItemState, FSRSCalculationResult } from "./fsrs";
+
+export { calculateFSRS };
+export type { FSRSRating, FSRSItemState, FSRSCalculationResult };
+
 const TIER_INTERVALS_MS = [
   1 * 24 * 60 * 60 * 1000,
   3 * 24 * 60 * 60 * 1000,

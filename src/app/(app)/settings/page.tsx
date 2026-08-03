@@ -9,12 +9,14 @@ export default function SettingsPage() {
   const [darkMode, setDarkMode] = useState(false);
   const [notifications, setNotifications] = useState(true);
   const [showFurigana, setShowFurigana] = useState(true);
+  const [showPitchAccent, setShowPitchAccent] = useState(true);
 
   useEffect(() => {
     // Load initial preferences from localStorage
     const savedTheme = localStorage.getItem("theme");
     const savedNoti = localStorage.getItem("notificationsEnabled");
     const savedFuri = localStorage.getItem("showFurigana");
+    const savedPitch = localStorage.getItem("showPitchAccent");
 
     if (savedTheme === "dark" || document.documentElement.classList.contains("dark")) {
       setDarkMode(true);
@@ -24,6 +26,9 @@ export default function SettingsPage() {
     }
     if (savedFuri !== null) {
       setShowFurigana(savedFuri === "true");
+    }
+    if (savedPitch !== null) {
+      setShowPitchAccent(savedPitch === "true");
     }
   }, []);
 
@@ -49,6 +54,12 @@ export default function SettingsPage() {
     const next = !showFurigana;
     setShowFurigana(next);
     localStorage.setItem("showFurigana", String(next));
+  };
+
+  const togglePitchAccent = () => {
+    const next = !showPitchAccent;
+    setShowPitchAccent(next);
+    localStorage.setItem("showPitchAccent", String(next));
   };
 
   return (
@@ -139,7 +150,7 @@ export default function SettingsPage() {
           </div>
 
           {/* Furigana Display Toggle */}
-          <div className="flex items-center justify-between px-5 py-4">
+          <div className="flex items-center justify-between px-5 py-4 border-b-2 border-black">
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined text-type-black text-2xl" aria-hidden="true">
                 translate
@@ -162,6 +173,35 @@ export default function SettingsPage() {
               <div
                 className={`w-4 h-4 rounded-full bg-paper-white border border-black shadow-sm transition-transform ${
                   showFurigana ? "translate-x-6" : "translate-x-0"
+                }`}
+              />
+            </button>
+          </div>
+
+          {/* Pitch Accent Display Toggle */}
+          <div className="flex items-center justify-between px-5 py-4">
+            <div className="flex items-center gap-3">
+              <span className="material-symbols-outlined text-type-black text-2xl" aria-hidden="true">
+                graphic_eq
+              </span>
+              <div>
+                <p className="font-black text-type-black text-sm">피치 액센트(억양) 표시</p>
+                <p className="text-xs text-type-black/60 font-bold">일본어 고음/저음 성조 상단선 시각화</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={showPitchAccent}
+              aria-label="피치 액센트 표시 토글"
+              onClick={togglePitchAccent}
+              className={`w-12 h-6 rounded-full border-2 border-black p-0.5 transition-colors relative ${
+                showPitchAccent ? "bg-grape-punch" : "bg-canvas-almond"
+              }`}
+            >
+              <div
+                className={`w-4 h-4 rounded-full bg-paper-white border border-black shadow-sm transition-transform ${
+                  showPitchAccent ? "translate-x-6" : "translate-x-0"
                 }`}
               />
             </button>
