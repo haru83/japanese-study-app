@@ -1,6 +1,6 @@
-# 🌸 Design.md: Sakura Shiba (Sticker Bomb Edition)
+# 🐶 Design.md: WangWang Japanese (Sticker Bomb Edition)
 
-이 문서는 'Fictional — Whimsical Sticker Bomb' 스타일 가이드를 기반으로 발전시킨 사쿠라 시바(Sakura Shiba) 일본어 학습 앱의 디자인 시스템입니다. 장난기 가득한 그림책의 에너지를 담아, 정형화된 UI보다는 화면 위에 스티커를 무심하게 툭툭 던져 놓은 듯한 생동감을 지향합니다.
+이 문서는 'Fictional — Whimsical Sticker Bomb' 스타일 가이드를 기반으로 발전시킨 왕왕 일본어(WangWang Japanese) 학습 앱의 디자인 시스템입니다. 장난기 가득한 그림책의 에너지를 담아, 정형화된 UI보다는 화면 위에 스티커를 무심하게 툭툭 던져 놓은 듯한 생동감을 지향합니다.
 
 ## 1. 디자인 철학 (Visual Philosophy)
 

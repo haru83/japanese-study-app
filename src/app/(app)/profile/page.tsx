@@ -8,6 +8,7 @@ import { ProgressBar } from "@/components/ui/ProgressBar";
 import { ShibaAvatar } from "@/components/mascot/ShibaAvatar";
 import NicknameEditor from "./NicknameEditor";
 import { LogoutButton } from "./LogoutButton";
+import { LearningHeatmap } from "@/components/profile/LearningHeatmap";
 
 const LEVEL_TITLES = [
   "초보 학습자",
@@ -127,6 +128,49 @@ export default async function ProfilePage() {
           </div>
         </section>
 
+        {/* ── 월별 학습 히트맵 ── */}
+        <section className="mb-6">
+          <h2 className="font-black text-type-black text-sm mb-3">학습 캘린더 📅</h2>
+          <LearningHeatmap
+            lastStudyAt={progress?.lastStudyAt}
+            totalEntries={profile?.diaries?.length ?? 0}
+          />
+        </section>
+
+        {/* ── 도전 과제 & 업적 ── */}
+        <section className="mb-6">
+          <h2 className="font-black text-type-black text-sm mb-3">도전 과제 & 업적 🏆</h2>
+          <div className="bg-paper-white rounded-[15px] border-2 border-black shadow-[4px_4px_0px_0px_#000] p-4">
+            <div className="grid grid-cols-3 gap-2.5">
+              {[
+                { icon: "🐶", title: "첫 걸음", unlocked: true },
+                { icon: "🗣️", title: "경어 입문", unlocked: (profile?.keigoProgress?.length ?? 0) > 0 },
+                { icon: "📝", title: "일기 작가", unlocked: (profile?.diaries?.length ?? 0) > 0 },
+                { icon: "🔥", title: "연속 학습자", unlocked: (progress?.streakDays ?? 0) >= 3 },
+                { icon: "👗", title: "패셔니스타", unlocked: equippedItems.length > 0 },
+                { icon: "⚡", title: "복습 마스터", unlocked: level >= 2 },
+              ].map((ach) => (
+                <div
+                  key={ach.title}
+                  className={`flex flex-col items-center justify-center p-3 rounded-xl border-2 border-black text-center transition-all ${
+                    ach.unlocked
+                      ? "bg-sakura-pink/40 shadow-[2px_2px_0px_0px_#000]"
+                      : "bg-gray-100 opacity-40 grayscale"
+                  }`}
+                >
+                  <span className="text-2xl mb-1">{ach.icon}</span>
+                  <span className="text-[11px] font-black text-type-black truncate max-w-full">
+                    {ach.title}
+                  </span>
+                  <span className="text-[9px] font-bold text-type-black/60 mt-0.5">
+                    {ach.unlocked ? "달성!" : "미달성"}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* ── 학습 자료 ── */}
         <section>
           <h2 className="font-black text-type-black text-sm mb-3">학습 자료 📚</h2>
@@ -156,6 +200,7 @@ export default async function ProfilePage() {
           <h2 className="font-black text-type-black text-sm mb-3">설정 🔧</h2>
           <div className="bg-paper-white rounded-[15px] border-2 border-black shadow-[4px_4px_0px_0px_#000] overflow-hidden">
       {[
+        { icon: "⚙️", label: "앱 설정", href: "/settings", desc: "알림, 다크모드, 발음 설정" },
         ...(isAdmin ? [{ icon: "🛡️", label: "관리자 페이지", href: "/admin", desc: "콘텐츠 관리" }] : []),
       ].map((item, i, arr) => (
         <Link

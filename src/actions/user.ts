@@ -13,6 +13,7 @@ export async function getUserProfile() {
     include: {
       progress: true,
       keigoProgress: { where: { completed: true } },
+      diaries: { select: { id: true } },
     },
   });
 }

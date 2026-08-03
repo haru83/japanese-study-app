@@ -46,7 +46,7 @@ export default async function ShopPage() {
             <div>
               <h1 className="text-lg font-black text-type-black flex items-center gap-2">
                 <span className="material-symbols-outlined text-shiba-orange" style={{ fontVariationSettings: "'FILL' 1" }}>storefront</span>
-                시바 상점
+                왕왕 상점
               </h1>
               <p className="text-xs font-bold text-type-black/60">스탬프로 아이템을 구매해요!</p>
             </div>
@@ -63,7 +63,7 @@ export default async function ShopPage() {
         <div className="bg-canvas-almond rounded-[15px] border-2 border-black shadow-[4px_4px_0px_0px_#000] p-6 flex flex-col items-center">
           <ShibaAvatar level={level} size={80} sticker wobble="wobbly-2" />
           <p className="mt-3 text-sm font-black text-type-black">
-            Lv.{level} 시바견
+            Lv.{level} 왕왕이
           </p>
           <p className="text-xs font-bold text-type-black/60">
             구매한 아이템은 옷장에서 착용할 수 있어요

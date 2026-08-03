@@ -1,9 +1,24 @@
 import type { Metadata } from "next";
+import { Zen_Maru_Gothic, Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "@/components/providers/session-provider";
 
+const zenMaru = Zen_Maru_Gothic({
+  weight: ["500", "700", "900"],
+  subsets: ["latin"],
+  variable: "--font-zen-maru",
+  display: "swap",
+});
+
+const notoSansKr = Noto_Sans_KR({
+  weight: ["400", "500", "700", "900"],
+  subsets: ["latin"],
+  variable: "--font-noto-sans-kr",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "시바 일본어",
+  title: "왕왕 일본어",
   description: "일기 쓰기와 경어 학습을 한 번에",
 };
 
@@ -13,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html lang="ko" className={`${zenMaru.variable} ${notoSansKr.variable}`}>
       <head>
         <link
           rel="stylesheet"

@@ -74,7 +74,7 @@ japanese-study-app/
 - ❌ **Do not mutate `streakDays` twice in one day** — idempotency enforced in `streak.ts`
 
 ## UNIQUE STYLES
-- **Sakura Shiba Sticker Bomb** design system:
+- **WangWang Japanese Sticker Bomb** design system:
   - Wobbly Card: `border-2 border-black shadow-[4px_4px_0px_0px_#000] rounded-[15px] .wobbly-*`
   - Bubble Card: `rounded-[144px] shadow-[0px_0px_0px_2px_#ffd80c]`
   - Sticker: `.sticker` class (white border + drop-shadow)

@@ -13,7 +13,7 @@ export default async function AppLayout({
 
   return (
     <div className="flex flex-col min-h-screen">
-      <main className="flex-1 pb-[85px]">{children}</main>
+      <main className="flex-1 pb-[calc(85px+env(safe-area-inset-bottom,0px))]">{children}</main>
       <BottomNav unreadCount={unreadCount} />
     </div>
   );

@@ -26,12 +26,14 @@ export function BottomNav({ unreadCount = 0 }: { unreadCount?: number }) {
           <Link
             key={item.href}
             href={item.href}
+            aria-label={item.label}
             className={`flex flex-col items-center justify-center w-1/5 shrink-0 transition-transform ${
               isActive ? "scale-105" : "scale-100 opacity-60"
             }`}
           >
             <div className="relative flex items-center justify-center h-7 w-7 overflow-hidden">
               <span
+                aria-hidden="true"
                 className="material-symbols-outlined text-2xl text-black select-none leading-none block"
                 style={{
                   fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0",

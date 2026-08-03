@@ -22,8 +22,8 @@
   --color-text-sub: #5a4a4a;
 
   /* Fonts */
-  --font-display: "Zen Maru Gothic", "Noto Sans KR", sans-serif;
-  --font-body: "Zen Maru Gothic", "Noto Sans KR", sans-serif;
+  --font-display: var(--font-zen-maru), "Zen Maru Gothic", var(--font-noto-sans-kr), "Noto Sans KR", sans-serif;
+  --font-body: var(--font-zen-maru), "Zen Maru Gothic", var(--font-noto-sans-kr), "Noto Sans KR", sans-serif;
   --font-japanese: "Noto Sans JP", "Zen Maru Gothic", sans-serif;
 }
 

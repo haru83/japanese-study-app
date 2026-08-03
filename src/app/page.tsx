@@ -12,7 +12,7 @@ export default function SplashPage() {
             Japanese Learning
           </p>
           <h1 className="text-[26px] font-black text-type-black leading-none tracking-tight">
-            시바 일본어
+            왕왕 일본어
           </h1>
         </div>
         <ShibaAvatar level={1} size={48} sticker wobble="wobbly-4" />

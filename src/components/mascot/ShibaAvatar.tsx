@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 /**
  * 레벨별 시바견 마스코트 기본 이미지 (아이템 미착용)
  */
-const BASE_IMAGE = "/mascot/shiba-base.png";
+const BASE_IMAGE = "/mascot/shiba-base.webp";
 
 /**
  * 아이템별 오버레이 이미지 매핑
@@ -17,27 +17,27 @@ const BASE_IMAGE = "/mascot/shiba-base.png";
  */
 const ITEM_OVERLAYS: Record<string, string> = {
  // ─── 기존 아이템 (5개) ───
- "hat-cap": "/mascot/overlay-hat-cap.png",
- "scarf": "/mascot/overlay-scarf.png",
- "hat-santa": "/mascot/overlay-hat-santa.png",
- "glasses": "/mascot/overlay-glasses.png",
- "crown": "/mascot/overlay-crown.png",
+ "hat-cap": "/mascot/overlay-hat-cap.webp",
+ "scarf": "/mascot/overlay-scarf.webp",
+ "hat-santa": "/mascot/overlay-hat-santa.webp",
+ "glasses": "/mascot/overlay-glasses.webp",
+ "crown": "/mascot/overlay-crown.webp",
  // ─── 신규 아이템 (15개) ───
- "hachimaki": "/mascot/overlay-hachimaki.png",
- "horns": "/mascot/overlay-horns.png",
- "halo": "/mascot/overlay-halo.png",
- "bow-tie": "/mascot/overlay-bow-tie.png",
- "necklace-pearl": "/mascot/overlay-necklace-pearl.png",
- "mask-fox": "/mascot/overlay-mask-fox.png",
- "mask-oni": "/mascot/overlay-mask-oni.png",
- "earring-gold": "/mascot/overlay-earring-gold.png",
- "flower-crown": "/mascot/overlay-flower-crown.png",
- "muffler": "/mascot/overlay-muffler.png",
- "hakama": "/mascot/overlay-hakama.png",
- "armor-samurai": "/mascot/overlay-armor-samurai.png",
- "cape": "/mascot/overlay-cape.png",
- "bandana": "/mascot/overlay-bandana.png",
- "stud-ear": "/mascot/overlay-stud-ear.png",
+ "hachimaki": "/mascot/overlay-hachimaki.webp",
+ "horns": "/mascot/overlay-horns.webp",
+ "halo": "/mascot/overlay-halo.webp",
+ "bow-tie": "/mascot/overlay-bow-tie.webp",
+ "necklace-pearl": "/mascot/overlay-necklace-pearl.webp",
+ "mask-fox": "/mascot/overlay-mask-fox.webp",
+ "mask-oni": "/mascot/overlay-mask-oni.webp",
+ "earring-gold": "/mascot/overlay-earring-gold.webp",
+ "flower-crown": "/mascot/overlay-flower-crown.webp",
+ "muffler": "/mascot/overlay-muffler.webp",
+ "hakama": "/mascot/overlay-hakama.webp",
+ "armor-samurai": "/mascot/overlay-armor-samurai.webp",
+ "cape": "/mascot/overlay-cape.webp",
+ "bandana": "/mascot/overlay-bandana.webp",
+ "stud-ear": "/mascot/overlay-stud-ear.webp",
 };
 
 /**
@@ -57,12 +57,12 @@ const ITEM_LEVEL_FALLBACKS: Record<string, number> = {
  * 옷장 시스템에서는 아이템 착용 시에만 사용됨
  */
 const LEVEL_IMAGES: Record<number, string> = {
-  1: "/mascot/shiba-base.png",
-  2: "/mascot/shiba-lv2-hachimaki.png",
-  3: "/mascot/shiba-lv3-scarf.png",
-  4: "/mascot/shiba-lv4-kimono.png",
-  5: "/mascot/shiba-lv5-glasses.png",
-  6: "/mascot/shiba-lv6-master.png",
+  1: "/mascot/shiba-base.webp",
+  2: "/mascot/shiba-lv2-hachimaki.webp",
+  3: "/mascot/shiba-lv3-scarf.webp",
+  4: "/mascot/shiba-lv4-kimono.webp",
+  5: "/mascot/shiba-lv5-glasses.webp",
+  6: "/mascot/shiba-lv6-master.webp",
 };
 
 /**
@@ -388,7 +388,7 @@ export function ShibaAvatar({
             {/* 기본 시바견 이미지 */}
             <Image
               src={src}
-              alt={`시바견 마스코트 Lv.${level}`}
+              alt={`왕왕이 마스코트 Lv.${level}`}
               width={size}
               height={size}
               className={clsx("object-contain", circular && "object-cover rounded-full")}

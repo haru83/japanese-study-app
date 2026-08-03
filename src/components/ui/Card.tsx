@@ -1,3 +1,6 @@
+"use client";
+
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface CardProps {
@@ -18,19 +21,22 @@ const WOBBLE_CLASS: Record<number, string> = {
 
 export function Card({ children, className, onClick, variant = "flat", wobble }: CardProps) {
   return (
-    <div
+    <motion.div
       onClick={onClick}
+      whileHover={onClick ? { scale: 1.02, y: -2 } : { scale: 1.005 }}
+      whileTap={onClick ? { scale: 0.98 } : undefined}
+      transition={{ type: "spring", stiffness: 350, damping: 20 }}
       className={cn(
         "bg-paper-white border-2 border-black",
         variant === "bubble" && "rounded-[144px] shadow-[0px_0px_0px_2px_#ffd80c]",
         variant === "wobbly" && "rounded-[15px] shadow-[4px_4px_0px_0px_#000]",
         variant === "flat" && "rounded-2xl shadow-[4px_4px_0px_0px_#000]",
         wobble && WOBBLE_CLASS[wobble],
-        onClick && "cursor-pointer hover:scale-[1.02] transition-transform",
+        onClick && "cursor-pointer",
         className
       )}
     >
       {children}
-    </div>
+    </motion.div>
   );
 }

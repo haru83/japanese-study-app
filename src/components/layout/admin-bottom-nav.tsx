@@ -15,26 +15,39 @@ export function AdminBottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white dark:bg-surface-dark border-t border-gray-100 dark:border-border-dark flex justify-around items-end pb-[env(safe-area-inset-bottom)] pt-3 h-[85px] z-50 rounded-t-3xl shadow-[0_-5px_20px_-5px_rgba(0,0,0,0.05)]">
+    <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-paper-white border-t-4 border-black flex justify-around items-center pb-[calc(env(safe-area-inset-bottom)+8px)] pt-2 h-[72px] z-50">
       {ADMIN_NAV_ITEMS.map((item) => {
         const isActive = pathname.startsWith(item.href);
         return (
           <Link
             key={item.href}
             href={item.href}
-            className={`flex flex-col items-center gap-1 w-1/5 pb-2 group ${
-              isActive ? "text-primary" : "text-gray-400 hover:text-gray-500"
+            aria-label={item.label}
+            className={`flex flex-col items-center justify-center w-1/5 shrink-0 transition-transform ${
+              isActive ? "scale-105" : "scale-100 opacity-60"
             }`}
           >
+            <div className="relative flex items-center justify-center h-7 w-7 overflow-hidden">
+              <span
+                aria-hidden="true"
+                className="material-symbols-outlined text-2xl text-black select-none leading-none block"
+                style={{
+                  fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0",
+                }}
+              >
+                {item.icon}
+              </span>
+            </div>
             <span
-              className="material-symbols-outlined text-2xl"
-              style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}
+              className={`text-[11px] font-bold text-black leading-tight mt-0.5 truncate max-w-full ${
+                isActive ? "" : "opacity-70"
+              }`}
             >
-              {item.icon}
-            </span>
-            <span className={`text-xs font-medium ${isActive ? "font-bold" : ""}`}>
               {item.label}
             </span>
+            {isActive && (
+              <div className="w-1.5 h-1.5 rounded-full bg-grape-punch border border-black mt-0.5" />
+            )}
           </Link>
         );
       })}

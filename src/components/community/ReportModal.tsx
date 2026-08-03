@@ -30,16 +30,19 @@ export function ReportModal({ targetType, targetId, onClose }: ModalProps) {
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="report-modal-title"
+      className="fixed inset-0 bg-black/50 z-[100] flex items-end justify-center"
       onClick={onClose}
     >
       <div
-        className="bg-paper-white rounded-t-[20px] border-t-4 border-black w-full max-w-md p-5"
+        className="bg-paper-white rounded-t-[20px] border-t-4 border-black w-full max-w-md p-5 pb-[calc(env(safe-area-inset-bottom)+20px)]"
         onClick={(e) => e.stopPropagation()}
       >
         {done ? (
           <div className="text-center py-4">
-            <p className="font-black text-type-black text-base mb-2">
+            <p id="report-modal-title" className="font-black text-type-black text-base mb-2">
               신고가 접수됐어요
             </p>
             <p className="text-sm text-type-black/60 font-bold mb-4">

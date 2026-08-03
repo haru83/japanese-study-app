@@ -70,6 +70,26 @@ async function FeedTab() {
 
   return (
     <>
+      <Link
+        href="/diary/topic"
+        className="bg-paper-white rounded-[20px] border-2 border-black shadow-[4px_4px_0px_0px_#000] p-4 flex items-center justify-between hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all mb-2"
+      >
+        <div className="flex items-center gap-3">
+          <div className="text-3xl bg-sakura-pink p-2 rounded-xl border-2 border-black shrink-0">
+            ✏️
+          </div>
+          <div>
+            <h3 className="font-black text-type-black text-sm">나도 일기 작성하기</h3>
+            <p className="text-xs text-type-black/60 font-bold mt-0.5">
+              오늘 하루 이야기를 일본어로 적어보세요 (+10 XP)
+            </p>
+          </div>
+        </div>
+        <span className="bg-sakura-pink text-type-black text-xs font-black px-3 py-1.5 rounded-xl border-2 border-black shrink-0">
+          작성하기
+        </span>
+      </Link>
+
       {diaries.map((diary) => (
         <PublicDiaryCard key={diary.id} diary={diary} />
       ))}

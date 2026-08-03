@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { updateUserName } from "@/actions/user";
 import { ShibaAvatar } from "@/components/mascot/ShibaAvatar";
+import { syncGuestProgressToServer } from "@/lib/syncGuestProgress";
 
 export default function OnboardingPage() {
   const { data: session } = useSession();
@@ -17,6 +18,7 @@ export default function OnboardingPage() {
     setLoading(true);
     try {
       await updateUserName(name);
+      await syncGuestProgressToServer();
       router.push("/home");
       router.refresh();
     } catch {
@@ -34,9 +36,9 @@ export default function OnboardingPage() {
 
         {/* Title */}
         <div className="text-center">
-          <h1 className="text-3xl font-black text-type-black">환영합니다! 👋</h1>
+          <h1 className="text-3xl font-black text-type-black">왕왕 일본어에 오신 것을 환영합니다! 👋</h1>
           <p className="mt-2 text-sm text-type-black/60 font-medium">
-            앱에서 사용할 이름을 설정해주세요
+            왕왕이와 함께할 닉네임을 설정해주세요
           </p>
         </div>
 

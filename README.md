@@ -1,7 +1,7 @@
-# 사쿠라 시바 🌸
+# 왕왕 일본어 🐶
 
 일기 쓰기와 경어(敬語) 레슨을 하나로 합친 통합 일본어 학습 앱입니다. 
-**Sakura Shiba (Sticker Bomb Edition)** 디자인 시스템 적용.
+**WangWang Japanese (Sticker Bomb Edition)** 디자인 시스템 적용.
 
 ---
 

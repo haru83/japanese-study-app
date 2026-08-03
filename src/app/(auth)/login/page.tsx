@@ -85,7 +85,7 @@ function LoginForm() {
     <div className="flex items-center gap-2 border-2 border-black bg-paper-white px-4 py-2 rounded-full shadow-[3px_3px_0px_0px_#000]">
       <ShibaAvatar level={1} size={24} />
       <span className="text-type-black font-bold text-base tracking-tight">
-        사쿠라 시바
+        왕왕 일본어
       </span>
     </div>
       </header>

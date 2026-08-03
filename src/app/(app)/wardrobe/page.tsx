@@ -47,7 +47,7 @@ export default async function WardrobePage() {
             <div>
               <h1 className="text-lg font-black text-type-black flex items-center gap-2">
                 <span className="material-symbols-outlined text-sakura-pink" style={{ fontVariationSettings: "'FILL' 1" }}>checkroom</span>
-                시바 옷장
+                왕왕 옷장
               </h1>
               <p className="text-xs font-bold text-type-black/60">아이템을 착용하거나 해제해요</p>
             </div>
@@ -75,7 +75,7 @@ export default async function WardrobePage() {
             />
           </div>
           <p className="mt-3 text-sm font-black text-type-black">
-            Lv.{level} 시바견
+            Lv.{level} 왕왕이
           </p>
           {equippedItems.length > 0 ? (
             <div className="mt-2 flex flex-wrap items-center justify-center gap-1.5">

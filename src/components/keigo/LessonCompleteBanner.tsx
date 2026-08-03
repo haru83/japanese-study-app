@@ -14,6 +14,7 @@ interface LessonCompleteBannerProps {
   quizTotal: number;
   backHref?: string;
   backLabel?: string;
+  nextLessonHref?: string;
 }
 
 export function LessonCompleteBanner({
@@ -25,6 +26,7 @@ export function LessonCompleteBanner({
   quizTotal,
   backHref = "/keigo",
   backLabel = "목록으로",
+  nextLessonHref,
 }: LessonCompleteBannerProps) {
   const router = useRouter();
   const isPerfect = quizScore === quizTotal && quizTotal > 0;
@@ -33,14 +35,17 @@ export function LessonCompleteBanner({
     <motion.div
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
-      className="fixed inset-0 bg-black/50 flex items-end justify-center z-50"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="lesson-complete-title"
+      className="fixed inset-0 bg-black/50 flex items-end justify-center z-[100]"
       onClick={(e) => e.stopPropagation()}
     >
       <motion.div
         initial={{ y: 100 }}
         animate={{ y: 0 }}
         transition={{ type: "spring", stiffness: 200 }}
-        className="w-full max-w-md bg-paper-white rounded-t-[30px] border-t-4 border-x-4 border-black p-6 pb-10"
+        className="w-full max-w-md bg-paper-white rounded-t-[30px] border-t-4 border-x-4 border-black p-6 pb-[calc(env(safe-area-inset-bottom)+28px)]"
       >
         {/* Celebration — 레벨업 시 아바타 변신, 일반 시 이모지 */}
         <div className="text-center mb-5">
@@ -69,7 +74,7 @@ export function LessonCompleteBanner({
               {isPerfect ? "🌟" : "⭐"}
             </motion.div>
           )}
-          <h2 className="text-xl font-black text-type-black">
+          <h2 id="lesson-complete-title" className="text-xl font-black text-type-black">
             {leveledUp ? "레벨 업! 🎉" : "레슨 완료!"}
           </h2>
           <p className="text-type-black/60 font-bold text-sm mt-1">
@@ -108,10 +113,28 @@ export function LessonCompleteBanner({
               🎉 Lv.{newLevel} 달성!
             </p>
             <p className="text-white/80 text-xs font-bold mt-1">
-              시바견이 새로운 아이템을 장착했어요!
+              왕왕이가 새로운 아이템을 장착했어요!
             </p>
           </motion.div>
         )}
+
+        {/* Quick Review Shortcuts */}
+        <div className="flex gap-2 mb-4">
+          <button
+            type="button"
+            onClick={() => router.push("/learning/review")}
+            className="flex-1 bg-canvas-almond rounded-xl border-2 border-black p-2 text-center text-xs font-black text-type-black hover:bg-sakura-pink transition-colors flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_0px_#000]"
+          >
+            <span>⚡</span> 수집 단어 복습
+          </button>
+          <button
+            type="button"
+            onClick={() => router.push("/learning/grammar")}
+            className="flex-1 bg-canvas-almond rounded-xl border-2 border-black p-2 text-center text-xs font-black text-type-black hover:bg-matcha-green transition-colors flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_0px_#000]"
+          >
+            <span>📝</span> 문법 노트
+          </button>
+        </div>
 
         <div className="flex gap-3">
           <Button
@@ -122,13 +145,23 @@ export function LessonCompleteBanner({
           >
             {backLabel}
           </Button>
-          <Button
-            size="lg"
-            onClick={() => router.push("/home")}
-            className="flex-1"
-          >
-            홈으로
-          </Button>
+          {nextLessonHref ? (
+            <Button
+              size="lg"
+              onClick={() => router.push(nextLessonHref)}
+              className="flex-1"
+            >
+              다음 레슨 ➔
+            </Button>
+          ) : (
+            <Button
+              size="lg"
+              onClick={() => router.push("/home")}
+              className="flex-1"
+            >
+              홈으로
+            </Button>
+          )}
         </div>
       </motion.div>
     </motion.div>

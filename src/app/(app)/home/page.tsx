@@ -35,7 +35,7 @@ function GuestHomeView() {
               Japanese Learning
             </p>
             <h1 className="text-[28px] font-black text-type-black leading-none tracking-tight">
-              시바 일본어
+              왕왕 일본어
             </h1>
           </div>
           <ShibaAvatar level={1} size={56} sticker wobble="wobbly-3" className="-mt-3 -ml-6 relative z-10" />
@@ -85,7 +85,7 @@ function GuestHomeView() {
             { icon: "📝", label: "일기 쓰기", desc: "매일 일본어 일기 작성 +10 XP" },
             { icon: "⚡", label: "XP & 레벨", desc: "학습할수록 레벨이 올라요" },
             { icon: "⭐", label: "스탬프 수집", desc: "레슨 완료마다 스탬프 획득" },
-            { icon: "👗", label: "아바타 꾸미기", desc: "스탬프로 시바를 코디해요" },
+            { icon: "👗", label: "아바타 꾸미기", desc: "스탬프로 왕왕이를 코디해요" },
           ].map((item, i, arr) => (
             <div
               key={item.label}
@@ -287,30 +287,52 @@ export default async function HomePage() {
         {/* ── 오늘 할 일 ── */}
         <section>
           <h2 className="font-black text-type-black text-sm mb-3">오늘 할 일 ✏️</h2>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="flex flex-col gap-3">
             <Link
-              href="/diary/topic"
-              className="bg-sakura-pink wobbly-2 rounded-[15px] p-5 border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+              href="/learning/review"
+              className="bg-matcha-green wobbly-1 rounded-[15px] p-4 border-2 border-black shadow-[4px_4px_0px_0px_#000] flex items-center justify-between hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
             >
-              <div className="text-4xl mb-3">📖</div>
-              <h3 className="font-black text-type-black">일기 쓰기</h3>
-              <p className="text-xs text-type-black/60 font-bold mt-1">+10 XP / +1 스탬프</p>
-              <div className="mt-3 bg-paper-white text-type-black text-xs font-black px-3 py-1.5 rounded-xl inline-block border-2 border-black">
-                시작하기
+              <div className="flex items-center gap-3">
+                <div className="text-3xl bg-paper-white p-2 rounded-xl border-2 border-black shrink-0">
+                  ⚡
+                </div>
+                <div>
+                  <h3 className="font-black text-type-black text-sm">SRS 플래시카드 복습</h3>
+                  <p className="text-xs text-type-black/70 font-bold mt-0.5">
+                    수집된 어휘를 망각 곡선에 맞춰 복습해요
+                  </p>
+                </div>
               </div>
+              <span className="bg-paper-white text-type-black text-xs font-black px-3 py-1.5 rounded-xl border-2 border-black shrink-0">
+                복습하기
+              </span>
             </Link>
 
-            <Link
-              href="/keigo"
-              className="bg-grape-punch wobbly-4 rounded-[15px] p-5 border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
-            >
-              <div className="text-4xl mb-3">🎯</div>
-              <h3 className="font-black text-white">경어 레슨</h3>
-              <p className="text-xs text-white/70 font-bold mt-1">+15 XP / +1 스탬프</p>
-              <div className="mt-3 bg-paper-white text-type-black text-xs font-black px-3 py-1.5 rounded-xl inline-block border-2 border-black">
-                학습하기
-              </div>
-            </Link>
+            <div className="grid grid-cols-2 gap-3">
+              <Link
+                href="/diary/topic"
+                className="bg-sakura-pink wobbly-2 rounded-[15px] p-5 border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+              >
+                <div className="text-4xl mb-3">📖</div>
+                <h3 className="font-black text-type-black">일기 쓰기</h3>
+                <p className="text-xs text-type-black/60 font-bold mt-1">+10 XP / +1 스탬프</p>
+                <div className="mt-3 bg-paper-white text-type-black text-xs font-black px-3 py-1.5 rounded-xl inline-block border-2 border-black">
+                  시작하기
+                </div>
+              </Link>
+
+              <Link
+                href="/keigo"
+                className="bg-grape-punch wobbly-4 rounded-[15px] p-5 border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+              >
+                <div className="text-4xl mb-3">🎯</div>
+                <h3 className="font-black text-white">경어 레슨</h3>
+                <p className="text-xs text-white/70 font-bold mt-1">+15 XP / +1 스탬프</p>
+                <div className="mt-3 bg-paper-white text-type-black text-xs font-black px-3 py-1.5 rounded-xl inline-block border-2 border-black">
+                  학습하기
+                </div>
+              </Link>
+            </div>
           </div>
         </section>
 

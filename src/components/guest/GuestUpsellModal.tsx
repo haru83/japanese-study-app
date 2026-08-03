@@ -16,14 +16,17 @@ export function GuestUpsellModal({ onClose, quizScore, quizTotal }: GuestUpsellM
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="fixed inset-0 bg-black/50 flex items-end justify-center z-50"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="guest-upsell-title"
+      className="fixed inset-0 bg-black/50 flex items-end justify-center z-[100]"
       onClick={onClose}
     >
       <motion.div
         initial={{ y: 120 }}
         animate={{ y: 0 }}
         transition={{ type: "spring", stiffness: 200, damping: 22 }}
-        className="w-full max-w-md bg-paper-white rounded-t-[30px] border-t-4 border-x-4 border-black p-6 pb-10"
+        className="w-full max-w-md bg-paper-white rounded-t-[30px] border-t-4 border-x-4 border-black p-6 pb-[calc(env(safe-area-inset-bottom)+28px)]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Celebration */}
@@ -36,7 +39,7 @@ export function GuestUpsellModal({ onClose, quizScore, quizTotal }: GuestUpsellM
           >
             {isPerfect ? "🌟" : "🎉"}
           </motion.div>
-          <h2 className="text-xl font-black text-type-black">퀴즈 완료!</h2>
+          <h2 id="guest-upsell-title" className="text-xl font-black text-type-black">퀴즈 완료!</h2>
           <p className="text-type-black/60 font-bold text-sm mt-1">
             {quizScore}/{quizTotal} 정답 {isPerfect ? "— 완벽해요!" : ""}
           </p>

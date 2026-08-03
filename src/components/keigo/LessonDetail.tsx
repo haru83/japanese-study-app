@@ -190,6 +190,7 @@ export function LessonDetail({ lesson }: Props) {
           newLevel={xpResult.newLevel}
           quizScore={xpResult.quizScore}
           quizTotal={xpResult.quizTotal}
+          nextLessonHref={Number(lesson.id) < 30 ? `/keigo/lessons/${Number(lesson.id) + 1}` : undefined}
         />
       )}
     </div>
