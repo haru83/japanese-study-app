@@ -40,7 +40,7 @@ export function getRecommendedAction(input: UserProgressInput): RecommendedActio
       title: `경어 레슨: ${input.keigoNextTitle} 🎯`,
       subtitle: "다음 경어 레슨을 완료하고 스탬프를 받으세요",
       badgeText: "+15 XP / +1 스탬프",
-      href: `/keigo/${input.keigoNextId}`,
+      href: `/keigo/lessons/${input.keigoNextId}`,
       icon: "🎯",
       accentColor: "bg-grape-punch text-white",
     };

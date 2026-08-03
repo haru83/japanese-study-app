@@ -20,7 +20,7 @@ describe("Smart Recommendation Engine", () => {
       keigoNextTitle: "식당 주문 경어",
     });
 
-    expect(action.href).toBe("/keigo/keigo-2");
+    expect(action.href).toBe("/keigo/lessons/keigo-2");
     expect(action.title).toContain("식당 주문 경어");
   });
 
