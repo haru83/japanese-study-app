@@ -153,25 +153,7 @@ export function LessonDetail({ lesson }: Props) {
           </div>
         )}
 
-        {activeSection !== "quiz" && (
-          <div className="mt-5">
-            {activeSection === "vocab" ? (
-              <button
-                onClick={() => setActiveSection("quiz")}
-                className="w-full bg-grape-punch text-white font-black py-4 rounded-[15px] border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all active:scale-95"
-              >
-                퀴즈 풀기 →
-              </button>
-            ) : (
-              <button
-                onClick={() => setActiveSection(SECTIONS[SECTIONS.indexOf(activeSection) + 1])}
-                className="w-full bg-canvas-almond text-type-black font-black py-3 rounded-[15px] border-2 border-black shadow-[3px_3px_0px_0px_#000] hover:shadow-[1px_1px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all text-sm"
-              >
-                다음: {SECTION_LABELS[SECTIONS[SECTIONS.indexOf(activeSection) + 1]]} →
-              </button>
-            )}
-          </div>
-        )}
+
       </div>
 
       {guestScore && (
