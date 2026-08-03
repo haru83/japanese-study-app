@@ -110,6 +110,14 @@
 ### 🚀 가이드형 단일 추천 학습 경로 (Guided Path UI)
 - 힉의 법칙(Hick's Law) 기반: 홈 접속 시 의사결정 인지 피로를 최소화하는 **"오늘의 맞춤 추천 학습 🚀"** 단일 메인 히어로 CTA 렌더링
 
+### 📌 단어 & 문법 북마크 (Bookmarks System)
+- 어휘 및 문법 항목 1클릭 핀 고정/해제
+- `/learning/bookmarks` 전용 북마크 단어장 및 탭 필터링 지원
+
+### 👥 커뮤니티 소셜 프로필 팝업 (Social Profile Modal)
+- 커뮤니티 피드에서 타 사용자의 아바타 또는 닉네임 클릭 시 팝업 렌더링
+- 왕왕이 마스코트 착용 아바타, 레벨 칭호 배지, 3종 통계(일기/스트릭/스탬프) 및 최근 공개 일기 리스트 제공
+
 ### 🛡️ 어드민 패널
 - 사용자 관리, 콘텐츠(토픽) 관리
 - **경어 레슨 관리** (`/admin/keigo`): 레슨 목록·검색·필터, 활성/비활성 토글, 신규 추가·편집·삭제
@@ -167,7 +175,7 @@
 | State | Zustand (경어 진행상황 persist) |
 | Animation | Framer Motion |
 | Validation | Zod (Server Action input validation) |
-| Testing | Vitest (251 tests) |
+| Testing | Vitest (253 tests) |
 | AI Tutor | Gemini 3.1 Flash Lite Preview (Google AI Studio OpenAI-compat API) |
 | Font | Zen Maru Gothic + Noto Sans KR |
 

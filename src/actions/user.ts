@@ -4,6 +4,17 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
+export interface PublicUserProfile {
+  id: string;
+  name: string;
+  level: number;
+  xp: number;
+  streakDays: number;
+  totalStamps: number;
+  equippedIds: string[];
+  publicDiaries: { id: string; title: string; createdAt: Date }[];
+}
+
 export async function getUserProfile() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return null;
@@ -16,6 +27,35 @@ export async function getUserProfile() {
       diaries: { select: { id: true } },
     },
   });
+}
+
+export async function getPublicUserProfile(targetUserId: string): Promise<PublicUserProfile | null> {
+  const user = await prisma.user.findUnique({
+    where: { id: targetUserId },
+    include: {
+      progress: true,
+      wardrobeItems: { select: { wardrobeItemId: true } },
+      diaries: {
+        where: { isPublic: true },
+        select: { id: true, title: true, createdAt: true },
+        orderBy: { createdAt: "desc" },
+        take: 3,
+      },
+    },
+  });
+
+  if (!user) return null;
+
+  return {
+    id: user.id,
+    name: user.name || "학습자",
+    level: user.progress?.level ?? 1,
+    xp: user.progress?.xp ?? 0,
+    streakDays: user.progress?.streakDays ?? 0,
+    totalStamps: user.progress?.totalStamps ?? 0,
+    equippedIds: user.wardrobeItems.map((w) => w.wardrobeItemId),
+    publicDiaries: user.diaries,
+  };
 }
 
 export async function updateUserName(name: string) {

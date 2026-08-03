@@ -43,6 +43,32 @@ export default function LearningIndexPage() {
           </span>
         </Link>
 
+        {/* Bookmarks Notebook */}
+        <Link
+          href="/learning/bookmarks"
+          className="bg-shiba-orange/20 rounded-[20px] border-2 border-black shadow-[4px_4px_0px_0px_#000] p-5 flex items-center justify-between hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] transition-all"
+        >
+          <div className="flex items-center gap-4">
+            <div className="text-4xl bg-shiba-orange p-3 rounded-2xl border-2 border-black shrink-0">
+              📌
+            </div>
+            <div>
+              <span className="text-[10px] font-black text-type-black/50 uppercase tracking-widest block">
+                Bookmarks & Favorites
+              </span>
+              <h2 className="text-lg font-black text-type-black">
+                북마크 단어장
+              </h2>
+              <p className="text-xs text-type-black/70 font-bold mt-0.5">
+                핀 고정한 중요 어휘와 문법 모음
+              </p>
+            </div>
+          </div>
+          <span className="material-symbols-outlined text-2xl text-type-black shrink-0">
+            chevron_right
+          </span>
+        </Link>
+
         {/* Vocabulary List */}
         <Link
           href="/learning/vocabulary"
