@@ -7,6 +7,7 @@ import {
   xpForNextLevel,
   xpProgress,
   computeXpResult,
+  getLevelTitle,
 } from "@/lib/xp";
 
 // ─── calculateLevel ──────────────────────────────────────
@@ -179,3 +180,17 @@ describe("XP_REWARDS", () => {
     expect(XP_REWARDS.LEARNING_DIARY_QUIZ_PERFECT).toBeLessThan(XP_REWARDS.LEARNING_DIARY_COMPLETE);
   });
 });
+
+// ─── getLevelTitle ───────────────────────────────────────
+
+describe("getLevelTitle", () => {
+  it("returns correct level title for levels 1 through 6+", () => {
+    expect(getLevelTitle(1)).toBe("초보 왕왕이");
+    expect(getLevelTitle(2)).toBe("공부하는 왕왕이");
+    expect(getLevelTitle(3)).toBe("경어 능력자");
+    expect(getLevelTitle(4)).toBe("마스터 왕왕이");
+    expect(getLevelTitle(5)).toBe("일본어 학자");
+    expect(getLevelTitle(6)).toBe("전설의 대마왕");
+  });
+});
+

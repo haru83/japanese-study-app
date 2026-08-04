@@ -61,3 +61,18 @@ export function computeXpResult(
     leveledUp: newLevel > oldLevel,
   };
 }
+
+export const LEVEL_TITLES: Record<number, string> = {
+  1: "초보 왕왕이",
+  2: "공부하는 왕왕이",
+  3: "경어 능력자",
+  4: "마스터 왕왕이",
+  5: "일본어 학자",
+  6: "전설의 대마왕",
+};
+
+export function getLevelTitle(level: number): string {
+  const boundedLevel = Math.min(Math.max(level, 1), 6);
+  return LEVEL_TITLES[boundedLevel] ?? LEVEL_TITLES[1];
+}
+
