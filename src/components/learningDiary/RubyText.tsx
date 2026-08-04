@@ -18,14 +18,14 @@ export function RubyText({ segments, showRuby, showPitchAccent = false, classNam
 
         return seg.ruby && showRuby && hasKanji ? (
           <ruby key={i} className="inline-flex flex-col items-center">
-            {seg.text}
             <rt
-              className={`text-[0.55em] text-type-black/60 px-0.5 ${
+              className={`text-[0.55em] text-type-black/60 px-0.5 leading-none ${
                 isHighPitch ? "border-t-2 border-grape-punch text-grape-punch font-bold" : ""
               }`}
             >
               {seg.ruby}
             </rt>
+            <span>{seg.text}</span>
           </ruby>
         ) : (
           <span key={i}>{seg.text}</span>
