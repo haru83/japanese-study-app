@@ -13,3 +13,15 @@ describe("formatLocalDateString", () => {
     expect(formatLocalDateString(testDate)).toBe("2026-08-05");
   });
 });
+
+describe("Calendar Month Calculations", () => {
+  it("calculates correct days in month and starting day of week for August 2026", () => {
+    const year = 2026;
+    const month = 7; // August (0-indexed)
+    const firstDayOfWeek = new Date(year, month, 1).getDay(); // Saturday = 6
+    const daysInMonth = new Date(year, month + 1, 0).getDate(); // 31 days
+    expect(firstDayOfWeek).toBe(6);
+    expect(daysInMonth).toBe(31);
+  });
+});
+
