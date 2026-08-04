@@ -217,6 +217,21 @@ interface ShibaAvatarProps {
 }
 
 /**
+ * 아이템 ID 별칭 매핑 (데이터베이스 ID와 오버레이 파일 키 간의 매핑)
+ */
+const ITEM_ID_ALIASES: Record<string, string> = {
+  "item-headband": "hachimaki",
+  "item-scarf": "scarf",
+  "item-kimono": "hakama",
+  "item-glasses": "glasses",
+  "item-crown": "crown",
+};
+
+export function normalizeItemId(id: string): string {
+  return ITEM_ID_ALIASES[id] ?? id;
+}
+
+/**
  * 착용 아이템이 있는지, 오버레이 PNG가 존재하는지 판단
  * → 오버레이 모드: 기본 시바견 + 아이템 오버레이 레이어
  * → 폴백 모드: 기존 레벨 합성 이미지 (오버레이 PNG가 없을 때)
@@ -224,7 +239,10 @@ interface ShibaAvatarProps {
 function shouldUseOverlayMode(equippedItemIds?: string[]): boolean {
   if (!equippedItemIds || equippedItemIds.length === 0) return false;
   // 하나라도 오버레이가 있으면 오버레이 모드
-  return equippedItemIds.some((id) => ITEM_OVERLAYS[id] && !missingOverlays.has(id));
+  return equippedItemIds.some((id) => {
+    const normalized = normalizeItemId(id);
+    return ITEM_OVERLAYS[normalized] && !missingOverlays.has(normalized);
+  });
 }
 
 /**
@@ -237,7 +255,8 @@ function shouldUseOverlayMode(equippedItemIds?: string[]): boolean {
 export function getFallbackLevelImage(_level: number, equippedItemIds?: string[]): string {
   if (equippedItemIds && equippedItemIds.length > 0) {
     let maxLevel = 0;
-    for (const itemId of equippedItemIds) {
+    for (const rawId of equippedItemIds) {
+      const itemId = normalizeItemId(rawId);
       const itemLevel = ITEM_ID_TO_LEVEL[itemId];
       if (itemLevel && itemLevel > maxLevel) {
         maxLevel = itemLevel;
@@ -336,8 +355,9 @@ export function ShibaAvatar({
 
   // 오버레이할 아이템 정렬 (z-index 낮→높은 순으로 렌더링)
   const overlayItems = (equippedItemIds ?? [])
-    .filter((id) => ITEM_OVERLAYS[id] && !missingOverlays.has(id))
-    .sort((a, b) => (ITEM_Z_INDEX[a] ?? 10) - (ITEM_Z_INDEX[b] ?? 10));
+    .map((id) => ({ rawId: id, normalizedId: normalizeItemId(id) }))
+    .filter(({ normalizedId }) => ITEM_OVERLAYS[normalizedId] && !missingOverlays.has(normalizedId))
+    .sort((a, b) => (ITEM_Z_INDEX[a.normalizedId] ?? 10) - (ITEM_Z_INDEX[b.normalizedId] ?? 10));
 
   // 오버레이 이미지 로드 실패 처리
   const handleOverlayError = useCallback((itemId: string) => {
@@ -422,19 +442,19 @@ export function ShibaAvatar({
             />
 
             {/* 아이템 오버레이 레이어들 */}
-            {useOverlay && overlayItems.map((itemId) => (
+            {useOverlay && overlayItems.map(({ rawId, normalizedId }) => (
               <Image
-                key={itemId}
-                src={ITEM_OVERLAYS[itemId]}
-                alt={itemId}
+                key={rawId}
+                src={ITEM_OVERLAYS[normalizedId]}
+                alt={normalizedId}
                 width={size}
                 height={size}
                 className={clsx(
                   "absolute inset-0 object-contain pointer-events-none",
                   circular && "object-cover rounded-full"
                 )}
-                style={{ zIndex: ITEM_Z_INDEX[itemId] ?? 10 }}
-                onError={() => handleOverlayError(itemId)}
+                style={{ zIndex: ITEM_Z_INDEX[normalizedId] ?? 10 }}
+                onError={() => handleOverlayError(normalizedId)}
                 unoptimized
               />
             ))}
