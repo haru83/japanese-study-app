@@ -275,18 +275,18 @@ function ShibaAura({ level }: { level: number }) {
   if (level <= 1) return null;
 
   const auraClasses: Record<number, string> = {
-    2: "bg-sakura-pink/30 animate-pulse ring-4 ring-sakura-pink/50",
-    3: "bg-grape-punch/25 animate-pulse ring-4 ring-grape-punch/40",
-    4: "bg-sky-400/25 animate-pulse ring-4 ring-sky-400/40",
-    5: "bg-amber-400/30 animate-pulse ring-4 ring-amber-400/50",
-    6: "bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 animate-pulse ring-4 ring-yellow-400/70 shadow-[0_0_15px_rgba(250,204,21,0.6)]",
+    2: "bg-sakura-pink/60 animate-pulse ring-4 ring-sakura-pink/70 shadow-[0_0_12px_rgba(255,183,197,0.8)]",
+    3: "bg-grape-punch/50 animate-pulse ring-4 ring-grape-punch/60 shadow-[0_0_14px_rgba(147,51,234,0.6)]",
+    4: "bg-sky-400/50 animate-pulse ring-4 ring-sky-400/60 shadow-[0_0_16px_rgba(56,189,248,0.7)]",
+    5: "bg-amber-400/60 animate-pulse ring-4 ring-amber-400/70 shadow-[0_0_18px_rgba(251,191,36,0.8)]",
+    6: "bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 animate-pulse ring-4 ring-yellow-400/80 shadow-[0_0_22px_rgba(250,204,21,0.9)]",
   };
 
   const currentAura = auraClasses[Math.min(level, 6)] ?? auraClasses[2];
 
   return (
     <div
-      className={`absolute inset-0 rounded-full blur-md -z-10 ${currentAura}`}
+      className={`absolute -inset-3 rounded-full blur-md pointer-events-none z-0 ${currentAura}`}
     />
   );
 }
