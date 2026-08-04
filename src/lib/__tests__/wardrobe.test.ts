@@ -99,18 +99,18 @@ describe("Wardrobe items level requirements", () => {
 describe("CHARACTER_BASES & getFallbackLevelImage & getShibaMascotSrc", () => {
   it("CHARACTER_BASES contains mappings for all supported dog characters", () => {
     expect(CHARACTER_BASES.shiba).toBe("/mascot/shiba-base.webp");
-    expect(CHARACTER_BASES.poodle).toBe("/mascot/shiba-base.webp");
-    expect(CHARACTER_BASES.beagle).toBe("/mascot/shiba-base.webp");
-    expect(CHARACTER_BASES.pomeranian).toBe("/mascot/shiba-base.webp");
+    expect(CHARACTER_BASES.poodle).toBe("/mascot/poodle-base.png");
+    expect(CHARACTER_BASES.beagle).toBe("/mascot/beagle-base.png");
+    expect(CHARACTER_BASES.pomeranian).toBe("/mascot/pomeranian-base.png");
   });
 
   it("getFallbackLevelImage returns character base image when no items are equipped", () => {
-    expect(getFallbackLevelImage(1, [], "poodle")).toBe("/mascot/shiba-base.webp");
-    expect(getFallbackLevelImage(10, [], "beagle")).toBe("/mascot/shiba-base.webp");
+    expect(getFallbackLevelImage(1, [], "poodle")).toBe("/mascot/poodle-base.png");
+    expect(getFallbackLevelImage(10, [], "beagle")).toBe("/mascot/beagle-base.png");
   });
 
   it("getShibaMascotSrc returns base image for characterId", () => {
-    expect(getShibaMascotSrc(1, "pomeranian")).toBe("/mascot/shiba-base.webp");
+    expect(getShibaMascotSrc(1, "pomeranian")).toBe("/mascot/pomeranian-base.png");
     expect(getShibaMascotSrc(1)).toBe("/mascot/shiba-base.webp");
   });
 

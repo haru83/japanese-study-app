@@ -10,9 +10,9 @@ import { motion, AnimatePresence } from "framer-motion";
  */
 export const CHARACTER_BASES: Record<string, string> = {
   shiba: "/mascot/shiba-base.webp",
-  poodle: "/mascot/shiba-base.webp", // Fallback to base or character image
-  beagle: "/mascot/shiba-base.webp",
-  pomeranian: "/mascot/shiba-base.webp",
+  poodle: "/mascot/poodle-base.png",
+  beagle: "/mascot/beagle-base.png",
+  pomeranian: "/mascot/pomeranian-base.png",
 };
 
 const BASE_IMAGE = CHARACTER_BASES.shiba;
