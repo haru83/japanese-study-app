@@ -36,6 +36,13 @@ const WARDROBE_SEED: SeedWardrobeItem[] = [
   { id: "cape", name: "영웅 망토", icon: "🦸", stampCost: 15, requiredLevel: 4, imageUrl: "", isRare: false },
   { id: "bandana", name: "밴다나", icon: "💃", stampCost: 4, requiredLevel: 1, imageUrl: "", isRare: false },
   { id: "stud-ear", name: "다이아 귀걸이", icon: "💎", stampCost: 22, requiredLevel: 5, imageUrl: "", isRare: true },
+  // ─── 추가 신규 아이템 (6개) ───
+  { id: "item-ninja", name: "닌자 복장", icon: "🥷", stampCost: 20, requiredLevel: 4, imageUrl: "/mascot/overlay-ninja.webp", isRare: true },
+  { id: "item-wizard-hat", name: "마법사 모자", icon: "🧙‍♂️", stampCost: 18, requiredLevel: 4, imageUrl: "/mascot/overlay-wizard-hat.webp", isRare: true },
+  { id: "item-hawaiian-shirt", name: "하와이안 셔츠", icon: "🌺", stampCost: 12, requiredLevel: 2, imageUrl: "/mascot/overlay-hawaiian-shirt.webp", isRare: false },
+  { id: "item-headphones", name: "스트리머 헤드폰", icon: "🎧", stampCost: 15, requiredLevel: 3, imageUrl: "/mascot/overlay-headphones.webp", isRare: false },
+  { id: "item-pink-ribbon", name: "핑크 리본", icon: "🎀", stampCost: 8, requiredLevel: 1, imageUrl: "/mascot/overlay-pink-ribbon.webp", isRare: false },
+  { id: "item-randoseru", name: "란도셀 책가방", icon: "🎒", stampCost: 25, requiredLevel: 5, imageUrl: "/mascot/overlay-randoseru.webp", isRare: true },
 ];
 
 const LEVEL_WARDROBE_ITEMS: SeedWardrobeItem[] = [
