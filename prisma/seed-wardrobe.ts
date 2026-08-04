@@ -29,12 +29,22 @@ const WARDROBE_SEED = [
  { id: "stud-ear", name: "다이아 귀걸이", icon: "💎", stampCost: 22, requiredLevel: 5, imageUrl: "", isRare: true },
  ];
 
+const LEVEL_WARDROBE_ITEMS = [
+  { id: "item-headband", name: "열정 머리띠", description: "Lv.2 달성 보상 머리띠", imageUrl: "/mascot/shiba-hachimaki.png", icon: "🎗️", isRare: false, requiredLevel: 2, stampCost: 0 },
+  { id: "item-scarf", name: "탐험가 스카프", description: "Lv.3 달성 보상 스카프", imageUrl: "/mascot/shiba-scarf.png", icon: "🧣", isRare: false, requiredLevel: 3, stampCost: 0 },
+  { id: "item-kimono", name: "전통 기모노", description: "Lv.4 달성 보상 기모노", imageUrl: "/mascot/shiba-kimono.png", icon: "👘", isRare: true, requiredLevel: 4, stampCost: 0 },
+  { id: "item-glasses", name: "지성 안경", description: "Lv.5 달성 보상 안경", imageUrl: "/mascot/shiba-glasses.png", icon: "👓", isRare: false, requiredLevel: 5, stampCost: 0 },
+  { id: "item-crown", name: "마스터 왕관", description: "Lv.6 달성 보상 왕관", imageUrl: "/mascot/shiba-master.png", icon: "👑", isRare: true, requiredLevel: 6, stampCost: 0 },
+];
+
 async function main() {
-  for (const item of WARDROBE_SEED) {
+  const allItems = [...WARDROBE_SEED, ...LEVEL_WARDROBE_ITEMS];
+  for (const item of allItems) {
     await prisma.wardrobeItem.upsert({
       where: { id: item.id },
       update: {
         name: item.name,
+        description: item.description,
         icon: item.icon,
         stampCost: item.stampCost,
         requiredLevel: item.requiredLevel,
@@ -44,7 +54,7 @@ async function main() {
       create: item,
     });
   }
-  console.log(`Seeded ${WARDROBE_SEED.length} wardrobe items`);
+  console.log(`Seeded ${allItems.length} wardrobe items`);
 }
 
 main()

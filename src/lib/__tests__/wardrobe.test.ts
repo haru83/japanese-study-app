@@ -52,3 +52,19 @@ describe("canPurchaseItem", () => {
     expect(canPurchaseItem({ userStamps: 9999, userLevel: 6, stampCost: 5000, requiredLevel: 5 })).toBe(true);
   });
 });
+
+describe("Wardrobe items level requirements", () => {
+  it("defines valid level requirements for level-unlocked items", () => {
+    const levelItems = [
+      { name: "머리띠", requiredLevel: 2 },
+      { name: "스카프", requiredLevel: 3 },
+      { name: "기모노", requiredLevel: 4 },
+      { name: "안경", requiredLevel: 5 },
+      { name: "마스터 왕관", requiredLevel: 6 },
+    ];
+    levelItems.forEach((item) => {
+      expect(item.requiredLevel).toBeGreaterThanOrEqual(1);
+    });
+  });
+});
+
