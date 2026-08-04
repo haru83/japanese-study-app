@@ -74,3 +74,55 @@ export async function getTopics() {
     orderBy: { createdAt: "desc" },
   });
 }
+
+export async function getUserStudyDates(): Promise<string[]> {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) return [];
+
+  const userId = session.user.id;
+
+  const [keigo, learningDiaries, diaries, challenges, progress] = await Promise.all([
+    prisma.keigoLessonProgress.findMany({
+      where: { userId, completed: true, completedAt: { not: null } },
+      select: { completedAt: true },
+    }),
+    prisma.learningDiaryProgress.findMany({
+      where: { userId },
+      select: { completedAt: true },
+    }),
+    prisma.diary.findMany({
+      where: { userId },
+      select: { createdAt: true },
+    }),
+    prisma.dailyChallenge.findMany({
+      where: { userId, completed: true },
+      select: { createdAt: true, claimedAt: true },
+    }),
+    prisma.userProgress.findUnique({
+      where: { userId },
+      select: { lastStudyAt: true },
+    }),
+  ]);
+
+  const dateSet = new Set<string>();
+
+  const addDate = (d?: Date | null) => {
+    if (!d) return;
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    dateSet.add(`${year}-${month}-${day}`);
+  };
+
+  keigo.forEach((k) => addDate(k.completedAt));
+  learningDiaries.forEach((ld) => addDate(ld.completedAt));
+  diaries.forEach((d) => addDate(d.createdAt));
+  challenges.forEach((c) => {
+    addDate(c.createdAt);
+    addDate(c.claimedAt);
+  });
+  if (progress?.lastStudyAt) addDate(progress.lastStudyAt);
+
+  return Array.from(dateSet);
+}
+
