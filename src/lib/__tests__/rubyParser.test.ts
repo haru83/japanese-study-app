@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildRubySegments } from "@/lib/rubyParser";
+import { buildRubySegments, parseMonoRubySegments } from "@/lib/rubyParser";
 
 // ─── 기본 한자-후리가나 매칭 ─────────────────────────────
 
@@ -100,6 +100,27 @@ describe("buildRubySegments", () => {
     expect(result).toEqual([
       { text: "行", ruby: "い" },
       { text: "きます。" },
+    ]);
+  });
+
+  it("영어 알파벳에는 후리가나를 붙이지 않고 한자에만 붙인다: ABC商事", () => {
+    const result = buildRubySegments("ABC商事の山田", "エービーシーしょうじのやまだ");
+    expect(result).toEqual([
+      { text: "ABC" },
+      { text: "商事", ruby: "しょうじ" },
+      { text: "の" },
+      { text: "山田", ruby: "やまだ" },
+    ]);
+  });
+});
+
+describe("parseMonoRubySegments", () => {
+  it("한자에만 ruby를 부착하고 알파벳에는 부착하지 않는다", () => {
+    const result = parseMonoRubySegments("[ABC|エービーシー][商|しょう|high][事|じ|low]");
+    expect(result).toEqual([
+      { text: "ABC" },
+      { text: "商", ruby: "しょう", pitch: "high" },
+      { text: "事", ruby: "じ", pitch: "low" },
     ]);
   });
 });

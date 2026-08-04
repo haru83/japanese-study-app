@@ -1,6 +1,8 @@
 import type { RubySegment } from "@/types/learningDiary";
 
 const KANJI_RE = /[一-龯㐀-䶿]/;
+const ALPHA_RE = /[a-zA-Z]/;
+const KATAKANA_RE = /[ァ-ヴー]/;
 
 function isKanji(char: string): boolean {
   return KANJI_RE.test(char);
@@ -21,14 +23,17 @@ export function parseMonoRubySegments(input: string): MonoRubySegment[] {
   let match: RegExpExecArray | null;
   while ((match = regex.exec(input)) !== null) {
     if (match[1]) {
-      // Bracket segment: [text|ruby|pitch]
-      segments.push({
-        text: match[1],
-        ruby: match[2],
-        pitch: (match[3] as "high" | "low") || "high",
-      });
+      const text = match[1];
+      if (isKanji(text)) {
+        segments.push({
+          text,
+          ruby: match[2],
+          pitch: (match[3] as "high" | "low") || "high",
+        });
+      } else {
+        segments.push({ text });
+      }
     } else if (match[4]) {
-      // Plain text segment
       segments.push({
         text: match[4],
       });
@@ -75,6 +80,45 @@ export function buildRubySegments(text: string, pronunciation: string): RubySegm
         raw.push({ text: kanji, ruby: ruby || undefined });
         pi = pronunciation.length;
       }
+    } else if (ALPHA_RE.test(ch)) {
+      // English alphabet characters
+      const engStart = ti;
+      while (ti < text.length && ALPHA_RE.test(text[ti])) {
+        ti++;
+      }
+      const engText = text.slice(engStart, ti);
+      raw.push({ text: engText }); // NO ruby for English alphabet!
+
+      // Advance pi past English Katakana reading in pronunciation
+      if (ti < text.length) {
+        const nextChar = text[ti];
+        if (isKanji(nextChar)) {
+          let kIndex = ti;
+          while (kIndex < text.length && isKanji(text[kIndex])) {
+            kIndex++;
+          }
+          const kanjiAnchor = kIndex < text.length ? text[kIndex] : null;
+          if (kanjiAnchor) {
+            const anchorPos = pronunciation.indexOf(kanjiAnchor, pi);
+            if (anchorPos !== -1) {
+              let tempPi = pi;
+              while (tempPi < anchorPos && KATAKANA_RE.test(pronunciation[tempPi])) {
+                tempPi++;
+              }
+              if (tempPi < anchorPos) {
+                pi = tempPi;
+              }
+            }
+          }
+        } else {
+          const pos = pronunciation.indexOf(nextChar, pi);
+          if (pos !== -1) {
+            pi = pos;
+          }
+        }
+      } else {
+        pi = pronunciation.length;
+      }
     } else {
       if (pi < pronunciation.length && pronunciation[pi] === ch) {
         raw.push({ text: ch });
@@ -100,3 +144,4 @@ export function buildRubySegments(text: string, pronunciation: string): RubySegm
 
   return merged;
 }
+

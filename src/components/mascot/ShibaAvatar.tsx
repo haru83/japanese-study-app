@@ -233,7 +233,7 @@ function shouldUseOverlayMode(equippedItemIds?: string[]): boolean {
  * - 아이템 미착용 → 항상 기본 시바견 (shiba-base.png)
  *   ※ 옷장 시스템 도입 후, 착용 아이템이 없으면 레벨과 무관하게 기본 이미지만 표시
  */
-function getFallbackLevelImage(_level: number, equippedItemIds?: string[]): string {
+function getFallbackLevelImage(level: number, equippedItemIds?: string[]): string {
   if (equippedItemIds && equippedItemIds.length > 0) {
     let maxLevel = 0;
     for (const itemId of equippedItemIds) {
@@ -246,8 +246,9 @@ function getFallbackLevelImage(_level: number, equippedItemIds?: string[]): stri
       return LEVEL_IMAGES[maxLevel] ?? LEVEL_IMAGES[1];
     }
   }
-  // 아이템 미착용 시 항상 기본 시바견
-  return BASE_IMAGE;
+  // 아이템 미착용 시 레벨에 맞는 마스코트 이미지 (Lv.1: base, Lv.2: hachimaki, Lv.3: scarf, Lv.4: kimono, Lv.5: glasses, Lv.6: master)
+  const effectiveLevel = Math.min(Math.max(level, 1), 6);
+  return LEVEL_IMAGES[level] ?? LEVEL_IMAGES[effectiveLevel] ?? BASE_IMAGE;
 }
 
 // ─── 메인 컴포넌트 ──────────────────────────────────────────

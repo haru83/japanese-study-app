@@ -27,7 +27,7 @@ export default async function ShopPage() {
   const profile = await getUserProfile();
   const stamps = profile?.progress?.totalStamps ?? 0;
   const level = profile?.progress?.level ?? 1;
-  const { items, ownedIds } = await getWardrobeItems();
+  const { items, ownedIds, equippedIds } = await getWardrobeItems();
 
   const notOwnedItems = items.filter((item) => !ownedIds.includes(item.id));
 
@@ -61,7 +61,7 @@ export default async function ShopPage() {
       {/* Mascot preview */}
       <section className="px-5 mb-5">
         <div className="bg-canvas-almond rounded-[15px] border-2 border-black shadow-[4px_4px_0px_0px_#000] p-6 flex flex-col items-center">
-          <ShibaAvatar level={level} size={80} sticker wobble="wobbly-2" />
+          <ShibaAvatar level={level} size={80} sticker wobble="wobbly-2" equippedItemIds={equippedIds} />
           <p className="mt-3 text-sm font-black text-type-black">
             Lv.{level} 왕왕이
           </p>

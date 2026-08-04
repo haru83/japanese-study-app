@@ -14,8 +14,9 @@ export function RubyText({ segments, showRuby, showPitchAccent = false, classNam
       {segments.map((seg, i) => {
         const monoSeg = seg as MonoRubySegment;
         const isHighPitch = showPitchAccent && monoSeg.pitch === "high";
+        const hasKanji = seg.text ? /[一-龯㐀-䶿]/.test(seg.text) : false;
 
-        return seg.ruby && showRuby ? (
+        return seg.ruby && showRuby && hasKanji ? (
           <ruby key={i} className="inline-flex flex-col items-center">
             {seg.text}
             <rt
