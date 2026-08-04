@@ -1,5 +1,16 @@
-export const LEVEL_THRESHOLDS = [0, 50, 120, 210, 320, 450];
-export const MAX_LEVEL = LEVEL_THRESHOLDS.length;
+export const LEVEL_THRESHOLDS: number[] = [
+  0,     // Lv 1: 0 ~ 99
+  100,   // Lv 2: 100 ~ 249
+  250,   // Lv 3: 250 ~ 449
+  450,   // Lv 4: 450 ~ 699
+  700,   // Lv 5: 700 ~ 999
+  1000,  // Lv 6: 1000 ~ 1399
+  1400,  // Lv 7: 1400 ~ 1899
+  1900,  // Lv 8: 1900 ~ 2499
+  2500,  // Lv 9: 2500 ~ 3199
+  3200,  // Lv 10: 3200+
+];
+export const MAX_LEVEL = 10;
 
 export const XP_REWARDS = {
   DIARY_COMPLETE: 10,
@@ -69,10 +80,14 @@ export const LEVEL_TITLES: Record<number, string> = {
   4: "마스터 왕왕이",
   5: "일본어 학자",
   6: "전설의 대마왕",
+  7: "일본어 능력자",
+  8: "어휘 대가",
+  9: "경어 현자",
+  10: "신화의 만렙 왕왕이",
 };
 
 export function getLevelTitle(level: number): string {
-  const boundedLevel = Math.min(Math.max(level, 1), 6);
+  const boundedLevel = Math.min(Math.max(level, 1), 10);
   return LEVEL_TITLES[boundedLevel] ?? LEVEL_TITLES[1];
 }
 
