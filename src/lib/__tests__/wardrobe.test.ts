@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { canPurchaseItem } from "@/lib/wardrobe";
+import { getFallbackLevelImage } from "@/components/mascot/ShibaAvatar";
 
 describe("canPurchaseItem", () => {
   it("스탬프와 레벨이 충분하면 구매 가능하다", () => {
@@ -67,4 +68,18 @@ describe("Wardrobe items level requirements", () => {
     });
   });
 });
+
+describe("getFallbackLevelImage", () => {
+  it("착용 아이템이 없으면 레벨과 관계없이 항상 base 이미지를 반환한다", () => {
+    expect(getFallbackLevelImage(1, [])).toBe("/mascot/shiba-base.webp");
+    expect(getFallbackLevelImage(6, [])).toBe("/mascot/shiba-base.webp");
+    expect(getFallbackLevelImage(6)).toBe("/mascot/shiba-base.webp");
+  });
+
+  it("폴백 레벨이 있는 아이템 착용 시 해당 레벨 이미지를 반환한다", () => {
+    expect(getFallbackLevelImage(1, ["scarf"])).toBe("/mascot/shiba-lv3-scarf.webp");
+    expect(getFallbackLevelImage(1, ["crown"])).toBe("/mascot/shiba-lv6-master.webp");
+  });
+});
+
 

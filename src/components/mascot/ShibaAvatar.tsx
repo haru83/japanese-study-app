@@ -44,13 +44,14 @@ const ITEM_OVERLAYS: Record<string, string> = {
  * 오버레이가 없는 아이템의 레벨 이미지 폴백 매핑
  * 오버레이 PNG가 아직 없을 때, 기존 레벨별 합성 이미지를 대신 사용
  */
-const ITEM_LEVEL_FALLBACKS: Record<string, number> = {
+const ITEM_ID_TO_LEVEL: Record<string, number> = {
   "hat-cap": 2,    // shiba-lv2-hachimaki.png
   "scarf": 3,      // shiba-lv3-scarf.png
   "glasses": 5,    // shiba-lv5-glasses.png
   "crown": 6,      // shiba-lv6-master.png
   "hat-santa": 2,  // closest visual: hachimaki
 };
+const ITEM_LEVEL_FALLBACKS = ITEM_ID_TO_LEVEL;
 
 /**
  * 레벨별 합성 이미지 (오버레이 PNG가 없을 때의 폴백용)
@@ -230,25 +231,45 @@ function shouldUseOverlayMode(equippedItemIds?: string[]): boolean {
  * 아이템 착용 상태에 따른 이미지 결정
  * - 아이템 착용 + 오버레이 PNG 있음 → 기본 시바견 + 오버레이 레이어 (shouldUseOverlayMode에서 처리)
  * - 아이템 착용 + 오버레이 PNG 없음 → 레벨 폴백 합성 이미지
- * - 아이템 미착용 → 항상 기본 시바견 (shiba-base.png)
+ * - 아이템 미착용 → 항상 기본 시바견 (shiba-base.webp)
  *   ※ 옷장 시스템 도입 후, 착용 아이템이 없으면 레벨과 무관하게 기본 이미지만 표시
  */
-function getFallbackLevelImage(level: number, equippedItemIds?: string[]): string {
+export function getFallbackLevelImage(_level: number, equippedItemIds?: string[]): string {
   if (equippedItemIds && equippedItemIds.length > 0) {
     let maxLevel = 0;
     for (const itemId of equippedItemIds) {
-      const fallback = ITEM_LEVEL_FALLBACKS[itemId];
-      if (fallback && fallback > maxLevel) {
-        maxLevel = fallback;
+      const itemLevel = ITEM_ID_TO_LEVEL[itemId];
+      if (itemLevel && itemLevel > maxLevel) {
+        maxLevel = itemLevel;
       }
     }
     if (maxLevel > 0) {
       return LEVEL_IMAGES[maxLevel] ?? LEVEL_IMAGES[1];
     }
   }
-  // 아이템 미착용 시 레벨에 맞는 마스코트 이미지 (Lv.1: base, Lv.2: hachimaki, Lv.3: scarf, Lv.4: kimono, Lv.5: glasses, Lv.6: master)
-  const effectiveLevel = Math.min(Math.max(level, 1), 6);
-  return LEVEL_IMAGES[level] ?? LEVEL_IMAGES[effectiveLevel] ?? BASE_IMAGE;
+  // Remove automatic clothing escalation: always return base image
+  return BASE_IMAGE;
+}
+
+// ─── 백그라운드 아우라 ──────────────────────────────────────────
+function ShibaAura({ level }: { level: number }) {
+  if (level <= 1) return null;
+
+  const auraClasses: Record<number, string> = {
+    2: "bg-sakura-pink/30 animate-pulse ring-4 ring-sakura-pink/50",
+    3: "bg-grape-punch/25 animate-pulse ring-4 ring-grape-punch/40",
+    4: "bg-sky-400/25 animate-pulse ring-4 ring-sky-400/40",
+    5: "bg-amber-400/30 animate-pulse ring-4 ring-amber-400/50",
+    6: "bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 animate-pulse ring-4 ring-yellow-400/70 shadow-[0_0_15px_rgba(250,204,21,0.6)]",
+  };
+
+  const currentAura = auraClasses[Math.min(level, 6)] ?? auraClasses[2];
+
+  return (
+    <div
+      className={`absolute inset-0 rounded-full blur-md -z-10 ${currentAura}`}
+    />
+  );
 }
 
 // ─── 메인 컴포넌트 ──────────────────────────────────────────
@@ -339,6 +360,9 @@ export function ShibaAvatar({
       )}
       style={{ width: size, height: size }}
     >
+      {/* 백그라운드 아우라 */}
+      <ShibaAura level={level} />
+
       {/* 레벨업 파티클 */}
       <AnimatePresence>
         {showLevelUpEffect && (
