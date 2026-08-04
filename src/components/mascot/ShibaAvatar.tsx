@@ -4,6 +4,7 @@ import { useRef, useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
+import { getItemSlot } from "@/lib/wardrobe";
 
 /**
  * 캐릭터별 기본 이미지 매핑
@@ -481,22 +482,32 @@ export function ShibaAvatar({
             />
 
             {/* 아이템 오버레이 레이어들 */}
-            {useOverlay && overlayItems.map(({ rawId, normalizedId }) => (
-              <Image
-                key={rawId}
-                src={ITEM_OVERLAYS[normalizedId]}
-                alt={normalizedId}
-                width={size}
-                height={size}
-                className={clsx(
-                  "absolute inset-0 object-contain pointer-events-none",
-                  circular && "object-cover rounded-full"
-                )}
-                style={{ zIndex: ITEM_Z_INDEX[normalizedId] ?? 10 }}
-                onError={() => handleOverlayError(normalizedId)}
-                unoptimized
-              />
-            ))}
+            {useOverlay && overlayItems.map(({ rawId, normalizedId }) => {
+              const isNonShiba = characterId && characterId !== "shiba";
+              const slot = getItemSlot(normalizedId);
+              const clipStyle = isNonShiba ? (
+                slot === "head" ? { clipPath: "inset(0 0 35% 0)" } :
+                slot === "face" ? { clipPath: "inset(10% 5% 20% 5%)" } :
+                { clipPath: "inset(30% 0 0 0)" }
+              ) : {};
+
+              return (
+                <Image
+                  key={rawId}
+                  src={ITEM_OVERLAYS[normalizedId]}
+                  alt={normalizedId}
+                  width={size}
+                  height={size}
+                  className={clsx(
+                    "absolute inset-0 object-contain pointer-events-none",
+                    circular && "object-cover rounded-full"
+                  )}
+                  style={{ zIndex: ITEM_Z_INDEX[normalizedId] ?? 10, ...clipStyle }}
+                  onError={() => handleOverlayError(normalizedId)}
+                  unoptimized
+                />
+              );
+            })}
           </motion.div>
         </AnimatePresence>
       </motion.div>
