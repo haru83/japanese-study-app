@@ -3,6 +3,7 @@ export interface Lesson {
   title: string;
   category: "business" | "hospitality" | "social";
   thumbnail: string;
+  comicFrames?: string[];
   dialogue: Array<{
     speaker: string;
     text: string;
