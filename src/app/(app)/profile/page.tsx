@@ -1,14 +1,14 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { getUserProfile } from "@/actions/user";
+import { getUserProfile, getUserStudyDates } from "@/actions/user";
 import { getWardrobeItems } from "@/actions/wardrobe";
 import { xpProgress, xpForNextLevel, MAX_LEVEL, LEVEL_THRESHOLDS } from "@/lib/xp";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { ShibaAvatar } from "@/components/mascot/ShibaAvatar";
 import NicknameEditor from "./NicknameEditor";
 import { LogoutButton } from "./LogoutButton";
-import { LearningHeatmap } from "@/components/profile/LearningHeatmap";
+import { LearningCalendar } from "@/components/profile/LearningCalendar";
 
 const LEVEL_TITLES = [
   "초보 학습자",
@@ -23,9 +23,10 @@ export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return null;
 
-  const [profile, { items, equippedIds }] = await Promise.all([
+  const [profile, { items, equippedIds }, studyDates] = await Promise.all([
     getUserProfile(),
     getWardrobeItems(),
+    getUserStudyDates(),
   ]);
 
   const progress = profile?.progress;
@@ -131,9 +132,9 @@ export default async function ProfilePage() {
         {/* ── 월별 학습 히트맵 ── */}
         <section className="mb-6">
           <h2 className="font-black text-type-black text-sm mb-3">학습 캘린더 📅</h2>
-          <LearningHeatmap
-            lastStudyAt={progress?.lastStudyAt}
-            totalEntries={profile?.diaries?.length ?? 0}
+          <LearningCalendar
+            studyDates={studyDates}
+            streakDays={progress?.streakDays ?? 0}
           />
         </section>
 
