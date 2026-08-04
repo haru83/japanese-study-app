@@ -9,11 +9,13 @@ describe("Public User Profile Schema Verification", () => {
       xp: 150,
       streakDays: 5,
       totalStamps: 12,
+      activeCharacter: "poodle",
       equippedIds: ["hat-cap"],
       publicDiaries: [{ id: "d-1", title: "오늘의 일기", createdAt: new Date() }],
     };
 
     expect(profile.level).toBe(3);
+    expect(profile.activeCharacter).toBe("poodle");
     expect(profile.equippedIds).toContain("hat-cap");
     expect(profile.publicDiaries).toHaveLength(1);
   });

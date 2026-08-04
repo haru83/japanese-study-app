@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -11,6 +12,7 @@ export interface PublicUserProfile {
   xp: number;
   streakDays: number;
   totalStamps: number;
+  activeCharacter: string;
   equippedIds: string[];
   publicDiaries: { id: string; title: string; createdAt: Date }[];
 }
@@ -53,9 +55,32 @@ export async function getPublicUserProfile(targetUserId: string): Promise<Public
     xp: user.progress?.xp ?? 0,
     streakDays: user.progress?.streakDays ?? 0,
     totalStamps: user.progress?.totalStamps ?? 0,
+    activeCharacter: user.progress?.activeCharacter ?? "shiba",
     equippedIds: user.wardrobeItems.map((w) => w.wardrobeItemId),
     publicDiaries: user.diaries,
   };
+}
+
+export async function updateActiveCharacter(characterId: string) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) throw new Error("로그인이 필요합니다.");
+
+  const validCharacters = ["shiba", "poodle", "beagle", "pomeranian"];
+  if (!validCharacters.includes(characterId)) {
+    throw new Error("유효하지 않은 캐릭터입니다.");
+  }
+
+  await prisma.userProgress.upsert({
+    where: { userId: session.user.id },
+    update: { activeCharacter: characterId },
+    create: { userId: session.user.id, activeCharacter: characterId },
+  });
+
+  revalidatePath("/profile");
+  revalidatePath("/wardrobe");
+  revalidatePath("/");
+
+  return { success: true };
 }
 
 export async function updateUserName(name: string) {
