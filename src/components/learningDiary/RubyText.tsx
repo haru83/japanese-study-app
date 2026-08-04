@@ -19,7 +19,7 @@ export function RubyText({ segments, showRuby, showPitchAccent = false, classNam
         return seg.ruby && showRuby && hasKanji ? (
           <ruby key={i} className="relative inline-block text-center align-baseline">
             <rt
-              className={`absolute bottom-full left-1/2 -translate-x-1/2 translate-y-[2px] text-[0.55em] text-type-black/60 whitespace-nowrap leading-none pointer-events-none ${
+              className={`absolute bottom-full left-1/2 -translate-x-1/2 translate-y-[6px] text-[0.55em] text-type-black/60 whitespace-nowrap leading-none pointer-events-none ${
                 isHighPitch ? "border-t-2 border-grape-punch text-grape-punch font-bold" : ""
               }`}
             >
