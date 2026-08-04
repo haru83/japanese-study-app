@@ -129,6 +129,9 @@ export default async function ShopPage() {
               } else if (!canAfford) {
                 label = "스탬프 부족";
                 statusColor = "bg-gray-200 text-type-black/50";
+              } else if (item.stampCost === 0) {
+                label = "무료 획득";
+                statusColor = "bg-sakura-pink text-type-black";
               } else {
                 label = "구매";
                 statusColor = "bg-sakura-pink text-type-black";
@@ -157,22 +160,22 @@ export default async function ShopPage() {
                   )}
 
                   {/* Cost & level */}
-                  {item.stampCost === 0 ? (
-                    <p className="text-xs font-bold text-shiba-orange mt-2">무료</p>
-                  ) : (
-                    <div className="mt-2 flex flex-col items-center gap-1.5">
-                      <p className="text-xs font-bold text-type-black/60 flex items-center gap-1">
-                        ⭐ {item.stampCost}
-                        <span className="text-type-black/30">·</span>
-                        Lv.{item.requiredLevel}
-                      </p>
-                      <PurchaseButton
-                        itemId={item.id}
-                        available={available}
-                        label={label}
-                      />
-                    </div>
-                  )}
+                  <div className="mt-2 flex flex-col items-center gap-1.5 w-full">
+                    <p className="text-xs font-bold text-type-black/60 flex items-center gap-1">
+                      {item.stampCost === 0 ? (
+                        <span className="text-shiba-orange font-black">무료</span>
+                      ) : (
+                        <>⭐ {item.stampCost}</>
+                      )}
+                      <span className="text-type-black/30">·</span>
+                      Lv.{item.requiredLevel}
+                    </p>
+                    <PurchaseButton
+                      itemId={item.id}
+                      available={available}
+                      label={label}
+                    />
+                  </div>
                 </div>
               );
             })}
