@@ -103,16 +103,17 @@ model Diary {
 // ── Gamification ──────────────────────────────────────────────────────────────
 
 model UserProgress {
-  id          String    @id @default(cuid())
-  userId      String    @unique
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  xp          Int       @default(0)
-  level       Int       @default(1)
-  totalStamps Int       @default(0)
-  streakDays  Int       @default(0)
-  lastStudyAt DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  xp              Int       @default(0)
+  level           Int       @default(1)
+  totalStamps     Int       @default(0)
+  streakDays      Int       @default(0)
+  activeCharacter String    @default("shiba") // "shiba" | "poodle" | "beagle" | "pomeranian"
+  lastStudyAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }
 
 model WardrobeItem {
