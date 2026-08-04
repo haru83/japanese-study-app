@@ -45,6 +45,13 @@ const ITEM_OVERLAYS: Record<string, string> = {
   "cape": "/mascot/overlay-cape.webp",
   "bandana": "/mascot/overlay-bandana.webp",
   "stud-ear": "/mascot/overlay-stud-ear.webp",
+  // ─── 추가 신규 아이템 (6개) ───
+  "ninja": "/mascot/overlay-ninja.webp",
+  "wizard-hat": "/mascot/overlay-wizard-hat.webp",
+  "hawaiian-shirt": "/mascot/overlay-hawaiian-shirt.webp",
+  "headphones": "/mascot/overlay-headphones.webp",
+  "pink-ribbon": "/mascot/overlay-pink-ribbon.webp",
+  "randoseru": "/mascot/overlay-randoseru.webp",
 };
 
 /**
@@ -80,9 +87,12 @@ const LEVEL_IMAGES: Record<number, string> = {
 const ITEM_Z_INDEX: Record<string, number> = {
   // ─── 머리 위 (최상위) ───
   "crown": 30,
+  "wizard-hat": 30,
   "flower-crown": 30,
   "halo": 28,
+  "pink-ribbon": 28,
   "horns": 27,
+  "headphones": 26,
   "hat-cap": 25,
   "hat-santa": 25,
   "hachimaki": 25,
@@ -101,8 +111,11 @@ const ITEM_Z_INDEX: Record<string, number> = {
   "muffler": 14,
   // ─── 몸통 ───
   "cape": 10,
+  "hawaiian-shirt": 8,
   "hakama": 8,
+  "ninja": 7,
   "armor-samurai": 6,
+  "randoseru": 5,
 };
 
 /**
@@ -234,6 +247,12 @@ const ITEM_ID_ALIASES: Record<string, string> = {
   "item-kimono": "hakama",
   "item-glasses": "glasses",
   "item-crown": "crown",
+  "item-ninja": "ninja",
+  "item-wizard-hat": "wizard-hat",
+  "item-hawaiian-shirt": "hawaiian-shirt",
+  "item-headphones": "headphones",
+  "item-pink-ribbon": "pink-ribbon",
+  "item-randoseru": "randoseru",
 };
 
 export function normalizeItemId(id: string): string {

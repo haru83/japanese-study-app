@@ -31,6 +31,7 @@ export default async function ProfilePage() {
 
   const progress = profile?.progress;
   const level = progress?.level ?? 1;
+  const activeCharacter = progress?.activeCharacter ?? "shiba";
   const xp = progress?.xp ?? 0;
   const xpPercent = xpProgress(xp, level);
   const nextXp = xpForNextLevel(level);
@@ -49,6 +50,7 @@ export default async function ProfilePage() {
         {/* 아바타 + 닉네임 */}
         <div className="flex items-center gap-4 mb-5">
           <ShibaAvatar
+            characterId={activeCharacter}
             level={level}
             size={72}
             sticker

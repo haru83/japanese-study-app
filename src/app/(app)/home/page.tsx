@@ -217,7 +217,7 @@ export default async function HomePage() {
             <p className="text-type-black/60 text-sm font-bold">안녕하세요!</p>
             <h2 className="text-xl font-black text-type-black">{name} 님 👋</h2>
           </div>
-          <ShibaAvatar level={level} size={56} sticker wobble="wobbly-3" className="-mt-3 -ml-6 relative z-10" equippedItemIds={equippedIds} />
+          <ShibaAvatar characterId={progress?.activeCharacter ?? "shiba"} level={level} size={56} sticker wobble="wobbly-3" className="-mt-3 -ml-6 relative z-10" equippedItemIds={equippedIds} />
         </div>
 
         {/* XP bar */}

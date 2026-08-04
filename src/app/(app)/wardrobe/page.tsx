@@ -6,6 +6,8 @@ import { getWardrobeItems } from "@/actions/wardrobe";
 import { ShibaAvatar } from "@/components/mascot/ShibaAvatar";
 import { EquipButton } from "@/components/wardrobe/EquipButton";
 
+import { CharacterSelector } from "@/components/wardrobe/CharacterSelector";
+
 export default async function WardrobePage() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
@@ -26,6 +28,7 @@ export default async function WardrobePage() {
 
   const profile = await getUserProfile();
   const level = profile?.progress?.level ?? 1;
+  const activeCharacter = profile?.progress?.activeCharacter ?? "shiba";
   const { items, ownedIds, equippedIds } = await getWardrobeItems();
 
   // 보유한 아이템만 필터링
@@ -67,6 +70,7 @@ export default async function WardrobePage() {
         <div className="bg-canvas-almond rounded-[15px] border-2 border-black shadow-[4px_4px_0px_0px_#000] p-6 flex flex-col items-center">
           <div className="relative">
             <ShibaAvatar
+              characterId={activeCharacter}
               level={level}
               size={96}
               sticker
@@ -94,6 +98,11 @@ export default async function WardrobePage() {
             </p>
           )}
         </div>
+      </section>
+
+      {/* Dog Character Selection */}
+      <section className="px-5">
+        <CharacterSelector currentCharacter={activeCharacter} />
       </section>
 
       {/* Owned items grid */}

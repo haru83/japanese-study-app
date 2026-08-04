@@ -12,6 +12,12 @@ export const ITEM_SLOTS: Record<string, WardrobeSlot> = {
   "flower-crown": "head",
   "halo": "head",
   "horns": "head",
+  "wizard-hat": "head",
+  "item-wizard-hat": "head",
+  "headphones": "head",
+  "item-headphones": "head",
+  "pink-ribbon": "head",
+  "item-pink-ribbon": "head",
 
   // ─── 얼굴 (face) ───
   "glasses": "face",
@@ -35,6 +41,12 @@ export const ITEM_SLOTS: Record<string, WardrobeSlot> = {
   "item-kimono": "body",
   "armor-samurai": "body",
   "cape": "body",
+  "ninja": "body",
+  "item-ninja": "body",
+  "hawaiian-shirt": "body",
+  "item-hawaiian-shirt": "body",
+  "randoseru": "body",
+  "item-randoseru": "body",
 };
 
 export function getItemSlot(itemId: string): WardrobeSlot | "other" {
