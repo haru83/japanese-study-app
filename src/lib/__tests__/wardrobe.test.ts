@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { canPurchaseItem, getItemSlot } from "@/lib/wardrobe";
-import { getFallbackLevelImage } from "@/components/mascot/ShibaAvatar";
+import { getFallbackLevelImage, getShibaMascotSrc, CHARACTER_BASES } from "@/components/mascot/ShibaAvatar";
 
 describe("getItemSlot", () => {
   it("머리 아이템들은 head 슬롯으로 분류된다", () => {
@@ -96,7 +96,24 @@ describe("Wardrobe items level requirements", () => {
   });
 });
 
-describe("getFallbackLevelImage", () => {
+describe("CHARACTER_BASES & getFallbackLevelImage & getShibaMascotSrc", () => {
+  it("CHARACTER_BASES contains mappings for all supported dog characters", () => {
+    expect(CHARACTER_BASES.shiba).toBe("/mascot/shiba-base.webp");
+    expect(CHARACTER_BASES.poodle).toBe("/mascot/shiba-base.webp");
+    expect(CHARACTER_BASES.beagle).toBe("/mascot/shiba-base.webp");
+    expect(CHARACTER_BASES.pomeranian).toBe("/mascot/shiba-base.webp");
+  });
+
+  it("getFallbackLevelImage returns character base image when no items are equipped", () => {
+    expect(getFallbackLevelImage(1, [], "poodle")).toBe("/mascot/shiba-base.webp");
+    expect(getFallbackLevelImage(10, [], "beagle")).toBe("/mascot/shiba-base.webp");
+  });
+
+  it("getShibaMascotSrc returns base image for characterId", () => {
+    expect(getShibaMascotSrc(1, "pomeranian")).toBe("/mascot/shiba-base.webp");
+    expect(getShibaMascotSrc(1)).toBe("/mascot/shiba-base.webp");
+  });
+
   it("착용 아이템이 없으면 레벨과 관계없이 항상 base 이미지를 반환한다", () => {
     expect(getFallbackLevelImage(1, [])).toBe("/mascot/shiba-base.webp");
     expect(getFallbackLevelImage(6, [])).toBe("/mascot/shiba-base.webp");

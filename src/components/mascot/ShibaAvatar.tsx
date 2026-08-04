@@ -6,9 +6,16 @@ import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 
 /**
- * 레벨별 시바견 마스코트 기본 이미지 (아이템 미착용)
+ * 캐릭터별 기본 이미지 매핑
  */
-const BASE_IMAGE = "/mascot/shiba-base.webp";
+export const CHARACTER_BASES: Record<string, string> = {
+  shiba: "/mascot/shiba-base.webp",
+  poodle: "/mascot/shiba-base.webp", // Fallback to base or character image
+  beagle: "/mascot/shiba-base.webp",
+  pomeranian: "/mascot/shiba-base.webp",
+};
+
+const BASE_IMAGE = CHARACTER_BASES.shiba;
 
 /**
  * 아이템별 오버레이 이미지 매핑
@@ -16,28 +23,28 @@ const BASE_IMAGE = "/mascot/shiba-base.webp";
  * 오버레이 이미지가 없는 아이템은 레벨 이미지로 폴백합니다.
  */
 const ITEM_OVERLAYS: Record<string, string> = {
- // ─── 기존 아이템 (5개) ───
- "hat-cap": "/mascot/overlay-hat-cap.webp",
- "scarf": "/mascot/overlay-scarf.webp",
- "hat-santa": "/mascot/overlay-hat-santa.webp",
- "glasses": "/mascot/overlay-glasses.webp",
- "crown": "/mascot/overlay-crown.webp",
- // ─── 신규 아이템 (15개) ───
- "hachimaki": "/mascot/overlay-hachimaki.webp",
- "horns": "/mascot/overlay-horns.webp",
- "halo": "/mascot/overlay-halo.webp",
- "bow-tie": "/mascot/overlay-bow-tie.webp",
- "necklace-pearl": "/mascot/overlay-necklace-pearl.webp",
- "mask-fox": "/mascot/overlay-mask-fox.webp",
- "mask-oni": "/mascot/overlay-mask-oni.webp",
- "earring-gold": "/mascot/overlay-earring-gold.webp",
- "flower-crown": "/mascot/overlay-flower-crown.webp",
- "muffler": "/mascot/overlay-muffler.webp",
- "hakama": "/mascot/overlay-hakama.webp",
- "armor-samurai": "/mascot/overlay-armor-samurai.webp",
- "cape": "/mascot/overlay-cape.webp",
- "bandana": "/mascot/overlay-bandana.webp",
- "stud-ear": "/mascot/overlay-stud-ear.webp",
+  // ─── 기존 아이템 (5개) ───
+  "hat-cap": "/mascot/overlay-hat-cap.webp",
+  "scarf": "/mascot/overlay-scarf.webp",
+  "hat-santa": "/mascot/overlay-hat-santa.webp",
+  "glasses": "/mascot/overlay-glasses.webp",
+  "crown": "/mascot/overlay-crown.webp",
+  // ─── 신규 아이템 (15개) ───
+  "hachimaki": "/mascot/overlay-hachimaki.webp",
+  "horns": "/mascot/overlay-horns.webp",
+  "halo": "/mascot/overlay-halo.webp",
+  "bow-tie": "/mascot/overlay-bow-tie.webp",
+  "necklace-pearl": "/mascot/overlay-necklace-pearl.webp",
+  "mask-fox": "/mascot/overlay-mask-fox.webp",
+  "mask-oni": "/mascot/overlay-mask-oni.webp",
+  "earring-gold": "/mascot/overlay-earring-gold.webp",
+  "flower-crown": "/mascot/overlay-flower-crown.webp",
+  "muffler": "/mascot/overlay-muffler.webp",
+  "hakama": "/mascot/overlay-hakama.webp",
+  "armor-samurai": "/mascot/overlay-armor-samurai.webp",
+  "cape": "/mascot/overlay-cape.webp",
+  "bandana": "/mascot/overlay-bandana.webp",
+  "stud-ear": "/mascot/overlay-stud-ear.webp",
 };
 
 /**
@@ -71,32 +78,32 @@ const LEVEL_IMAGES: Record<number, string> = {
  * 높을수록 위에 렌더링됨
  */
 const ITEM_Z_INDEX: Record<string, number> = {
- // ─── 머리 위 (최상위) ───
- "crown": 30,
- "flower-crown": 30,
- "halo": 28,
- "horns": 27,
- "hat-cap": 25,
- "hat-santa": 25,
- "hachimaki": 25,
- "bandana": 24,
- // ─── 얼굴 ───
- "mask-fox": 22,
- "mask-oni": 22,
- "glasses": 20,
- // ─── 귀 ───
- "earring-gold": 18,
- "stud-ear": 18,
- // ─── 목 ───
- "bow-tie": 16,
- "necklace-pearl": 15,
- "scarf": 14,
- "muffler": 14,
- // ─── 몸통 ───
- "cape": 10,
- "hakama": 8,
- "armor-samurai": 6,
- };
+  // ─── 머리 위 (최상위) ───
+  "crown": 30,
+  "flower-crown": 30,
+  "halo": 28,
+  "horns": 27,
+  "hat-cap": 25,
+  "hat-santa": 25,
+  "hachimaki": 25,
+  "bandana": 24,
+  // ─── 얼굴 ───
+  "mask-fox": 22,
+  "mask-oni": 22,
+  "glasses": 20,
+  // ─── 귀 ───
+  "earring-gold": 18,
+  "stud-ear": 18,
+  // ─── 목 ───
+  "bow-tie": 16,
+  "necklace-pearl": 15,
+  "scarf": 14,
+  "muffler": 14,
+  // ─── 몸통 ───
+  "cape": 10,
+  "hakama": 8,
+  "armor-samurai": 6,
+};
 
 /**
  * 어떤 오버레이 PNG가 실제로 존재하는지 런타임에 체크
@@ -198,7 +205,9 @@ function usePrevious<T>(value: T): T | undefined {
 
 // ─── Props ───────────────────────────────────────────────────
 interface ShibaAvatarProps {
-  /** 사용자 레벨 (1~6) */
+  /** 캐릭터 ID (shiba, poodle, beagle, pomeranian) */
+  characterId?: string;
+  /** 사용자 레벨 (1~10) */
   level?: number;
   /** 장착한 아이템 ID 목록 */
   equippedItemIds?: string[];
@@ -249,10 +258,10 @@ function shouldUseOverlayMode(equippedItemIds?: string[]): boolean {
  * 아이템 착용 상태에 따른 이미지 결정
  * - 아이템 착용 + 오버레이 PNG 있음 → 기본 시바견 + 오버레이 레이어 (shouldUseOverlayMode에서 처리)
  * - 아이템 착용 + 오버레이 PNG 없음 → 레벨 폴백 합성 이미지
- * - 아이템 미착용 → 항상 기본 시바견 (shiba-base.webp)
+ * - 아이템 미착용 → 캐릭터 기본 이미지 (CHARACTER_BASES[characterId] 또는 shiba-base.webp)
  *   ※ 옷장 시스템 도입 후, 착용 아이템이 없으면 레벨과 무관하게 기본 이미지만 표시
  */
-export function getFallbackLevelImage(_level: number, equippedItemIds?: string[]): string {
+export function getFallbackLevelImage(_level: number, equippedItemIds?: string[], characterId?: string): string {
   if (equippedItemIds && equippedItemIds.length > 0) {
     let maxLevel = 0;
     for (const rawId of equippedItemIds) {
@@ -266,8 +275,8 @@ export function getFallbackLevelImage(_level: number, equippedItemIds?: string[]
       return LEVEL_IMAGES[maxLevel] ?? LEVEL_IMAGES[1];
     }
   }
-  // Remove automatic clothing escalation: always return base image
-  return BASE_IMAGE;
+  // Remove automatic clothing escalation: return base image for selected character
+  return (characterId && CHARACTER_BASES[characterId]) || BASE_IMAGE;
 }
 
 // ─── 백그라운드 아우라 ──────────────────────────────────────────
@@ -280,9 +289,13 @@ function ShibaAura({ level }: { level: number }) {
     4: "bg-sky-400/50 animate-pulse ring-4 ring-sky-400/60 shadow-[0_0_16px_rgba(56,189,248,0.7)]",
     5: "bg-amber-400/60 animate-pulse ring-4 ring-amber-400/70 shadow-[0_0_18px_rgba(251,191,36,0.8)]",
     6: "bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 animate-pulse ring-4 ring-yellow-400/80 shadow-[0_0_22px_rgba(250,204,21,0.9)]",
+    7: "bg-purple-500/60 animate-pulse ring-4 ring-purple-400/80 shadow-[0_0_24px_rgba(168,85,247,0.8)]",
+    8: "bg-cyan-400/60 animate-pulse ring-4 ring-cyan-300/80 shadow-[0_0_26px_rgba(34,211,238,0.9)]",
+    9: "bg-indigo-500/60 animate-pulse ring-4 ring-indigo-400/80 shadow-[0_0_28px_rgba(99,102,241,0.9)]",
+    10: "bg-gradient-to-r from-amber-400 via-rose-500 to-amber-300 animate-pulse ring-4 ring-amber-300/90 shadow-[0_0_32px_rgba(251,191,36,1)]",
   };
 
-  const currentAura = auraClasses[Math.min(level, 6)] ?? auraClasses[2];
+  const currentAura = auraClasses[Math.min(level, 10)] ?? auraClasses[2];
 
   return (
     <div
@@ -293,6 +306,7 @@ function ShibaAura({ level }: { level: number }) {
 
 // ─── 메인 컴포넌트 ──────────────────────────────────────────
 export function ShibaAvatar({
+  characterId = "shiba",
   level = 1,
   equippedItemIds,
   className,
@@ -302,8 +316,9 @@ export function ShibaAvatar({
   circular = false,
   triggerLevelUp,
 }: ShibaAvatarProps) {
+  const baseImage = (characterId && CHARACTER_BASES[characterId]) || CHARACTER_BASES.shiba;
   const useOverlay = shouldUseOverlayMode(equippedItemIds);
-  const src = useOverlay ? BASE_IMAGE : getFallbackLevelImage(level, equippedItemIds);
+  const src = useOverlay ? baseImage : getFallbackLevelImage(level, equippedItemIds, characterId);
   const prevLevel = usePrevious(level);
   const prevTrigger = usePrevious(triggerLevelUp);
   const prevEquipped = usePrevious(equippedItemIds);
@@ -481,10 +496,13 @@ export function ShibaAvatar({
 }
 
 /**
- * 기본 시바견 이미지 경로를 반환하는 유틸리티
+ * 기본 시바견 및 캐릭터 이미지 경로를 반환하는 유틸리티
  * 서버 컴포넌트에서 <img> 태그로 직접 사용할 때 활용
  * ※ 옷장 시스템 도입 후, 아이템 미착용 시 항상 기본 이미지만 표시
  */
-export function getShibaMascotSrc(_level?: number): string {
-  return BASE_IMAGE;
+export function getShibaMascotSrc(_level?: number, characterId?: string): string {
+  if (characterId && CHARACTER_BASES[characterId]) {
+    return CHARACTER_BASES[characterId];
+  }
+  return CHARACTER_BASES.shiba;
 }
