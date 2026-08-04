@@ -281,6 +281,11 @@ function shouldUseOverlayMode(equippedItemIds?: string[]): boolean {
  *   ※ 옷장 시스템 도입 후, 착용 아이템이 없으면 레벨과 무관하게 기본 이미지만 표시
  */
 export function getFallbackLevelImage(_level: number, equippedItemIds?: string[], characterId?: string): string {
+  // 시바견이 아닌 캐릭터(푸들, 비글, 포메)는 시바견 전용 합성 이미지(LEVEL_IMAGES)를 절대 사용하지 않음
+  if (characterId && characterId !== "shiba" && CHARACTER_BASES[characterId]) {
+    return CHARACTER_BASES[characterId];
+  }
+
   if (equippedItemIds && equippedItemIds.length > 0) {
     let maxLevel = 0;
     for (const rawId of equippedItemIds) {
@@ -354,38 +359,38 @@ export function ShibaAvatar({
   const [showLevelUpEffect, setShowLevelUpEffect] = useState(false);
   const [showEquipEffect, setShowEquipEffect] = useState(false);
   const [particles, setParticles] = useState<Particle[]>([]);
-  const [imageKey, setImageKey] = useState(src + JSON.stringify(equippedItemIds));
+  const [imageKey, setImageKey] = useState(`${characterId}-${src}-${JSON.stringify(equippedItemIds)}`);
 
   // 레벨업 이펙트 트리거
   useEffect(() => {
     if (isLevelUp) {
       setParticles(generateParticles(16));
       setShowLevelUpEffect(true);
-      setImageKey(src + JSON.stringify(equippedItemIds));
+      setImageKey(`${characterId}-${src}-${JSON.stringify(equippedItemIds)}`);
 
       const timer = setTimeout(() => {
         setShowLevelUpEffect(false);
       }, 1200);
       return () => clearTimeout(timer);
     }
-  }, [isLevelUp, src, equippedItemIds]);
+  }, [isLevelUp, characterId, src, equippedItemIds]);
 
   // 착용 변경 이펙트 (작은 바운스)
   useEffect(() => {
     if (isEquipChanged) {
       setShowEquipEffect(true);
-      setImageKey(src + JSON.stringify(equippedItemIds));
+      setImageKey(`${characterId}-${src}-${JSON.stringify(equippedItemIds)}`);
       const timer = setTimeout(() => {
         setShowEquipEffect(false);
       }, 600);
       return () => clearTimeout(timer);
     }
-  }, [isEquipChanged, src, equippedItemIds]);
+  }, [isEquipChanged, characterId, src, equippedItemIds]);
 
-  // src나 equippedItemIds가 바뀌면 imageKey 갱신
+  // src나 equippedItemIds, characterId가 바뀌면 imageKey 갱신
   useEffect(() => {
-    setImageKey(src + JSON.stringify(equippedItemIds));
-  }, [src, equippedItemIds]);
+    setImageKey(`${characterId}-${src}-${JSON.stringify(equippedItemIds)}`);
+  }, [characterId, src, equippedItemIds]);
 
   // 오버레이할 아이템 정렬 (z-index 낮→높은 순으로 렌더링)
   const overlayItems = (equippedItemIds ?? [])
