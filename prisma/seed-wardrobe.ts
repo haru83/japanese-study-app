@@ -14,8 +14,6 @@ interface SeedWardrobeItem {
 }
 
 const WARDROBE_SEED: SeedWardrobeItem[] = [
-  // ─── 기본 ───
-  { id: "default", name: "기본", icon: "🐕", stampCost: 0, requiredLevel: 1, imageUrl: "", isRare: false },
   // ─── 기존 아이템 (5개) ───
   { id: "hat-cap", name: "야구 모자", icon: "🧢", stampCost: 5, requiredLevel: 1, imageUrl: "", isRare: false },
   { id: "hat-santa", name: "산타 모자", icon: "🎅", stampCost: 8, requiredLevel: 2, imageUrl: "", isRare: false },
@@ -49,6 +47,8 @@ const LEVEL_WARDROBE_ITEMS: SeedWardrobeItem[] = [
 ];
 
 async function main() {
+  await prisma.userWardrobeItem.deleteMany({ where: { wardrobeItemId: "default" } });
+  await prisma.wardrobeItem.deleteMany({ where: { id: "default" } });
   const allItems = [...WARDROBE_SEED, ...LEVEL_WARDROBE_ITEMS];
   for (const item of allItems) {
     await prisma.wardrobeItem.upsert({

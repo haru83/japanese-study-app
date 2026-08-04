@@ -1,6 +1,33 @@
 import { describe, it, expect } from "vitest";
-import { canPurchaseItem } from "@/lib/wardrobe";
+import { canPurchaseItem, getItemSlot } from "@/lib/wardrobe";
 import { getFallbackLevelImage } from "@/components/mascot/ShibaAvatar";
+
+describe("getItemSlot", () => {
+  it("머리 아이템들은 head 슬롯으로 분류된다", () => {
+    expect(getItemSlot("hachimaki")).toBe("head");
+    expect(getItemSlot("item-headband")).toBe("head");
+    expect(getItemSlot("bandana")).toBe("head");
+    expect(getItemSlot("crown")).toBe("head");
+  });
+
+  it("얼굴 아이템들은 face 슬롯으로 분류된다", () => {
+    expect(getItemSlot("glasses")).toBe("face");
+    expect(getItemSlot("item-glasses")).toBe("face");
+    expect(getItemSlot("mask-fox")).toBe("face");
+  });
+
+  it("목 아이템들은 neck 슬롯으로 분류된다", () => {
+    expect(getItemSlot("scarf")).toBe("neck");
+    expect(getItemSlot("item-scarf")).toBe("neck");
+    expect(getItemSlot("muffler")).toBe("neck");
+  });
+
+  it("몸통 아이템들은 body 슬롯으로 분류된다", () => {
+    expect(getItemSlot("hakama")).toBe("body");
+    expect(getItemSlot("item-kimono")).toBe("body");
+    expect(getItemSlot("armor-samurai")).toBe("body");
+  });
+});
 
 describe("canPurchaseItem", () => {
   it("스탬프와 레벨이 충분하면 구매 가능하다", () => {
