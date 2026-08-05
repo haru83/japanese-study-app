@@ -41,12 +41,12 @@ export const lessons: Lesson[] = [
     ],
     grammarPoints: [
       {
-        rule: "〜ていただく",
-        explanation: "상대방에게 무언가를 받거나 해달라고 부탁할 때 쓰는 겸양 표현입니다.",
+        rule: "かしこまりました",
+        explanation: "상사의 지시나 업무 요청을 정중하게 알겠다고 승낙할 때 사용하는 정중 표현입니다.",
       },
       {
         rule: "〜いたします",
-        explanation: "「します」의 겸양어로, 격식 있는 상황에서 사용합니다.",
+        explanation: "「します」의 겸양어로, 격식 있는 인사나 업무 요청 시 사용합니다 (예: よろしくお願いいたします).",
       },
     ],
     vocab: [
