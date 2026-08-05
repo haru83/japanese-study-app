@@ -23,6 +23,7 @@ export const CHARACTER_ITEM_MASCOTS: Record<string, Record<string, string>> = {
   shiba: {
     "hachimaki": "/mascot/shiba-lv2-hachimaki.webp",
     "item-headband": "/mascot/shiba-lv2-hachimaki.webp",
+    "bandana": "/mascot/shiba-lv2-hachimaki.webp",
     "scarf": "/mascot/shiba-lv3-scarf.webp",
     "item-scarf": "/mascot/shiba-lv3-scarf.webp",
     "hakama": "/mascot/shiba-lv4-kimono.webp",
@@ -35,14 +36,17 @@ export const CHARACTER_ITEM_MASCOTS: Record<string, Record<string, string>> = {
   poodle: {
     "hachimaki": "/mascot/poodle-hachimaki.png",
     "item-headband": "/mascot/poodle-hachimaki.png",
+    "bandana": "/mascot/poodle-bandana.png",
   },
   beagle: {
     "hachimaki": "/mascot/beagle-hachimaki.png",
     "item-headband": "/mascot/beagle-hachimaki.png",
+    "bandana": "/mascot/beagle-bandana.png",
   },
   pomeranian: {
     "hachimaki": "/mascot/pomeranian-hachimaki.png",
     "item-headband": "/mascot/pomeranian-hachimaki.png",
+    "bandana": "/mascot/pomeranian-bandana.png",
   },
 };
 
