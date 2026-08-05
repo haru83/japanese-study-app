@@ -390,9 +390,13 @@ export function ShibaAvatar({
   circular = false,
   triggerLevelUp,
 }: ShibaAvatarProps) {
-  const equippedItemId = equippedItemIds && equippedItemIds.length > 0 ? normalizeItemId(equippedItemIds[0]) : null;
+  const rawEquippedId = equippedItemIds && equippedItemIds.length > 0 ? equippedItemIds[0] : null;
+  const equippedItemId = rawEquippedId ? normalizeItemId(rawEquippedId) : null;
+  
   const fittedMascotSrc = equippedItemId
-    ? (CHARACTER_ITEM_MASCOTS[characterId]?.[equippedItemId] || CHARACTER_ITEM_MASCOTS[characterId]?.[equippedItemIds![0]])
+    ? (CHARACTER_ITEM_MASCOTS[characterId]?.[equippedItemId] || 
+       CHARACTER_ITEM_MASCOTS[characterId]?.[rawEquippedId!] ||
+       `/mascot/${characterId}-${equippedItemId}.png`)
     : null;
 
   const baseImage = (characterId && CHARACTER_BASES[characterId]) || CHARACTER_BASES.shiba;
