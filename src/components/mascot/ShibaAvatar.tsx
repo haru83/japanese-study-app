@@ -24,29 +24,45 @@ export const CHARACTER_ITEM_MASCOTS: Record<string, Record<string, string>> = {
     "hachimaki": "/mascot/shiba-lv2-hachimaki.webp",
     "item-headband": "/mascot/shiba-lv2-hachimaki.webp",
     "bandana": "/mascot/shiba-bandana.png",
-    "scarf": "/mascot/shiba-lv3-scarf.webp",
-    "item-scarf": "/mascot/shiba-lv3-scarf.webp",
+    "hat-cap": "/mascot/shiba-hat-cap.png",
+    "glasses": "/mascot/shiba-glasses.png",
+    "item-glasses": "/mascot/shiba-glasses.png",
+    "crown": "/mascot/shiba-crown.png",
+    "item-crown": "/mascot/shiba-crown.png",
+    "scarf": "/mascot/shiba-scarf.png",
+    "item-scarf": "/mascot/shiba-scarf.png",
     "hakama": "/mascot/shiba-lv4-kimono.webp",
     "item-kimono": "/mascot/shiba-lv4-kimono.webp",
-    "glasses": "/mascot/shiba-lv5-glasses.webp",
-    "item-glasses": "/mascot/shiba-lv5-glasses.webp",
-    "crown": "/mascot/shiba-lv6-master.webp",
-    "item-crown": "/mascot/shiba-lv6-master.webp",
   },
   poodle: {
     "hachimaki": "/mascot/poodle-hachimaki.png",
     "item-headband": "/mascot/poodle-hachimaki.png",
     "bandana": "/mascot/poodle-bandana.png",
+    "hat-cap": "/mascot/poodle-hat-cap.png",
+    "glasses": "/mascot/poodle-glasses.png",
+    "item-glasses": "/mascot/poodle-glasses.png",
+    "crown": "/mascot/poodle-crown.png",
+    "item-crown": "/mascot/poodle-crown.png",
   },
   beagle: {
     "hachimaki": "/mascot/beagle-hachimaki.png",
     "item-headband": "/mascot/beagle-hachimaki.png",
     "bandana": "/mascot/beagle-bandana.png",
+    "hat-cap": "/mascot/beagle-hat-cap.png",
+    "glasses": "/mascot/beagle-glasses.png",
+    "item-glasses": "/mascot/beagle-glasses.png",
+    "crown": "/mascot/beagle-crown.png",
+    "item-crown": "/mascot/beagle-crown.png",
   },
   pomeranian: {
     "hachimaki": "/mascot/pomeranian-hachimaki.png",
     "item-headband": "/mascot/pomeranian-hachimaki.png",
     "bandana": "/mascot/pomeranian-bandana.png",
+    "hat-cap": "/mascot/pomeranian-hat-cap.png",
+    "glasses": "/mascot/pomeranian-glasses.png",
+    "item-glasses": "/mascot/pomeranian-glasses.png",
+    "crown": "/mascot/pomeranian-crown.png",
+    "item-crown": "/mascot/pomeranian-crown.png",
   },
 };
 
@@ -395,8 +411,7 @@ export function ShibaAvatar({
   
   const fittedMascotSrc = equippedItemId
     ? (CHARACTER_ITEM_MASCOTS[characterId]?.[equippedItemId] || 
-       CHARACTER_ITEM_MASCOTS[characterId]?.[rawEquippedId!] ||
-       `/mascot/${characterId}-${equippedItemId}.png`)
+       CHARACTER_ITEM_MASCOTS[characterId]?.[rawEquippedId!])
     : null;
 
   const baseImage = (characterId && CHARACTER_BASES[characterId]) || CHARACTER_BASES.shiba;
