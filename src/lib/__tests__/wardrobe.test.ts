@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { canPurchaseItem, getItemSlot } from "@/lib/wardrobe";
-import { getFallbackLevelImage, getShibaMascotSrc, CHARACTER_BASES } from "@/components/mascot/ShibaAvatar";
+import { getFallbackLevelImage, getShibaMascotSrc, CHARACTER_BASES, getBreedFittedStyle } from "@/components/mascot/ShibaAvatar";
 
 describe("getItemSlot", () => {
   it("classifies all head items as head slot", () => {
@@ -110,6 +110,20 @@ describe("CHARACTER_BASES & getFallbackLevelImage & getShibaMascotSrc", () => {
   it("폴백 레벨이 있는 아이템 착용 시 해당 레벨 이미지를 반환한다", () => {
     expect(getFallbackLevelImage(1, ["scarf"])).toBe("/mascot/shiba-lv3-scarf.webp");
     expect(getFallbackLevelImage(1, ["crown"])).toBe("/mascot/shiba-lv6-master.webp");
+  });
+});
+
+describe("2-Slot Breed-Specific Fitted Overlay Resolution (getBreedFittedStyle)", () => {
+  it("returns empty style object for default shiba character", () => {
+    expect(getBreedFittedStyle("shiba", "head")).toEqual({});
+    expect(getBreedFittedStyle("shiba", "body")).toEqual({});
+    expect(getBreedFittedStyle(undefined, "head")).toEqual({});
+  });
+
+  it("returns 2-slot fitted clipPath styles for non-shiba dog breeds", () => {
+    expect(getBreedFittedStyle("poodle", "head")).toEqual({ clipPath: "inset(0 0 35% 0)" });
+    expect(getBreedFittedStyle("beagle", "head")).toEqual({ clipPath: "inset(0 0 35% 0)" });
+    expect(getBreedFittedStyle("pomeranian", "body")).toEqual({ clipPath: "inset(30% 0 0 0)" });
   });
 });
 

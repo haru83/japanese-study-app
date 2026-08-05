@@ -304,6 +304,21 @@ export function getFallbackLevelImage(_level: number, equippedItemIds?: string[]
   return (characterId && CHARACTER_BASES[characterId]) || BASE_IMAGE;
 }
 
+/**
+ * 캐릭터 품종별, 2개 슬롯(head / body) 아이템 착용 시 적용할 피팅 스타일 반환
+ * 기본 시바견은 클리핑 없이 전체 오버레이 적용, 타 품종(푸들, 비글, 포메 등)은 슬롯별 피팅 처리
+ */
+export function getBreedFittedStyle(characterId?: string, slot?: string): React.CSSProperties {
+  if (!characterId || characterId === "shiba") return {};
+  if (slot === "head") {
+    return { clipPath: "inset(0 0 35% 0)" };
+  }
+  if (slot === "body") {
+    return { clipPath: "inset(30% 0 0 0)" };
+  }
+  return {};
+}
+
 // ─── 백그라운드 아우라 ──────────────────────────────────────────
 function ShibaAura({ level }: { level: number }) {
   if (level <= 1) return null;
@@ -483,13 +498,8 @@ export function ShibaAvatar({
 
             {/* 아이템 오버레이 레이어들 */}
             {useOverlay && overlayItems.map(({ rawId, normalizedId }) => {
-              const isNonShiba = characterId && characterId !== "shiba";
               const slot = getItemSlot(normalizedId);
-              const clipStyle = isNonShiba ? (
-                slot === "head" ? { clipPath: "inset(0 0 35% 0)" } :
-                slot === "face" ? { clipPath: "inset(10% 5% 20% 5%)" } :
-                { clipPath: "inset(30% 0 0 0)" }
-              ) : {};
+              const fittedStyle = getBreedFittedStyle(characterId, slot);
 
               return (
                 <Image
@@ -502,7 +512,7 @@ export function ShibaAvatar({
                     "absolute inset-0 object-contain pointer-events-none",
                     circular && "object-cover rounded-full"
                   )}
-                  style={{ zIndex: ITEM_Z_INDEX[normalizedId] ?? 10, ...clipStyle }}
+                  style={{ zIndex: ITEM_Z_INDEX[normalizedId] ?? 10, ...fittedStyle }}
                   onError={() => handleOverlayError(normalizedId)}
                   unoptimized
                 />
