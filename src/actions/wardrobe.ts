@@ -84,7 +84,7 @@ export async function getWardrobeItems() {
   };
 }
 
-/** 아이템 착용 (동일 슬롯 아이템 자동 해제) */
+/** 아이템 착용 (2-Slot 상호 배제: head / body 동일 슬롯 아이템 자동 해제) */
 export async function equipItem(wardrobeItemId: string) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) throw new Error("로그인이 필요합니다.");
@@ -99,7 +99,7 @@ export async function equipItem(wardrobeItemId: string) {
 
   const slot = getItemSlot(wardrobeItemId);
 
-  // 현재 착용 중인 아이템 중 동일 슬롯 아이템 해제
+  // 현재 착용 중인 아이템 중 동일 슬롯 (head 또는 body) 아이템 자동 해제
   const currentlyEquipped = await prisma.userWardrobeItem.findMany({
     where: { userId, equippedAt: { not: null } },
     select: { wardrobeItemId: true },
