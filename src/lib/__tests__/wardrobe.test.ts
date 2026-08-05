@@ -3,29 +3,16 @@ import { canPurchaseItem, getItemSlot } from "@/lib/wardrobe";
 import { getFallbackLevelImage, getShibaMascotSrc, CHARACTER_BASES } from "@/components/mascot/ShibaAvatar";
 
 describe("getItemSlot", () => {
-  it("머리 아이템들은 head 슬롯으로 분류된다", () => {
+  it("classifies all head items as head slot", () => {
     expect(getItemSlot("hachimaki")).toBe("head");
-    expect(getItemSlot("item-headband")).toBe("head");
-    expect(getItemSlot("bandana")).toBe("head");
-    expect(getItemSlot("crown")).toBe("head");
+    expect(getItemSlot("glasses")).toBe("head");
+    expect(getItemSlot("wizard-hat")).toBe("head");
   });
 
-  it("얼굴 아이템들은 face 슬롯으로 분류된다", () => {
-    expect(getItemSlot("glasses")).toBe("face");
-    expect(getItemSlot("item-glasses")).toBe("face");
-    expect(getItemSlot("mask-fox")).toBe("face");
-  });
-
-  it("목 아이템들은 neck 슬롯으로 분류된다", () => {
-    expect(getItemSlot("scarf")).toBe("neck");
-    expect(getItemSlot("item-scarf")).toBe("neck");
-    expect(getItemSlot("muffler")).toBe("neck");
-  });
-
-  it("몸통 아이템들은 body 슬롯으로 분류된다", () => {
+  it("classifies all body items as body slot", () => {
+    expect(getItemSlot("scarf")).toBe("body");
     expect(getItemSlot("hakama")).toBe("body");
-    expect(getItemSlot("item-kimono")).toBe("body");
-    expect(getItemSlot("armor-samurai")).toBe("body");
+    expect(getItemSlot("ninja")).toBe("body");
   });
 });
 

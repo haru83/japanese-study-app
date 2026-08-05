@@ -1,7 +1,7 @@
-export type WardrobeSlot = "head" | "face" | "ear" | "neck" | "body";
+export type WardrobeSlot = "head" | "body";
 
 export const ITEM_SLOTS: Record<string, WardrobeSlot> = {
-  // ─── 머리 (head) ───
+  // ─── 머리 슬롯 (head) ───
   "hachimaki": "head",
   "item-headband": "head",
   "bandana": "head",
@@ -12,6 +12,12 @@ export const ITEM_SLOTS: Record<string, WardrobeSlot> = {
   "flower-crown": "head",
   "halo": "head",
   "horns": "head",
+  "glasses": "head",
+  "item-glasses": "head",
+  "mask-fox": "head",
+  "mask-oni": "head",
+  "earring-gold": "head",
+  "stud-ear": "head",
   "wizard-hat": "head",
   "item-wizard-hat": "head",
   "headphones": "head",
@@ -19,24 +25,12 @@ export const ITEM_SLOTS: Record<string, WardrobeSlot> = {
   "pink-ribbon": "head",
   "item-pink-ribbon": "head",
 
-  // ─── 얼굴 (face) ───
-  "glasses": "face",
-  "item-glasses": "face",
-  "mask-fox": "face",
-  "mask-oni": "face",
-
-  // ─── 귀 (ear) ───
-  "earring-gold": "ear",
-  "stud-ear": "ear",
-
-  // ─── 목 (neck) ───
-  "scarf": "neck",
-  "item-scarf": "neck",
-  "muffler": "neck",
-  "bow-tie": "neck",
-  "necklace-pearl": "neck",
-
-  // ─── 몸통 (body) ───
+  // ─── 몸통 슬롯 (body) ───
+  "scarf": "body",
+  "item-scarf": "body",
+  "muffler": "body",
+  "bow-tie": "body",
+  "necklace-pearl": "body",
   "hakama": "body",
   "item-kimono": "body",
   "armor-samurai": "body",
