@@ -16,6 +16,36 @@ export const CHARACTER_BASES: Record<string, string> = {
   pomeranian: "/mascot/pomeranian-base.png",
 };
 
+/**
+ * 캐릭터 품종별 + 착용 아이템별 1:1 맞춤 일체형 전용 마스코트 이미지 매핑 (옵션 2)
+ */
+export const CHARACTER_ITEM_MASCOTS: Record<string, Record<string, string>> = {
+  shiba: {
+    "hachimaki": "/mascot/shiba-lv2-hachimaki.webp",
+    "item-headband": "/mascot/shiba-lv2-hachimaki.webp",
+    "scarf": "/mascot/shiba-lv3-scarf.webp",
+    "item-scarf": "/mascot/shiba-lv3-scarf.webp",
+    "hakama": "/mascot/shiba-lv4-kimono.webp",
+    "item-kimono": "/mascot/shiba-lv4-kimono.webp",
+    "glasses": "/mascot/shiba-lv5-glasses.webp",
+    "item-glasses": "/mascot/shiba-lv5-glasses.webp",
+    "crown": "/mascot/shiba-lv6-master.webp",
+    "item-crown": "/mascot/shiba-lv6-master.webp",
+  },
+  poodle: {
+    "hachimaki": "/mascot/poodle-hachimaki.png",
+    "item-headband": "/mascot/poodle-hachimaki.png",
+  },
+  beagle: {
+    "hachimaki": "/mascot/beagle-hachimaki.png",
+    "item-headband": "/mascot/beagle-hachimaki.png",
+  },
+  pomeranian: {
+    "hachimaki": "/mascot/pomeranian-hachimaki.png",
+    "item-headband": "/mascot/pomeranian-hachimaki.png",
+  },
+};
+
 const BASE_IMAGE = CHARACTER_BASES.shiba;
 
 /**
@@ -356,9 +386,14 @@ export function ShibaAvatar({
   circular = false,
   triggerLevelUp,
 }: ShibaAvatarProps) {
+  const equippedItemId = equippedItemIds && equippedItemIds.length > 0 ? normalizeItemId(equippedItemIds[0]) : null;
+  const fittedMascotSrc = equippedItemId
+    ? (CHARACTER_ITEM_MASCOTS[characterId]?.[equippedItemId] || CHARACTER_ITEM_MASCOTS[characterId]?.[equippedItemIds![0]])
+    : null;
+
   const baseImage = (characterId && CHARACTER_BASES[characterId]) || CHARACTER_BASES.shiba;
-  const useOverlay = shouldUseOverlayMode(equippedItemIds);
-  const src = useOverlay ? baseImage : getFallbackLevelImage(level, equippedItemIds, characterId);
+  const useOverlay = fittedMascotSrc ? false : shouldUseOverlayMode(equippedItemIds);
+  const src = fittedMascotSrc || (useOverlay ? baseImage : getFallbackLevelImage(level, equippedItemIds, characterId));
   const prevLevel = usePrevious(level);
   const prevTrigger = usePrevious(triggerLevelUp);
   const prevEquipped = usePrevious(equippedItemIds);
