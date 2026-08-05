@@ -1,6 +1,27 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { canPurchaseItem, getItemSlot } from "@/lib/wardrobe";
 import { getFallbackLevelImage, getShibaMascotSrc, CHARACTER_BASES, getBreedFittedStyle } from "@/components/mascot/ShibaAvatar";
+import { equipItem } from "@/actions/wardrobe";
+import { prisma } from "@/lib/db";
+import { getServerSession } from "next-auth";
+
+vi.mock("next-auth", () => ({
+  getServerSession: vi.fn(),
+}));
+
+vi.mock("next/cache", () => ({
+  revalidatePath: vi.fn(),
+}));
+
+vi.mock("@/lib/db", () => ({
+  prisma: {
+    userWardrobeItem: {
+      findUnique: vi.fn(),
+      updateMany: vi.fn(),
+      update: vi.fn(),
+    },
+  },
+}));
 
 describe("getItemSlot", () => {
   it("classifies all head items as head slot", () => {
@@ -111,6 +132,11 @@ describe("CHARACTER_BASES & getFallbackLevelImage & getShibaMascotSrc", () => {
     expect(getFallbackLevelImage(1, ["scarf"])).toBe("/mascot/shiba-lv3-scarf.webp");
     expect(getFallbackLevelImage(1, ["crown"])).toBe("/mascot/shiba-lv6-master.webp");
   });
+
+  it("단일 아이템 착용 시 해당 단일 아이템 폴백 이미지를 정상 해소한다", () => {
+    expect(getFallbackLevelImage(1, ["hachimaki"])).toBe("/mascot/shiba-base.webp");
+    expect(getFallbackLevelImage(1, ["scarf"])).toBe("/mascot/shiba-lv3-scarf.webp");
+  });
 });
 
 describe("2-Slot Breed-Specific Fitted Overlay Resolution (getBreedFittedStyle)", () => {
@@ -126,5 +152,62 @@ describe("2-Slot Breed-Specific Fitted Overlay Resolution (getBreedFittedStyle)"
     expect(getBreedFittedStyle("pomeranian", "body")).toEqual({ clipPath: "inset(30% 0 0 0)" });
   });
 });
+
+describe("equipItem server action (single-item equipment restriction)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("로그인이 안 되어 있으면 에러를 던진다", async () => {
+    vi.mocked(getServerSession).mockResolvedValueOnce(null);
+    await expect(equipItem("hachimaki")).rejects.toThrow("로그인이 필요합니다.");
+  });
+
+  it("보유하지 않은 아이템을 착용하려 하면 에러를 던진다", async () => {
+    vi.mocked(getServerSession).mockResolvedValueOnce({
+      user: { id: "user-1" },
+      expires: "2099-01-01",
+    });
+    vi.mocked(prisma.userWardrobeItem.findUnique).mockResolvedValueOnce(null);
+
+    await expect(equipItem("hachimaki")).rejects.toThrow("보유하지 않은 아이템입니다.");
+  });
+
+  it("아이템 착용 시 전체 옷장의 모든 착용 중인 아이템을 해제 후 새로 착용한다", async () => {
+    vi.mocked(getServerSession).mockResolvedValueOnce({
+      user: { id: "user-1" },
+      expires: "2099-01-01",
+    });
+    vi.mocked(prisma.userWardrobeItem.findUnique).mockResolvedValueOnce({
+      id: "uwi-1",
+      userId: "user-1",
+      wardrobeItemId: "hachimaki",
+      equippedAt: null,
+      earnedAt: new Date(),
+    });
+
+    vi.mocked(prisma.userWardrobeItem.updateMany).mockResolvedValueOnce({ count: 2 });
+    vi.mocked(prisma.userWardrobeItem.update).mockResolvedValueOnce({
+      id: "uwi-1",
+      userId: "user-1",
+      wardrobeItemId: "hachimaki",
+      equippedAt: new Date(),
+      earnedAt: new Date(),
+    });
+
+    const result = await equipItem("hachimaki");
+
+    expect(result).toEqual({ success: true });
+    expect(prisma.userWardrobeItem.updateMany).toHaveBeenCalledWith({
+      where: { userId: "user-1", equippedAt: { not: null } },
+      data: { equippedAt: null },
+    });
+    expect(prisma.userWardrobeItem.update).toHaveBeenCalledWith({
+      where: { userId_wardrobeItemId: { userId: "user-1", wardrobeItemId: "hachimaki" } },
+      data: { equippedAt: expect.any(Date) },
+    });
+  });
+});
+
 
 

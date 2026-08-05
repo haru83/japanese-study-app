@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { canPurchaseItem, getItemSlot } from "@/lib/wardrobe";
+import { canPurchaseItem } from "@/lib/wardrobe";
 
 export async function purchaseWardrobeItem(wardrobeItemId: string) {
   const session = await getServerSession(authOptions);
@@ -84,7 +84,7 @@ export async function getWardrobeItems() {
   };
 }
 
-/** 아이템 착용 (2-Slot 상호 배제: head / body 동일 슬롯 아이템 자동 해제) */
+/** 아이템 착용 (단일 아이템 제한: 전체 옷장 중 최대 1개 착용) */
 export async function equipItem(wardrobeItemId: string) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) throw new Error("로그인이 필요합니다.");
@@ -97,27 +97,11 @@ export async function equipItem(wardrobeItemId: string) {
   });
   if (!owned) throw new Error("보유하지 않은 아이템입니다.");
 
-  const slot = getItemSlot(wardrobeItemId);
-
-  // 현재 착용 중인 아이템 중 동일 슬롯 (head 또는 body) 아이템 자동 해제
-  const currentlyEquipped = await prisma.userWardrobeItem.findMany({
+  // 전체 옷장에서 착용 중인 모든 아이템 자동 해제
+  await prisma.userWardrobeItem.updateMany({
     where: { userId, equippedAt: { not: null } },
-    select: { wardrobeItemId: true },
+    data: { equippedAt: null },
   });
-
-  const sameSlotItemIds = currentlyEquipped
-    .map((item) => item.wardrobeItemId)
-    .filter((id) => id !== wardrobeItemId && getItemSlot(id) === slot);
-
-  if (sameSlotItemIds.length > 0) {
-    await prisma.userWardrobeItem.updateMany({
-      where: {
-        userId,
-        wardrobeItemId: { in: sameSlotItemIds },
-      },
-      data: { equippedAt: null },
-    });
-  }
 
   // 착용 처리 (equippedAt 설정)
   await prisma.userWardrobeItem.update({
