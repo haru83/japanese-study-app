@@ -23,7 +23,7 @@ export const CHARACTER_ITEM_MASCOTS: Record<string, Record<string, string>> = {
   shiba: {
     "hachimaki": "/mascot/shiba-lv2-hachimaki.webp",
     "item-headband": "/mascot/shiba-lv2-hachimaki.webp",
-    "bandana": "/mascot/shiba-lv2-hachimaki.webp",
+    "bandana": "/mascot/shiba-bandana.png",
     "scarf": "/mascot/shiba-lv3-scarf.webp",
     "item-scarf": "/mascot/shiba-lv3-scarf.webp",
     "hakama": "/mascot/shiba-lv4-kimono.webp",
