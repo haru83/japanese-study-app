@@ -1,5 +1,6 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
@@ -14,6 +15,10 @@ export const authOptions: NextAuthOptions = {
     newUser: "/onboarding",
   },
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID ?? "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+    }),
     CredentialsProvider({
       name: "credentials",
       credentials: {
@@ -51,6 +56,15 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+  events: {
+    async createUser({ user }) {
+      await prisma.userProgress.upsert({
+        where: { userId: user.id },
+        create: { userId: user.id },
+        update: {},
+      });
+    },
+  },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -78,3 +92,4 @@ export const authOptions: NextAuthOptions = {
     },
   },
 };
+
