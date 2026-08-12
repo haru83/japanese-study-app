@@ -56,4 +56,22 @@ describe("Keigo Lessons Data", () => {
       }
     }
   });
+
+  it("should contain no Hangul or English alphabets in dialogue text across all lessons", () => {
+    const hasHangulOrEnglish = /[가-힣a-zA-Z]/;
+    for (const lesson of lessons) {
+      for (const line of lesson.dialogue) {
+        expect(hasHangulOrEnglish.test(line.text)).toBe(false);
+      }
+    }
+  });
+
+  it("should contain no Kanji in dialogue pronunciation across all lessons", () => {
+    const hasKanji = /[\u4e00-\u9faf]/;
+    for (const lesson of lessons) {
+      for (const line of lesson.dialogue) {
+        expect(hasKanji.test(line.pronunciation)).toBe(false);
+      }
+    }
+  });
 });
