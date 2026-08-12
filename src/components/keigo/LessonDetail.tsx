@@ -11,6 +11,7 @@ import { CATEGORY_LABELS } from "@/types/lesson";
 import { GuestUpsellModal } from "@/components/guest/GuestUpsellModal";
 import { RubyText } from "@/components/learningDiary/RubyText";
 import { buildRubySegments } from "@/lib/rubyParser";
+import { BookmarkButton } from "@/components/bookmark/BookmarkButton";
 import type { Lesson } from "@/types/lesson";
 import type { XpResult } from "@/lib/xp";
 
@@ -32,9 +33,10 @@ const CATEGORY_BG: Record<string, string> = {
 
 interface Props {
   lesson: Lesson;
+  bookmarkMap?: Record<string, boolean>;
 }
 
-export function LessonDetail({ lesson }: Props) {
+export function LessonDetail({ lesson, bookmarkMap }: Props) {
   const router = useRouter();
   const completeLocal = useProgressStore((s) => s.completeLesson);
 
@@ -120,10 +122,19 @@ export function LessonDetail({ lesson }: Props) {
             {lesson.grammarPoints.map((gp, i) => (
               <div
                 key={i}
-                className="bg-paper-white rounded-[15px] p-4 border-2 border-black shadow-[4px_4px_0px_0px_#000]"
+                className="bg-paper-white rounded-[15px] p-4 border-2 border-black shadow-[4px_4px_0px_0px_#000] flex items-start justify-between gap-3"
               >
-                <p className="font-black text-grape-punch mb-1">{gp.rule}</p>
-                <p className="text-sm text-type-black/80">{gp.explanation}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="font-black text-grape-punch mb-1">{gp.rule}</p>
+                  <p className="text-sm text-type-black/80">{gp.explanation}</p>
+                </div>
+                <BookmarkButton
+                  word={gp.rule}
+                  itemType="grammar"
+                  meaning={gp.explanation}
+                  source={lesson.title}
+                  initialBookmarked={bookmarkMap?.[gp.rule] ?? false}
+                />
               </div>
             ))}
           </div>
@@ -140,7 +151,15 @@ export function LessonDetail({ lesson }: Props) {
                 <span className="font-black text-type-black flex-1 leading-loose">
                   <RubyText segments={vocabSegments[i]} showRuby={true} />
                 </span>
-                <span className="text-sm text-grape-punch font-black">{v.meaning}</span>
+                <span className="text-sm text-grape-punch font-black shrink-0">{v.meaning}</span>
+                <BookmarkButton
+                  word={v.word}
+                  itemType="vocab"
+                  reading={(v as Record<string, unknown>).reading as string | undefined}
+                  meaning={v.meaning}
+                  source={lesson.title}
+                  initialBookmarked={bookmarkMap?.[v.word] ?? false}
+                />
               </div>
             ))}
           </div>

@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db";
 import { parseKeigoLesson } from "@/lib/lessonUtils";
 import { LessonDetail } from "@/components/keigo/LessonDetail";
 import { isContentUnlocked } from "@/lib/contentGate";
+import { getBookmarkMap } from "@/actions/bookmark";
 
 export default async function LessonDetailPage({
   params,
@@ -12,7 +13,7 @@ export default async function LessonDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [row, session] = await Promise.all([
+  const [row, session, bookmarkMap] = await Promise.all([
     prisma.keigoLesson.findUnique({
       where: { id },
       select: {
@@ -31,6 +32,7 @@ export default async function LessonDetailPage({
       },
     }),
     getServerSession(authOptions),
+    getBookmarkMap(),
   ]);
 
   if (!row) notFound();
@@ -48,5 +50,5 @@ export default async function LessonDetailPage({
   }
 
   const lesson = parseKeigoLesson(row);
-  return <LessonDetail lesson={lesson} />;
+  return <LessonDetail lesson={lesson} bookmarkMap={bookmarkMap} />;
 }

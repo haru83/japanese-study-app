@@ -8,6 +8,7 @@ import { RubyText } from "@/components/learningDiary/RubyText";
 import { QuizSection } from "@/components/keigo/QuizSection";
 import { LessonCompleteBanner } from "@/components/keigo/LessonCompleteBanner";
 import { GuestUpsellModal } from "@/components/guest/GuestUpsellModal";
+import { BookmarkButton } from "@/components/bookmark/BookmarkButton";
 import type { LearningDiary } from "@/types/learningDiary";
 import type { XpResult } from "@/lib/xp";
 
@@ -22,9 +23,10 @@ const LEVEL_COLORS: Record<string, string> = {
 
 interface Props {
   diary: LearningDiary;
+  bookmarkMap?: Record<string, boolean>;
 }
 
-export function DiaryDetail({ diary }: Props) {
+export function DiaryDetail({ diary, bookmarkMap }: Props) {
   const router = useRouter();
   const [section, setSection] = useState<Section>("원문");
   const [showRuby, setShowRuby] = useState(false);
@@ -153,11 +155,19 @@ export function DiaryDetail({ diary }: Props) {
                     key={i}
                     className="bg-paper-white rounded-[15px] p-4 border-2 border-black shadow-[4px_4px_0px_0px_#000] flex items-center gap-4"
                   >
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <p className="font-black text-type-black">{v.word}</p>
                       <p className="text-xs text-type-black/60 font-bold">{v.reading}</p>
                     </div>
-                    <span className="text-sm text-grape-punch font-black">{v.meaning}</span>
+                    <span className="text-sm text-grape-punch font-black shrink-0">{v.meaning}</span>
+                    <BookmarkButton
+                      word={v.word}
+                      itemType="vocab"
+                      reading={v.reading}
+                      meaning={v.meaning}
+                      source={diary.title}
+                      initialBookmarked={bookmarkMap?.[v.word] ?? false}
+                    />
                   </div>
                 ))}
               </div>
@@ -168,10 +178,19 @@ export function DiaryDetail({ diary }: Props) {
                 {diary.grammarPoints.map((g, i) => (
                   <div
                     key={i}
-                    className="bg-paper-white rounded-[15px] p-4 border-2 border-black shadow-[4px_4px_0px_0px_#000]"
+                    className="bg-paper-white rounded-[15px] p-4 border-2 border-black shadow-[4px_4px_0px_0px_#000] flex items-start justify-between gap-3"
                   >
-                    <p className="font-black text-grape-punch mb-1">{g.rule}</p>
-                    <p className="text-sm text-type-black leading-relaxed">{g.explanation}</p>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-black text-grape-punch mb-1">{g.rule}</p>
+                      <p className="text-sm text-type-black leading-relaxed">{g.explanation}</p>
+                    </div>
+                    <BookmarkButton
+                      word={g.rule}
+                      itemType="grammar"
+                      meaning={g.explanation}
+                      source={diary.title}
+                      initialBookmarked={bookmarkMap?.[g.rule] ?? false}
+                    />
                   </div>
                 ))}
               </div>

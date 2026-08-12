@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db";
 import { parseLearningDiaryEntry } from "@/lib/lessonUtils";
 import { DiaryDetail } from "@/components/learningDiary/DiaryDetail";
 import { isContentUnlocked } from "@/lib/contentGate";
+import { getBookmarkMap } from "@/actions/bookmark";
 
 export default async function LearnDiaryDetailPage({
   params,
@@ -12,9 +13,10 @@ export default async function LearnDiaryDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [row, session] = await Promise.all([
+  const [row, session, bookmarkMap] = await Promise.all([
     prisma.learningDiaryEntry.findUnique({ where: { id } }),
     getServerSession(authOptions),
+    getBookmarkMap(),
   ]);
 
   if (!row) notFound();
@@ -32,5 +34,5 @@ export default async function LearnDiaryDetailPage({
   }
 
   const diary = parseLearningDiaryEntry(row);
-  return <DiaryDetail diary={diary} />;
+  return <DiaryDetail diary={diary} bookmarkMap={bookmarkMap} />;
 }

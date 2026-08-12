@@ -1,8 +1,13 @@
 import Link from "next/link";
 import { getCompletedGrammarPoints } from "@/actions/learning";
+import { BookmarkButton } from "@/components/bookmark/BookmarkButton";
+import { getBookmarkMap } from "@/actions/bookmark";
 
 export default async function GrammarPage() {
-  const grammarPoints = await getCompletedGrammarPoints();
+  const [grammarPoints, bookmarkMap] = await Promise.all([
+    getCompletedGrammarPoints(),
+    getBookmarkMap(),
+  ]);
 
   return (
     <div className="min-h-screen bg-sakura-blush">
@@ -40,15 +45,24 @@ export default async function GrammarPage() {
           grammarPoints.map((gp, i) => (
             <div
               key={i}
-              className="bg-paper-white rounded-[15px] p-4 border-2 border-black shadow-[4px_4px_0px_0px_#000]"
+              className="bg-paper-white rounded-[15px] p-4 border-2 border-black shadow-[4px_4px_0px_0px_#000] flex items-start justify-between gap-3"
             >
-              <div className="flex items-start justify-between gap-2 mb-1">
-                <span className="font-black text-type-black">{gp.rule}</span>
-                <span className="text-[10px] text-type-black/50 font-bold shrink-0 mt-0.5">
-                  {gp.source}
-                </span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between gap-2 mb-1">
+                  <span className="font-black text-type-black">{gp.rule}</span>
+                  <span className="text-[10px] text-type-black/50 font-bold shrink-0 mt-0.5">
+                    {gp.source}
+                  </span>
+                </div>
+                <p className="text-sm text-type-black/70 font-bold">{gp.explanation}</p>
               </div>
-              <p className="text-sm text-type-black/70 font-bold">{gp.explanation}</p>
+              <BookmarkButton
+                word={gp.rule}
+                itemType="grammar"
+                meaning={gp.explanation}
+                source={gp.source}
+                initialBookmarked={bookmarkMap[gp.rule] ?? false}
+              />
             </div>
           ))
         )}

@@ -1,8 +1,13 @@
 import Link from "next/link";
 import { getCompletedVocab } from "@/actions/learning";
+import { BookmarkButton } from "@/components/bookmark/BookmarkButton";
+import { getBookmarkMap } from "@/actions/bookmark";
 
 export default async function VocabularyPage() {
-  const vocab = await getCompletedVocab();
+  const [vocab, bookmarkMap] = await Promise.all([
+    getCompletedVocab(),
+    getBookmarkMap(),
+  ]);
 
   return (
     <div className="min-h-screen bg-sakura-blush">
@@ -40,18 +45,28 @@ export default async function VocabularyPage() {
           vocab.map((v, i) => (
             <div
               key={i}
-              className="bg-paper-white rounded-[15px] p-4 border-2 border-black shadow-[4px_4px_0px_0px_#000]"
+              className="bg-paper-white rounded-[15px] p-4 border-2 border-black shadow-[4px_4px_0px_0px_#000] flex items-center gap-3"
             >
-              <div className="flex items-start justify-between gap-2">
-                <span className="font-black text-type-black text-base">{v.word}</span>
-                <span className="text-[10px] text-type-black/50 font-bold shrink-0 mt-0.5">
-                  {v.source}
-                </span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between gap-2">
+                  <span className="font-black text-type-black text-base">{v.word}</span>
+                  <span className="text-[10px] text-type-black/50 font-bold shrink-0 mt-0.5">
+                    {v.source}
+                  </span>
+                </div>
+                {v.reading && (
+                  <p className="text-xs text-type-black/50 font-bold mt-0.5">{v.reading}</p>
+                )}
+                <p className="text-sm text-grape-punch font-black mt-1">{v.meaning}</p>
               </div>
-              {v.reading && (
-                <p className="text-xs text-type-black/50 font-bold mt-0.5">{v.reading}</p>
-              )}
-              <p className="text-sm text-grape-punch font-black mt-1">{v.meaning}</p>
+              <BookmarkButton
+                word={v.word}
+                itemType="vocab"
+                reading={v.reading}
+                meaning={v.meaning}
+                source={v.source}
+                initialBookmarked={bookmarkMap[v.word] ?? false}
+              />
             </div>
           ))
         )}

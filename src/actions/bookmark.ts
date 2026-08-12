@@ -86,3 +86,23 @@ export async function getBookmarkedItems(itemType?: string): Promise<BookmarkedI
 
   return items;
 }
+
+export async function getBookmarkMap(): Promise<Record<string, boolean>> {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) return {};
+
+  const items = await prisma.vocabReview.findMany({
+    where: {
+      userId: session.user.id,
+      isBookmarked: true,
+    },
+    select: { word: true },
+  });
+
+  const map: Record<string, boolean> = {};
+  for (const item of items) {
+    map[item.word] = true;
+  }
+
+  return map;
+}
