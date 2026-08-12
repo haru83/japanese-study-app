@@ -124,4 +124,12 @@ describe("selectWordOfTheDay", () => {
     expect(result).not.toBeNull();
     expect(["keigo", "learning-diary"]).toContain(result!.sourceType);
   });
+
+  it("sourceId가 전달되면 해당 ID를 유지한다", () => {
+    const vocab: VocabItem[] = [{ word: "七五三", meaning: "시치고산", sourceId: "photography-studio" }];
+    const date = new Date("2025-06-15T10:00:00Z");
+    const result = selectWordOfTheDay(date, vocab, []);
+    expect(result).not.toBeNull();
+    expect(result!.sourceId).toBe("photography-studio");
+  });
 });

@@ -60,7 +60,7 @@ export function selectWordOfTheDay(
     reading: selected.reading ?? "",
     meaning: selected.meaning,
     source: selected.source === "keigo" ? "경어 레슨" : "학습 일기",
-    sourceId: String(selected.sourceIndex),
+    sourceId: selected.sourceId || String(selected.sourceIndex),
     sourceType: selected.source,
   };
 }
