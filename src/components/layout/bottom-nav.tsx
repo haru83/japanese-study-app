@@ -7,6 +7,7 @@ const NAV_ITEMS = [
   { href: "/home", icon: "home", label: "홈" },
   { href: "/diary", icon: "book_2", label: "일기" },
   { href: "/keigo", icon: "record_voice_over", label: "경어" },
+  { href: "/learning", icon: "menu_book", label: "어휘" },
   { href: "/community", icon: "people", label: "커뮤니티" },
   { href: "/profile", icon: "face", label: "프로필" },
 ];
@@ -27,7 +28,7 @@ export function BottomNav({ unreadCount = 0 }: { unreadCount?: number }) {
             key={item.href}
             href={item.href}
             aria-label={item.label}
-            className={`flex flex-col items-center justify-center w-1/5 shrink-0 transition-transform ${
+            className={`flex flex-col items-center justify-center w-1/6 shrink-0 transition-transform ${
               isActive ? "scale-105" : "scale-100 opacity-60"
             }`}
           >
