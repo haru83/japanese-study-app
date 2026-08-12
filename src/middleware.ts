@@ -7,6 +7,8 @@ import { isAdminPath } from "@/lib/admin-paths";
 const AUTH_REQUIRED_PATTERNS = [
   /^\/diary\/write/,
   /^\/diary\/topic/,
+  /^\/diary\/learn/,
+  /^\/keigo/,
   /^\/profile/,
   /^\/shop/,
   /^\/wardrobe/,
@@ -58,6 +60,8 @@ export const config = {
     "/admin/:path*",
     "/diary/write/:path*",
     "/diary/topic/:path*",
+    "/diary/learn/:path*",
+    "/keigo/:path*",
     "/profile/:path*",
     "/shop/:path*",
     "/wardrobe/:path*",
