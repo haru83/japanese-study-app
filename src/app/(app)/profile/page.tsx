@@ -174,28 +174,26 @@ export default async function ProfilePage() {
           </div>
         </section>
 
-        {/* ── 학습 자료 ── */}
+        {/* ── 어휘 Hub 바로가기 ── */}
         <section>
-          <h2 className="font-black text-type-black text-sm mb-3">학습 자료 📚</h2>
-          <div className="bg-paper-white rounded-[15px] border-2 border-black shadow-[4px_4px_0px_0px_#000] overflow-hidden">
-            {[
-              { icon: "📚", label: "문법 가이드", href: "/learning/grammar", desc: "N5~N1 문법 정리" },
-              { icon: "🔤", label: "어휘 목록", href: "/learning/vocabulary", desc: "레슨별 단어장" },
-            ].map((item, i, arr) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className={`flex items-center gap-4 px-5 py-4 ${i < arr.length - 1 ? "border-b-2 border-black" : ""} hover:bg-sakura-blush/50 transition-colors`}
-              >
-                <span className="text-2xl">{item.icon}</span>
-                <div className="flex-1">
-                  <p className="text-sm font-black text-type-black">{item.label}</p>
-                  <p className="text-xs text-type-black/60 font-bold">{item.desc}</p>
-                </div>
-                <span className="text-type-black/30">→</span>
-              </Link>
-            ))}
-          </div>
+          <h2 className="font-black text-type-black text-sm mb-3">어휘 Hub 📚</h2>
+          <Link
+            href="/learning"
+            className="bg-paper-white rounded-[15px] p-5 border-2 border-black shadow-[4px_4px_0px_0px_#000] flex items-center gap-4 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] transition-all block"
+          >
+            <span className="text-3xl bg-sakura-pink p-3 rounded-2xl border-2 border-black shrink-0">
+              📚
+            </span>
+            <div className="flex-1 min-w-0">
+              <p className="text-base font-black text-type-black">어휘 & 학습 아카이브</p>
+              <p className="text-xs font-bold text-type-black/60 mt-0.5">
+                학습한 단어/문법 및 주제별·숙어 추가 학습
+              </p>
+            </div>
+            <span className="material-symbols-outlined text-xl text-type-black shrink-0">
+              chevron_right
+            </span>
+          </Link>
         </section>
 
         {/* ── 설정 및 계정 ── */}
