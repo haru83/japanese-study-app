@@ -673,7 +673,7 @@ export const kl_p6: Lesson[] = [
       {
         speaker: "건축주 VIP",
         text: "光と影の空間美が素晴らしいですね。",
-        pronunciation: "ひかりとしかくのくうかんびがすばらしいですね。",
+        pronunciation: "ひかりとかげのくうかんびがすばらしいですね。",
         translation: "빛과 그림자의 공간미가 훌륭하군요.",
       },
       {

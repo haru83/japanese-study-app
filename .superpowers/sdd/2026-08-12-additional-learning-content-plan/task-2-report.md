@@ -2,7 +2,8 @@
 
 **Date:** 2026-08-12  
 **Initial Commit:** `43c9fc3`  
-**Remediation Commit:** `69a21d1`  
+**Remediation Commit 1:** `fdbd211`  
+**Remediation Commit 2:** Pending commit  
 **Status:** Completed successfully  
 
 ---
@@ -57,7 +58,8 @@ Every lesson strictly implements the `Lesson` TypeScript interface:
 ## 5. Git Commit Details
 
 - **Initial Commit Message:** `feat: add 100 new keigo lessons (keigo-101 to keigo-200)` (`43c9fc3`)
-- **Fix Commit Message:** `fix: clean up text leakage and kanji pronunciation in keigo lessons`
+- **Fix Commit Message:** `fix: clean up text leakage and kanji pronunciation in keigo lessons` (`fdbd211`)
+- **Fix Commit 2 Message:** `fix: resolve text vs pronunciation mismatches in keigo lessons`
 - **Files Affected:**
   - `src/data/__tests__/lessons.test.ts`
   - `src/data/keigo/part1.ts`
@@ -84,3 +86,15 @@ Following code review feedback, the dataset underwent systematic auditing and cl
      - `/[가-힣a-zA-Z]/` validation for `dialogue.text` (ensures 0 Hangul/English leakage).
      - `/[\u4e00-\u9faf]/` validation for `dialogue.pronunciation` (ensures 0 Kanji in furigana readings).
    - All 6 tests in `lessons.test.ts` pass cleanly (0 errors found across all 200 lessons).
+
+---
+
+## 7. Text vs Pronunciation Mismatch Remediation
+
+In the second review round, 5 specific text-vs-pronunciation alignment mismatches were identified and corrected:
+
+1. **`keigo-111`** (`kl_p2.ts`): Updated `text` to match `再提出いたします` (`pronunciation`: `さいていしゅついたします`, `translation`: `재제출하겠습니다`).
+2. **`keigo-113`** (`kl_p2.ts`): Corrected `pronunciation` to `よくやった。らいげつもこのちょうしをいじしてください。` matching `text` `調子を維持してください`.
+3. **`keigo-114`** (`kl_p2.ts`): Aligned `pronunciation` to `さいわいにもがいぶへのりゅうしゅつはふせげました。ただちにあくせすけんげんのさいひょうかをおこないました。` matching `text` `再評価を行いました`.
+4. **`keigo-154`** (`kl_p4.ts`): Aligned `pronunciation` reading of `皆様` to `みなさま` (`じゅうみんのみなさまがあんしんしてくらせるかんきょうになればさいわいです`).
+5. **`keigo-191`** (`kl_p6.ts`): Aligned `pronunciation` reading of `影` to `かげ` (`ひかりとかげのくうかんびがすばらしいですね`).
