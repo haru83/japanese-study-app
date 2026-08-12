@@ -1,24 +1,29 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-05-23
-**Commit:** 1a767e1
+**Generated:** 2026-08-13
+**Commit:** dec3004
 **Branch:** master
 
 ## OVERVIEW
-Japanese language learning app (Next.js 15 + React 19) featuring diary writing, keigo (honorifics) lessons, SRS vocabulary review, and a Shiba Inu mascot gamification system.
+Japanese language learning app (Next.js 15 + React 19 + Prisma/SQLite) featuring 300 Keigo (honorifics) lessons, 300 Learning Diaries, Level-Gated Content (Lv1~10), Vocab Hub ("어휘"), SRS vocabulary review, Star Bookmarks, and a Shiba Inu mascot gamification system (XP, levels, 2-slot wardrobe).
 
 ## STRUCTURE
 ```
 japanese-study-app/
 ├── src/
-│   ├── app/              # Next.js App Router (route groups, API, admin)
-│   ├── actions/          # Server Actions (Next.js 15 pattern)
+│   ├── app/              # Next.js App Router (route groups, API, admin, learning, vocab)
+│   ├── actions/          # Server Actions (Next.js 15 pattern - auth, keigo, diary, bookmark, quest)
 │   ├── components/       # Feature-based React components
-│   ├── lib/              # Utilities, auth, game logic, parsing
+│   │   ├── bookmark/     # Star Bookmark toggle button
+│   │   ├── keigo/        # Keigo lesson list & detail components
+│   │   ├── learningDiary/# Learning diary list, detail & Mono-Ruby components
+│   │   ├── mascot/       # Shiba Avatar overlay layer system & level-up animation
+│   │   └── wotd/         # Word of the Day card
+│   ├── lib/              # Utilities, auth, game logic, contentGate, parsing, FSRS
 │   ├── store/            # Zustand stores (progress persistence)
 │   ├── types/            # TypeScript definitions
-│   └── data/             # EMPTY — remove or populate
-├── prisma/               # SQLite schema + seed scripts
+│   └── data/             # Content data files (kl_p1~11.ts, ld_p1~30.ts - 300 items each)
+├── prisma/               # SQLite schema + seed scripts (seed-learning.ts)
 ├── public/mascot/        # Shiba overlay PNG assets
 └── scripts/              # Python chroma-key script (non-standard)
 ```
@@ -32,17 +37,18 @@ japanese-study-app/
 | Add a feature component | `src/components/<feature>/` | Match existing feature directories |
 | Add utility function | `src/lib/` | Group with related utilities |
 | Add database model | `prisma/schema.prisma` | Then `npx prisma generate` |
-| Modify auth | `src/lib/auth.ts`, `src/middleware.ts` | Double-check admin routes |
-| Modify game logic | `src/lib/xp.ts`, `src/lib/streak.ts` | XP thresholds, level calculation |
+| Modify auth | `src/lib/auth.ts`, `src/middleware.ts` | Double-check admin routes & level-gated paths |
+| Modify game logic | `src/lib/xp.ts`, `src/lib/streak.ts`, `src/lib/contentGate.ts` | XP thresholds, level calculation, content gating |
 | Add test | `src/lib/__tests__/` or `src/store/__tests__/` | `.test.ts` naming, co-located |
 
 ## CODE MAP
 
 | Symbol | Type | Location | Role |
 |--------|------|----------|------|
-| `middleware.ts` | Edge function | `src/` | Auth + admin route protection |
+| `middleware.ts` | Edge function | `src/` | Auth + admin + learning route protection |
 | `auth.ts` | Config | `src/lib/` | NextAuth credentials provider |
 | `admin-auth.ts` | Utility | `src/lib/` | Centralized `requireAdmin()` guard |
+| `contentGate.ts` | Utility | `src/lib/` | Level calculation (`Math.ceil(sortOrder/30)`) & unlock verification |
 | `db.ts` | Singleton | `src/lib/` | Prisma client singleton |
 | `xp.ts` | Logic | `src/lib/` | XP thresholds, level calculation |
 | `streak.ts` | Logic | `src/lib/` | Timezone-aware streak calculation |
@@ -50,7 +56,9 @@ japanese-study-app/
 | `japaneseInput.ts` | Utility | `src/lib/` | IME input filter (hiragana/katakana only) |
 | `rubyParser.ts` | Utility | `src/lib/` | Furigana ruby text parser & Mono-Ruby parser |
 | `fsrs.ts` | Logic | `src/lib/` | FSRS-4.5 machine learning spaced repetition engine |
-| `recommendAction.ts` | Logic | `src/lib/` | Hick's Law single guided action recommendation engine |
+| `bookmark.ts` | Server Actions | `src/actions/` | Star bookmark toggle (`toggleBookmark`, `getBookmarkMap`, `getBookmarkedItems`) |
+| `BookmarkButton` | Component | `src/components/bookmark/` | Clean amber star icon toggle button |
+| `BottomNav` | Component | `src/components/layout/` | 6-item bottom navigation (`홈`, `일기`, `경어`, `어휘`, `커뮤니티`, `프로필`) |
 | `useProgressStore` | Store | `src/store/` | Zustand (persisted) — keigo progress |
 | `ShibaAvatar` | Component | `src/components/mascot/` | Overlay layer system + level-up animation |
 
@@ -113,6 +121,5 @@ npx prisma studio  # manually change User.role to "admin"
 - **SQLite in dev** — `prisma/dev.db` is local, never commit
 - **Server Actions origins** hardcoded to `localhost:3000/8000` + production IP `34.10.198.226`
 - **Guest users** can browse community but login required for reactions/comments
-- **One deprecated package**: `uuid@10` in lockfile — upgrade recommended
-- **`src/data/` is empty** — remove if unused
-- **`scripts/remove_green_bg.py`** — Python chroma-key for mascot assets (non-standard for Next.js)
+- **Level Gating System**: 30 content items per level (Lv1: 1~30, Lv2: 31~60 ... Lv10: 271~300)
+- **Vocab Hub Routes**: `/learning` (어휘 Main Hub), `/learning/vocabulary` (학습한 단어), `/learning/grammar` (학습한 문법), `/learning/topics` (주제별 단어), `/learning/idioms` (재미있는 숙어), `/learning/confusing-grammar` (헷갈리는 문법), `/learning/bookmarks` (북마크)

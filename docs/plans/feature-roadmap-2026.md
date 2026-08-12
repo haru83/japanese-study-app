@@ -35,11 +35,16 @@ The plan agent synthesized the **surviving ideas** into a structured roadmap.
 
 ## Current Status
 
-| Wave | Feature | Status | Commit |
-|------|---------|--------|--------|
+| Wave / System | Feature | Status | Commit |
+|---------------|---------|--------|--------|
 | **Wave 1** | Daily Quest System | ✅ Complete | 1288daa |
 | **Wave 1** | Word of the Day | ✅ Complete | 1288daa |
 | **Wave 1** | Grammar SRS Schema | ✅ Schema Complete | 1288daa |
+| **Content** | 300 Keigo + 300 Diary Content Expansion | ✅ Complete | c0303b9 |
+| **Security** | Middleware Route Guards & Auth | ✅ Complete | 9664ca9 |
+| **Gating** | Level-Gated Content System (Lv1~10) | ✅ Complete | 8ee32ee |
+| **Navigation** | Vocab Hub ("어휘") & 6-Item BottomNav | ✅ Complete | e3f8f9a |
+| **Bookmarks** | Star Bookmark Toggle System | ✅ Complete | dec3004 |
 | **Wave 2** | Achievement/Badge System | ⏳ Ready to start | — |
 | **Wave 2** | Keigo Roast Battle | ⏳ Ready to start | — |
 | **Wave 3** | Leagues | ⏳ Blocked (needs Wave 2) | — |
