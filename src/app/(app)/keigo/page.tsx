@@ -7,11 +7,14 @@ import type { LessonSummary } from "@/components/keigo/KeigoLessonList";
 export default async function KeigoPage() {
   const session = await getServerSession(authOptions);
 
-  const [rows, progress, totalCount] = await Promise.all([
+  const [rows, progress, totalCount, userProgress] = await Promise.all([
     prisma.keigoLesson.findMany({
       where: { isActive: true },
       orderBy: { sortOrder: "asc" },
-      select: { id: true, title: true, category: true, thumbnail: true, dialogue: true, quiz: true },
+      select: {
+        id: true, title: true, category: true, thumbnail: true,
+        dialogue: true, quiz: true, sortOrder: true,
+      },
     }),
     session?.user?.id
       ? prisma.keigoLessonProgress.findMany({
@@ -20,7 +23,15 @@ export default async function KeigoPage() {
         })
       : Promise.resolve([]),
     prisma.keigoLesson.count({ where: { isActive: true } }),
+    session?.user?.id
+      ? prisma.userProgress.findUnique({
+          where: { userId: session.user.id },
+          select: { level: true },
+        })
+      : Promise.resolve(null),
   ]);
+
+  const userLevel = userProgress?.level ?? 1;
 
   const lessons: LessonSummary[] = rows.map((row) => ({
     id: row.id,
@@ -29,6 +40,7 @@ export default async function KeigoPage() {
     thumbnail: row.thumbnail,
     dialogueCount: (JSON.parse(row.dialogue) as unknown[]).length,
     quizCount: (JSON.parse(row.quiz) as unknown[]).length,
+    sortOrder: row.sortOrder,
   }));
 
   const completedIds = progress.map((p) => p.lessonId);
@@ -38,6 +50,7 @@ export default async function KeigoPage() {
       lessons={lessons}
       completedIds={completedIds}
       totalCount={totalCount}
+      userLevel={userLevel}
     />
   );
 }

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { LessonCard } from "@/components/keigo/LessonCard";
 import { CategoryFilter } from "@/components/keigo/CategoryFilter";
 import { ProgressBar } from "@/components/ui/ProgressBar";
+import { requiredLevelForContent } from "@/lib/contentGate";
 import type { LessonCategory } from "@/types/lesson";
 
 export interface LessonSummary {
@@ -13,15 +14,17 @@ export interface LessonSummary {
   thumbnail: string;
   dialogueCount: number;
   quizCount: number;
+  sortOrder: number;
 }
 
 interface Props {
   lessons: LessonSummary[];
   completedIds: string[];
   totalCount: number;
+  userLevel: number;
 }
 
-export function KeigoLessonList({ lessons, completedIds, totalCount }: Props) {
+export function KeigoLessonList({ lessons, completedIds, totalCount, userLevel }: Props) {
   const [category, setCategory] = useState<LessonCategory>("all");
   const [query, setQuery] = useState("");
 
@@ -36,7 +39,7 @@ export function KeigoLessonList({ lessons, completedIds, totalCount }: Props) {
       <div className="bg-canvas-almond px-5 pt-12 pb-5 border-b-4 border-black">
         <h1 className="text-2xl font-black text-type-black">경어 레슨 🎯</h1>
         <p className="text-sm text-type-black/60 font-bold mt-0.5">
-          {completedIds.length} / {totalCount} 완료
+          {completedIds.length} / {totalCount} 완료 · 현재 레벨 {userLevel}
         </p>
         <div className="mt-3">
           <ProgressBar value={(completedIds.length / totalCount) * 100} color="grape" />
@@ -58,13 +61,19 @@ export function KeigoLessonList({ lessons, completedIds, totalCount }: Props) {
               검색 결과가 없습니다
             </p>
           )}
-          {filtered.map((lesson) => (
-            <LessonCard
-              key={lesson.id}
-              lesson={lesson}
-              completed={completedIds.includes(lesson.id)}
-            />
-          ))}
+          {filtered.map((lesson) => {
+            const reqLevel = requiredLevelForContent(lesson.sortOrder);
+            const locked = userLevel < reqLevel;
+            return (
+              <LessonCard
+                key={lesson.id}
+                lesson={lesson}
+                completed={completedIds.includes(lesson.id)}
+                locked={locked}
+                requiredLevel={reqLevel}
+              />
+            );
+          })}
         </div>
       </div>
     </div>

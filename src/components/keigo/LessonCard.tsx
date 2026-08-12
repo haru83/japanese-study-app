@@ -5,6 +5,8 @@ import type { LessonSummary } from "@/components/keigo/KeigoLessonList";
 interface LessonCardProps {
   lesson: LessonSummary;
   completed?: boolean;
+  locked?: boolean;
+  requiredLevel?: number;
 }
 
 const CATEGORY_BG: Record<string, string> = {
@@ -20,19 +22,43 @@ function wobbleFor(id: string) {
   return WOBBLE[hash % WOBBLE.length];
 }
 
-export function LessonCard({ lesson, completed }: LessonCardProps) {
+export function LessonCard({ lesson, completed, locked, requiredLevel }: LessonCardProps) {
   const wobble = wobbleFor(lesson.id);
+
+  if (locked) {
+    return (
+      <div
+        className={`relative bg-paper-white/50 rounded-[15px] p-4 border-2 border-black/30 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.15)] flex gap-3 ${wobble} cursor-not-allowed`}
+      >
+        <div className="w-14 h-14 rounded-xl bg-canvas-almond/50 border-2 border-black/20 flex items-center justify-center text-3xl flex-shrink-0 grayscale opacity-40">
+          {lesson.thumbnail}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-xs px-2 py-0.5 rounded-full font-bold border-2 border-black/30 bg-type-black/10 text-type-black/40">
+              🔒 레벨 {requiredLevel} 오픈
+            </span>
+          </div>
+          <p className="font-bold text-type-black/30 text-sm leading-snug">{lesson.title}</p>
+          <p className="text-xs text-type-black/25 mt-1">
+            대화 {lesson.dialogueCount}줄 · 퀴즈 {lesson.quizCount}문제
+          </p>
+        </div>
+        <div className="self-center text-type-black/20">
+          <span className="material-symbols-outlined text-sm">lock</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Link
       href={`/keigo/lessons/${lesson.id}`}
       className={`relative bg-paper-white rounded-[15px] p-4 border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all active:scale-95 flex gap-3 ${wobble}`}
     >
-      {/* Thumbnail sticker */}
       <div className="w-14 h-14 rounded-xl bg-canvas-almond border-2 border-black flex items-center justify-center text-3xl flex-shrink-0">
         {lesson.thumbnail}
       </div>
-
-      {/* Content */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
           <span
@@ -46,14 +72,11 @@ export function LessonCard({ lesson, completed }: LessonCardProps) {
             </span>
           )}
         </div>
-        <p className="font-bold text-type-black text-sm leading-snug">
-          {lesson.title}
-        </p>
+        <p className="font-bold text-type-black text-sm leading-snug">{lesson.title}</p>
         <p className="text-xs text-type-black/60 mt-1">
           대화 {lesson.dialogueCount}줄 · 퀴즈 {lesson.quizCount}문제
         </p>
       </div>
-
       <div className="self-center text-type-black">
         <span className="material-symbols-outlined text-sm">chevron_right</span>
       </div>
