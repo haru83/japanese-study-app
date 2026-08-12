@@ -6,9 +6,15 @@ import { VOCAB_READINGS } from "../src/data/vocabReadings";
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("🌸 100개 경어 레슨 & 100개 학습 일기 시딩 시작...");
+  console.log("🌸 200개 경어 레슨 & 200개 학습 일기 시딩 시작...");
 
-  // ── Keigo Lessons (100개) ───────────────────────────────────────────────────
+  // Remove stale keigo lessons
+  const lessonIds = lessons.map((l) => l.id);
+  await prisma.keigoLesson.deleteMany({
+    where: { id: { notIn: lessonIds } },
+  });
+
+  // ── Keigo Lessons (200개) ───────────────────────────────────────────────────
   console.log(`  Upserting ${lessons.length} keigo lessons...`);
   for (const [i, lesson] of lessons.entries()) {
     const enrichedVocab = lesson.vocab.map((v) => ({
@@ -42,9 +48,15 @@ async function main() {
       },
     });
   }
-  console.log("  ✓ Keigo lessons 100개 완료");
+  console.log(`  ✓ Keigo lessons ${lessons.length}개 완료`);
 
-  // ── Learning Diaries (100개) ───────────────────────────────────────────────
+  // Remove stale learning diaries
+  const diaryIds = learningDiaries.map((d) => d.id);
+  await prisma.learningDiaryEntry.deleteMany({
+    where: { id: { notIn: diaryIds } },
+  });
+
+  // ── Learning Diaries (200개) ───────────────────────────────────────────────
   console.log(`  Upserting ${learningDiaries.length} learning diaries...`);
   for (const [i, diary] of learningDiaries.entries()) {
     await prisma.learningDiaryEntry.upsert({
@@ -78,7 +90,7 @@ async function main() {
       },
     });
   }
-  console.log("  ✓ Learning diaries 100개 완료");
+  console.log(`  ✓ Learning diaries ${learningDiaries.length}개 완료`);
 
   console.log("🎉 Seeding complete!");
 }
