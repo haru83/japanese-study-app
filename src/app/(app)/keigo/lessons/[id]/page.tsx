@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { parseKeigoLesson } from "@/lib/lessonUtils";
 import { LessonDetail } from "@/components/keigo/LessonDetail";
-import { isContentUnlocked } from "@/lib/contentGate";
+import { isContentUnlocked, isWotdContent } from "@/lib/contentGate";
 
 export default async function LessonDetailPage({
   params,
@@ -44,7 +44,10 @@ export default async function LessonDetailPage({
   const userLevel = userProgress?.level ?? 1;
 
   if (!isContentUnlocked(row.sortOrder, userLevel)) {
-    redirect("/keigo");
+    const isWotd = await isWotdContent(row.id);
+    if (!isWotd) {
+      redirect("/keigo");
+    }
   }
 
   const lesson = parseKeigoLesson(row);
