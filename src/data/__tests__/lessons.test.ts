@@ -27,6 +27,7 @@ describe("Keigo Lessons Data", () => {
         expect(q.question).toBeTruthy();
         expect(q.options.length).toBeGreaterThanOrEqual(4);
         expect(q.options).toContain(q.answer);
+        expect(new Set(q.options).size).toBe(q.options.length);
       }
     }
   });
@@ -53,6 +54,7 @@ describe("Keigo Lessons Data", () => {
       for (const q of lesson.quiz) {
         expect(q.options.length).toBe(4);
         expect(q.options).toContain(q.answer);
+        expect(new Set(q.options).size).toBe(4);
       }
     }
   });
