@@ -19,8 +19,18 @@ import { part17 } from "./ld_p17";
 import { part18 } from "./ld_p18";
 import { part19 } from "./ld_p19";
 import { part20 } from "./ld_p20";
+import { part21 } from "./ld_p21";
+import { part22 } from "./ld_p22";
+import { part23 } from "./ld_p23";
+import { part24 } from "./ld_p24";
+import { part25 } from "./ld_p25";
+import { part26 } from "./ld_p26";
+import { part27 } from "./ld_p27";
+import { part28 } from "./ld_p28";
+import { part29 } from "./ld_p29";
+import { part30 } from "./ld_p30";
 
-// Combine all 200 learning diary entries from 20 category parts
+// Combine all 300 learning diary entries from 30 category parts
 export const learningDiaries: LearningDiary[] = [
   ...part1,
   ...part2,
@@ -42,5 +52,14 @@ export const learningDiaries: LearningDiary[] = [
   ...part18,
   ...part19,
   ...part20,
+  ...part21,
+  ...part22,
+  ...part23,
+  ...part24,
+  ...part25,
+  ...part26,
+  ...part27,
+  ...part28,
+  ...part29,
+  ...part30,
 ];
-
