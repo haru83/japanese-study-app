@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { selectWordOfTheDay, type WotdEntry, type VocabItem } from "@/lib/wotd-logic";
+import { CONTENT_PER_LEVEL } from "@/lib/contentGate";
 
 export interface UserStats {
   completedKeigo: number;
@@ -191,13 +192,23 @@ export async function getWordOfTheDay(): Promise<WotdEntry | null> {
 
   const now = new Date();
 
+  // 사용자 레벨 조회
+  const userProgress = await prisma.userProgress.findUnique({
+    where: { userId: session.user.id },
+    select: { level: true },
+  });
+  const userLevel = userProgress?.level ?? 1;
+
+  // 사용자 레벨에서 해금된 콘텐츠만 조회 (sortOrder <= userLevel * 30)
+  const maxUnlockedSortOrder = userLevel * CONTENT_PER_LEVEL;
+
   const [keigoLessons, learningDiaries] = await Promise.all([
     prisma.keigoLesson.findMany({
-      where: { isActive: true },
+      where: { isActive: true, sortOrder: { lte: maxUnlockedSortOrder } },
       select: { id: true, vocab: true },
     }),
     prisma.learningDiaryEntry.findMany({
-      where: { isActive: true },
+      where: { isActive: true, sortOrder: { lte: maxUnlockedSortOrder } },
       select: { id: true, vocabulary: true },
     }),
   ]);
