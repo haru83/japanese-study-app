@@ -6,7 +6,7 @@ import { VOCAB_READINGS } from "../src/data/vocabReadings";
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("🌸 200개 경어 레슨 & 200개 학습 일기 시딩 시작...");
+  console.log("🌸 300개 경어 레슨 & 300개 학습 일기 시딩 시작...");
 
   // Remove stale keigo lessons
   const lessonIds = lessons.map((l) => l.id);
@@ -14,7 +14,7 @@ async function main() {
     where: { id: { notIn: lessonIds } },
   });
 
-  // ── Keigo Lessons (200개) ───────────────────────────────────────────────────
+  // ── Keigo Lessons (300개) ───────────────────────────────────────────────────
   console.log(`  Upserting ${lessons.length} keigo lessons...`);
   for (const [i, lesson] of lessons.entries()) {
     const enrichedVocab = lesson.vocab.map((v) => ({
@@ -56,7 +56,7 @@ async function main() {
     where: { id: { notIn: diaryIds } },
   });
 
-  // ── Learning Diaries (200개) ───────────────────────────────────────────────
+  // ── Learning Diaries (300개) ───────────────────────────────────────────────
   console.log(`  Upserting ${learningDiaries.length} learning diaries...`);
   for (const [i, diary] of learningDiaries.entries()) {
     await prisma.learningDiaryEntry.upsert({
