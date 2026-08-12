@@ -34,7 +34,7 @@ export default function VocabHubPage() {
           <span className="text-3xl bg-shiba-orange p-2 rounded-xl border border-black shrink-0">📌</span>
           <div>
             <span className="text-[10px] font-black text-type-black/50 block">FAVORITES</span>
-            <p className="text-sm font-black text-type-black">북마크 단어장</p>
+            <p className="text-sm font-black text-type-black">북마크</p>
           </div>
         </Link>
       </section>

@@ -40,13 +40,16 @@ export function BookmarkButton({
       onClick={handleClick}
       disabled={loading}
       aria-label={isBookmarked ? "북마크 해제" : "북마크 추가"}
-      className={`p-1.5 rounded-full border-2 border-black transition-transform hover:scale-110 active:scale-95 ${
-        isBookmarked
-          ? "bg-shiba-orange text-type-black shadow-[2px_2px_0px_0px_#000]"
-          : "bg-paper-white text-type-black/30 shadow-[1px_1px_0px_0px_#000]"
-      }`}
+      className="p-1 hover:scale-125 active:scale-90 transition-transform shrink-0"
     >
-      <span className="material-symbols-outlined text-sm leading-none block" style={{ fontVariationSettings: isBookmarked ? "'FILL' 1" : "'FILL' 0" }}>
+      <span
+        className={`material-symbols-outlined text-lg leading-none block select-none ${
+          isBookmarked
+            ? "text-amber-400 drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]"
+            : "text-type-black/25 hover:text-amber-400/80 transition-colors"
+        }`}
+        style={{ fontVariationSettings: isBookmarked ? "'FILL' 1" : "'FILL' 0" }}
+      >
         star
       </span>
     </button>

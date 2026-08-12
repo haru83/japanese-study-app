@@ -26,7 +26,7 @@ export default async function BookmarksPage() {
           </Link>
           <div>
             <h1 className="text-xl font-black text-type-black flex items-center gap-2">
-              <span>📌</span> 북마크 단어장 ({items.length}개)
+              <span>📌</span> 북마크 ({items.length}개)
             </h1>
             <p className="text-xs font-bold text-type-black/60">
               중요 어휘와 문법을 한곳에서 모아 봐요
