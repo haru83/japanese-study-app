@@ -15,6 +15,7 @@ export interface VocabItem {
   word: string;
   reading?: string;
   meaning: string;
+  sourceId?: string;
 }
 
 /**

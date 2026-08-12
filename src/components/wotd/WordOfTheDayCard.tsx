@@ -16,8 +16,8 @@ const SOURCE_LABELS: Record<string, string> = {
 
 export function WordOfTheDayCard({ word, reading, meaning, source, sourceId, sourceType }: WordOfTheDayCardProps) {
   const href = sourceType === "keigo" && sourceId
-    ? `/keigo/${sourceId}`
-    : (sourceType === "learningDiary" || sourceType === "diary") && sourceId
+    ? `/keigo/lessons/${sourceId}`
+    : (sourceType === "learningDiary" || sourceType === "diary" || sourceType === "learning-diary") && sourceId
       ? `/diary/learn/${sourceId}`
       : "#";
 

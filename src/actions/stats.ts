@@ -205,7 +205,7 @@ export async function getWordOfTheDay(): Promise<WotdEntry | null> {
   const keigoVocab: VocabItem[] = keigoLessons.flatMap((lesson) => {
     try {
       const parsed = JSON.parse(lesson.vocab) as Array<{ word: string; reading?: string; meaning: string }>;
-      return parsed;
+      return parsed.map((v) => ({ ...v, sourceId: lesson.id }));
     } catch {
       return [];
     }
@@ -214,7 +214,7 @@ export async function getWordOfTheDay(): Promise<WotdEntry | null> {
   const diaryVocab: VocabItem[] = learningDiaries.flatMap((diary) => {
     try {
       const parsed = JSON.parse(diary.vocabulary) as Array<{ word: string; reading?: string; meaning: string }>;
-      return parsed;
+      return parsed.map((v) => ({ ...v, sourceId: diary.id }));
     } catch {
       return [];
     }

@@ -284,7 +284,7 @@ export default async function HomePage() {
               completed={learning?.keigoCompleted ?? 0}
               total={learning?.keigoTotal ?? 0}
               nextTitle={learning?.keigoNextTitle ?? null}
-              href={learning?.keigoNextId ? `/keigo/${learning.keigoNextId}` : "/keigo"}
+              href={learning?.keigoNextId ? `/keigo/lessons/${learning.keigoNextId}` : "/keigo"}
               accent="text-grape-punch"
             />
             <ProgressSection
