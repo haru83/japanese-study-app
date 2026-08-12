@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { DiaryLevelFilter } from "@/components/learningDiary/DiaryLevelFilter";
 import { LearningDiaryCard } from "@/components/learningDiary/LearningDiaryCard";
+import { requiredLevelForContent } from "@/lib/contentGate";
 import type { DiaryCategory, DiaryLevel } from "@/types/learningDiary";
 
 export interface DiarySummary {
@@ -12,15 +13,17 @@ export interface DiarySummary {
   category: string;
   level: string;
   thumbnail: string;
+  sortOrder: number;
 }
 
 interface Props {
   diaries: DiarySummary[];
   completedIds: string[];
   totalCount: number;
+  userLevel: number;
 }
 
-export function DiaryList({ diaries, completedIds, totalCount }: Props) {
+export function DiaryList({ diaries, completedIds, totalCount, userLevel }: Props) {
   const [selectedLevel, setSelectedLevel] = useState<DiaryLevel | "전체">("전체");
   const [selectedCategory, setSelectedCategory] = useState<DiaryCategory | "전체">("전체");
   const [query, setQuery] = useState("");
@@ -42,7 +45,7 @@ export function DiaryList({ diaries, completedIds, totalCount }: Props) {
         <div>
           <h1 className="text-lg font-bold text-text-main leading-tight">학습 일기</h1>
           <p className="text-xs text-text-sub">
-            완료 {completedIds.length} / {totalCount}개
+            완료 {completedIds.length} / {totalCount}개 · 현재 레벨 {userLevel}
           </p>
         </div>
         <div className="ml-auto">
@@ -78,13 +81,19 @@ export function DiaryList({ diaries, completedIds, totalCount }: Props) {
             검색 결과가 없습니다
           </p>
         )}
-        {filtered.map((diary) => (
-          <LearningDiaryCard
-            key={diary.id}
-            diary={diary}
-            completed={completedIds.includes(diary.id)}
-          />
-        ))}
+        {filtered.map((diary) => {
+          const reqLevel = requiredLevelForContent(diary.sortOrder);
+          const locked = userLevel < reqLevel;
+          return (
+            <LearningDiaryCard
+              key={diary.id}
+              diary={diary}
+              completed={completedIds.includes(diary.id)}
+              locked={locked}
+              requiredLevel={reqLevel}
+            />
+          );
+        })}
       </div>
     </main>
   );

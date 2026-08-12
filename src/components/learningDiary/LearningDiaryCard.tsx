@@ -10,9 +10,39 @@ const LEVEL_COLORS: Record<string, string> = {
 interface LearningDiaryCardProps {
   diary: DiarySummary;
   completed: boolean;
+  locked?: boolean;
+  requiredLevel?: number;
 }
 
-export function LearningDiaryCard({ diary, completed }: LearningDiaryCardProps) {
+export function LearningDiaryCard({
+  diary,
+  completed,
+  locked,
+  requiredLevel,
+}: LearningDiaryCardProps) {
+  if (locked) {
+    return (
+      <div className="flex items-center gap-3 bg-white/50 dark:bg-surface-dark/50 p-4 rounded-2xl border border-gray-200 dark:border-border-dark cursor-not-allowed opacity-60">
+        <div className="text-3xl shrink-0 grayscale opacity-50">{diary.thumbnail}</div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-0.5">
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+              🔒 레벨 {requiredLevel} 오픈
+            </span>
+            <span className="text-[10px] text-text-sub dark:text-text-sub-dark">{diary.category}</span>
+          </div>
+          <p className="font-bold text-text-main/50 dark:text-text-main-dark/50 text-sm truncate">
+            {diary.title}
+          </p>
+          <p className="text-xs text-text-sub/50 dark:text-text-sub-dark/50 truncate">{diary.titleKo}</p>
+        </div>
+        <div className="shrink-0 text-text-sub/40 dark:text-text-sub-dark/40">
+          <span className="material-symbols-outlined text-sm">lock</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Link
       href={`/diary/learn/${diary.id}`}

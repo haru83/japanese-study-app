@@ -7,11 +7,11 @@ import type { DiarySummary } from "@/components/learningDiary/DiaryList";
 export default async function LearnDiaryListPage() {
   const session = await getServerSession(authOptions);
 
-  const [rows, progress, totalCount] = await Promise.all([
+  const [rows, progress, totalCount, userProgress] = await Promise.all([
     prisma.learningDiaryEntry.findMany({
       where: { isActive: true },
       orderBy: { sortOrder: "asc" },
-      select: { id: true, title: true, titleKo: true, category: true, level: true, thumbnail: true },
+      select: { id: true, title: true, titleKo: true, category: true, level: true, thumbnail: true, sortOrder: true },
     }),
     session?.user?.id
       ? prisma.learningDiaryProgress.findMany({
@@ -20,8 +20,15 @@ export default async function LearnDiaryListPage() {
         })
       : Promise.resolve([]),
     prisma.learningDiaryEntry.count({ where: { isActive: true } }),
+    session?.user?.id
+      ? prisma.userProgress.findUnique({
+          where: { userId: session.user.id },
+          select: { level: true },
+        })
+      : Promise.resolve(null),
   ]);
 
+  const userLevel = userProgress?.level ?? 1;
   const diaries: DiarySummary[] = rows;
   const completedIds = progress.map((p) => p.diaryId);
 
@@ -30,6 +37,7 @@ export default async function LearnDiaryListPage() {
       diaries={diaries}
       completedIds={completedIds}
       totalCount={totalCount}
+      userLevel={userLevel}
     />
   );
 }
