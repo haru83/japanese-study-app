@@ -27,6 +27,7 @@ describe("VocabReview schema fields", () => {
       reviewCount: 0,
       createdAt: new Date(),
       updatedAt: new Date(),
+      isBookmarked: false,
     };
 
     expect(sample.itemType).toBe("VOCAB");

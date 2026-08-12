@@ -49,8 +49,8 @@ describe("FSRS Algorithm Engine", () => {
     for (let i = 0; i < 10; i++) {
       state = calculateFSRS(state, 4);
     }
-    expect(state.difficulty).toBeGreaterThanOrEqual(1.0);
-    expect(state.difficulty).toBeLessThanOrEqual(10.0);
+    expect(state!.difficulty).toBeGreaterThanOrEqual(1.0);
+    expect(state!.difficulty).toBeLessThanOrEqual(10.0);
   });
 
   it("generates correct preview interval labels for 4 ratings", () => {
