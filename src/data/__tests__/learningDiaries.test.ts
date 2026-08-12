@@ -22,6 +22,9 @@ describe("Learning Diaries Data", () => {
       expect(diary.vocabulary.length).toBeGreaterThan(0);
       expect(diary.grammarPoints.length).toBeGreaterThan(0);
       expect(diary.quiz.length).toBe(3);
+      for (const q of diary.quiz) {
+        expect(q.options).toContain(q.answer);
+      }
     }
   });
 });

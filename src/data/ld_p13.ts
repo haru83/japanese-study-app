@@ -153,7 +153,7 @@ export const part13: LearningDiary[] = [
     quiz: [
       { question: "「広大」의 읽는 법은?", options: ["こうだい", "ひろひろ", "きょうだい", "こうたい"], answer: "こうだい", explanation: "広大(こうだい)는 끝없이 넓음을 나타냅니다." },
       { question: "「地平線」의 뜻은?", options: ["지평선", "수평선", "산맥", "고속도로"], answer: "지평선", explanation: "地平線(ちへいせん)은 땅과 하늘이 만나는 지평선입니다." },
-      { question: "「格別」의 의미는?", options: ["유달리 특별함", "보통 수준임", "별로임", "유사함"], answer: "유달리特別함", explanation: "格別(かくべつ)는 별도로 훌륭하거나 특별함을 말합니다." }
+      { question: "「格別」의 의미는?", options: ["유달리 특별함", "보통 수준임", "별로임", "유사함"], answer: "유달리 특별함", explanation: "格別(かくべつ)는 별도로 훌륭하거나 특별함을 말합니다." }
     ]
   },
   {
