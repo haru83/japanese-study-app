@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { parseLearningDiaryEntry } from "@/lib/lessonUtils";
 import { DiaryDetail } from "@/components/learningDiary/DiaryDetail";
-import { isContentUnlocked, isWotdContent } from "@/lib/contentGate";
+import { isContentUnlocked } from "@/lib/contentGate";
 
 export default async function LearnDiaryDetailPage({
   params,
@@ -28,10 +28,7 @@ export default async function LearnDiaryDetailPage({
   const userLevel = userProgress?.level ?? 1;
 
   if (!isContentUnlocked(row.sortOrder, userLevel)) {
-    const isWotd = await isWotdContent(row.id);
-    if (!isWotd) {
-      redirect("/diary/learn");
-    }
+    redirect("/diary/learn");
   }
 
   const diary = parseLearningDiaryEntry(row);
