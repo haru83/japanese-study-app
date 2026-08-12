@@ -198,28 +198,31 @@ export default async function ProfilePage() {
           </div>
         </section>
 
-        {/* ── 설정 ── */}
+        {/* ── 설정 및 계정 ── */}
         <section>
-          <h2 className="font-black text-type-black text-sm mb-3">설정 🔧</h2>
+          <h2 className="font-black text-type-black text-sm mb-3">설정 및 계정 🔧</h2>
           <div className="bg-paper-white rounded-[15px] border-2 border-black shadow-[4px_4px_0px_0px_#000] overflow-hidden">
-      {[
-        { icon: "⚙️", label: "앱 설정", href: "/settings", desc: "알림, 다크모드, 발음 설정" },
-        ...(isAdmin ? [{ icon: "🛡️", label: "관리자 페이지", href: "/admin", desc: "콘텐츠 관리" }] : []),
-      ].map((item, i, arr) => (
-        <Link
-          key={item.label}
-          href={item.href}
-          className={`flex items-center gap-4 px-5 py-4 ${i < arr.length - 1 ? "border-b-2 border-black" : ""} hover:bg-sakura-blush/50 transition-colors`}
-        >
-          <span className="text-2xl">{item.icon}</span>
-          <div className="flex-1">
-            <p className="text-sm font-black text-type-black">{item.label}</p>
-            <p className="text-xs text-type-black/60 font-bold">{item.desc}</p>
-          </div>
-          <span className="text-type-black/30">→</span>
-        </Link>
-      ))}
-      <LogoutButton />
+            {isAdmin && (
+              <Link
+                href="/admin"
+                className="flex items-center gap-4 px-5 py-4 border-b-2 border-black hover:bg-sakura-blush/50 transition-colors"
+              >
+                <span className="text-2xl">🛡️</span>
+                <div className="flex-1">
+                  <p className="text-sm font-black text-type-black">관리자 페이지</p>
+                  <p className="text-xs text-type-black/60 font-bold">콘텐츠 및 사용자 관리</p>
+                </div>
+                <span className="text-type-black/30">→</span>
+              </Link>
+            )}
+            <div className="flex items-center gap-4 px-5 py-4 border-b-2 border-black">
+              <span className="text-2xl">🐶</span>
+              <div className="flex-1">
+                <p className="text-sm font-black text-type-black">앱 정보</p>
+                <p className="text-xs text-type-black/60 font-bold">왕왕 일본어 v1.0.0</p>
+              </div>
+            </div>
+            <LogoutButton />
           </div>
         </section>
       </div>
