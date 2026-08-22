@@ -15,7 +15,7 @@ export default function EntertainmentHubPage() {
             </span>
           </div>
           <p className="text-xs font-bold text-type-black/60 mt-1.5">
-            애니메이션, 음악 등 좋아하는 대중문화 콘텐츠로 즐겁게 일본어를 마스터해요!
+            애니 캐릭터 말투, 음악 등 서브컬처 테마로 즐겁게 일본어를 마스터해요!
           </p>
         </div>
       </header>
@@ -27,7 +27,7 @@ export default function EntertainmentHubPage() {
         </h2>
 
         <div className="flex flex-col gap-4">
-          {/* 1. 애니 명대사 */}
+          {/* 1. 애니 톤 일본어 */}
           <Link
             href="/entertainment/anime-quotes"
             className="bg-paper-white rounded-[20px] border-2 border-black shadow-[4px_4px_0px_0px_#000] p-5 flex items-center justify-between hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] transition-all group"
@@ -38,20 +38,20 @@ export default function EntertainmentHubPage() {
               </div>
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-base font-black text-type-black">애니 명대사 일본어</h3>
+                  <h3 className="text-base font-black text-type-black">애니 톤(Anime Style) 일본어</h3>
                   <span className="text-[10px] font-black bg-matcha-green px-2 py-0.5 rounded-full border border-black text-type-black">
                     HOT
                   </span>
                 </div>
                 <p className="text-xs text-type-black/70 font-bold">
-                  원피스, 나루토, 프리렌, 주술회전 등 8개 인기 애니메이션의 명장면과 대사로 배우는 생생한 회화
+                  열혈 주인공, 쿨한 라이벌, 츤데레 등 8가지 캐릭터 페르소나별 실전 말투와 핵심 문법 노트
                 </p>
                 <div className="flex items-center gap-2 pt-1">
                   <span className="text-[11px] font-black text-shiba-orange flex items-center gap-1">
-                    <span>✨</span> 총 32개 명대사 컬렉션
+                    <span>✨</span> 총 32개 캐릭터 대사 패턴
                   </span>
                   <span className="text-[11px] font-bold text-type-black/40">•</span>
-                  <span className="text-[11px] font-bold text-type-black/60">발음 TTS & 빈칸 퀴즈</span>
+                  <span className="text-[11px] font-bold text-type-black/60">남/여 TTS 발음 & 빈칸 퀴즈</span>
                 </div>
               </div>
             </div>

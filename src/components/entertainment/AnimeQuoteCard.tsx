@@ -45,7 +45,7 @@ export function AnimeQuoteCard({ quote, initialBookmarkMap }: Props) {
             <span>{quote.animeTitleKo}</span>
           </span>
           <span className="text-xs font-bold text-type-black/60">
-            {quote.characterKo} ({quote.characterJa})
+            {quote.characterKo}
           </span>
         </div>
 
@@ -74,7 +74,7 @@ export function AnimeQuoteCard({ quote, initialBookmarkMap }: Props) {
               あ
             </button>
 
-            <TtsButton text={quote.quoteJa} size="md" />
+            <TtsButton text={quote.quoteJa} size="md" gender={quote.gender} />
           </div>
         </div>
 
@@ -157,7 +157,7 @@ export function AnimeQuoteCard({ quote, initialBookmarkMap }: Props) {
                     itemType="vocab"
                     reading={vocab.reading}
                     meaning={vocab.meaning}
-                    source={`${quote.animeTitleKo} - ${quote.characterKo}`}
+                    source={`애니 톤 - ${quote.animeTitleKo}`}
                     initialBookmarked={!!initialBookmarkMap[vocab.word]}
                   />
                 </div>

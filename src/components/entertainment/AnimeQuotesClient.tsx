@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { ANIME_CATEGORIES, ANIME_QUOTES_DATA, type AnimeId } from "@/data/animeQuotes";
+import { ANIME_CATEGORIES, ANIME_QUOTES_DATA, type PersonaId } from "@/data/animeQuotes";
 import { AnimeQuoteCard } from "@/components/entertainment/AnimeQuoteCard";
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
 }
 
 export function AnimeQuotesClient({ initialBookmarkMap }: Props) {
-  const [selectedCategory, setSelectedCategory] = useState<"all" | AnimeId>("all");
+  const [selectedCategory, setSelectedCategory] = useState<"all" | PersonaId>("all");
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredQuotes = useMemo(() => {
@@ -23,9 +23,7 @@ export function AnimeQuotesClient({ initialBookmarkMap }: Props) {
       const q = searchQuery.trim().toLowerCase();
       return (
         item.animeTitleKo.toLowerCase().includes(q) ||
-        item.animeTitleJa.toLowerCase().includes(q) ||
         item.characterKo.toLowerCase().includes(q) ||
-        item.characterJa.toLowerCase().includes(q) ||
         item.quoteJa.toLowerCase().includes(q) ||
         item.quoteKo.toLowerCase().includes(q) ||
         (item.quoteReading && item.quoteReading.toLowerCase().includes(q)) ||
@@ -55,10 +53,10 @@ export function AnimeQuotesClient({ initialBookmarkMap }: Props) {
         </Link>
         <div>
           <h1 className="text-xl font-black text-type-black flex items-center gap-2">
-            애니 명대사 🎬
+            애니 톤 일본어 🎬
           </h1>
           <p className="text-xs font-bold text-type-black/60">
-            인기 애니메이션 명장면으로 배우는 실전 일본어 & 문법
+            만화·애니 속 캐릭터 페르소나별 실전 말투와 핵심 문법
           </p>
         </div>
       </header>
@@ -72,7 +70,7 @@ export function AnimeQuotesClient({ initialBookmarkMap }: Props) {
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="작품명, 캐릭터, 대사, 단어로 검색..."
+          placeholder="캐릭터 유형, 대사, 단어로 검색..."
           className="w-full pl-10 pr-9 py-2.5 bg-paper-white rounded-xl border-2 border-black shadow-[3px_3px_0px_0px_#000] text-sm font-bold placeholder:text-type-black/40 text-type-black focus:outline-none focus:ring-2 focus:ring-shiba-orange/50 transition-all"
         />
         {searchQuery && (
@@ -115,7 +113,7 @@ export function AnimeQuotesClient({ initialBookmarkMap }: Props) {
       <div className="flex items-center justify-between px-1">
         <span className="text-xs font-black text-type-black/70 flex items-center gap-1.5">
           <span className="w-2 h-2 rounded-full bg-matcha-green border border-black inline-block" />
-          총 <strong className="text-type-black font-black">{filteredQuotes.length}</strong>개의 명대사
+          총 <strong className="text-type-black font-black">{filteredQuotes.length}</strong>개의 페르소나 대사
         </span>
         <span className="text-[11px] font-bold text-type-black/50">
           💡 단어의 ⭐를 눌러 북마크에 보관하세요
@@ -128,7 +126,7 @@ export function AnimeQuotesClient({ initialBookmarkMap }: Props) {
           <p className="text-4xl">🔍</p>
           <p className="text-sm font-black text-type-black">검색 결과가 없습니다</p>
           <p className="text-xs text-type-black/60 font-bold">
-            다른 검색어나 카테고리를 선택해 보세요!
+            다른 검색어나 캐릭터 유형을 선택해 보세요!
           </p>
         </div>
       ) : (
