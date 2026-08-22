@@ -54,9 +54,9 @@ function GuestMyDiaryView() {
 
       {/* 학습 일기 유도 */}
       <div className="w-full bg-paper-white rounded-[15px] border-2 border-black shadow-[4px_4px_0px_0px_#000] p-4 wobbly-3">
-        <p className="font-black text-type-black text-sm mb-1">학습 일기는 무료예요! 📖</p>
+        <p className="font-black text-type-black text-sm mb-1">학습 일기를 둘러보세요! 📖</p>
         <p className="text-xs text-type-black/60 font-bold">
-          100개의 일본어 학습 일기를 로그인 없이 읽을 수 있어요.
+          100개의 다양한 테마별 일본어 학습 일기를 읽어보세요.
         </p>
         <Link
           href="/diary?tab=learn"

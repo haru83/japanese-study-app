@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { ShibaAvatar } from "@/components/mascot/ShibaAvatar";
 
 function LoginForm() {
@@ -21,6 +22,7 @@ function LoginForm() {
     password: "",
     confirmPassword: "",
   });
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -44,6 +46,10 @@ function LoginForm() {
           router.refresh();
         }
       } else {
+        if (!agreedToTerms) {
+          throw new Error("이용약관 및 개인정보 처리방침에 동의해 주세요.");
+        }
+
         if (formData.password !== formData.confirmPassword) {
           throw new Error("비밀번호가 일치하지 않습니다.");
         }
@@ -149,6 +155,28 @@ function LoginForm() {
               />
             )}
 
+            {!isLogin && (
+              <label className="flex items-start gap-2.5 px-1 py-1 cursor-pointer select-none text-left">
+                <input
+                  type="checkbox"
+                  checked={agreedToTerms}
+                  onChange={(e) => setAgreedToTerms(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 rounded border-2 border-black accent-sakura-pink shrink-0 cursor-pointer"
+                />
+                <span className="text-xs font-bold text-type-black/80 leading-snug">
+                  <span className="text-red-500 font-black">[필수]</span>{" "}
+                  <Link href="/terms" target="_blank" className="text-grape-punch underline hover:text-black">
+                    이용약관
+                  </Link>{" "}
+                  및{" "}
+                  <Link href="/privacy" target="_blank" className="text-grape-punch underline hover:text-black">
+                    개인정보 처리방침
+                  </Link>
+                  에 동의합니다.
+                </span>
+              </label>
+            )}
+
             {error && (
               <div className="bg-red-100 border-2 border-red-400 rounded-2xl px-4 py-3">
                 <p className="text-red-600 text-sm text-center font-bold">{error}</p>
@@ -200,6 +228,21 @@ function LoginForm() {
             </svg>
             <span>Google로 시작하기</span>
           </button>
+
+          {/* Policy Notice */}
+          <div className="mt-4 pt-3 border-t border-black/10 text-center">
+            <p className="text-[11px] font-bold text-type-black/50 leading-relaxed">
+              계속 진행하시면 왕왕 일본어의{" "}
+              <Link href="/terms" className="text-grape-punch underline hover:text-black">
+                이용약관
+              </Link>{" "}
+              및{" "}
+              <Link href="/privacy" className="text-grape-punch underline hover:text-black">
+                개인정보 처리방침
+              </Link>
+              에 동의하는 것으로 간주됩니다.
+            </p>
+          </div>
         </div>
 
         {/* Toggle */}

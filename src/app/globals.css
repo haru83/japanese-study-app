@@ -73,3 +73,15 @@ body {
 
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Japanese Ruby (Furigana) Styling */
+ruby {
+  ruby-align: center;
+  ruby-position: over;
+}
+
+rt {
+  user-select: none;
+  text-align: center;
+}
+

@@ -51,6 +51,7 @@ export function SocialProfileModal({ targetUserId, onClose }: Props) {
           {/* Mascot avatar preview */}
           <div className="bg-canvas-almond rounded-[20px] border-2 border-black p-4 shadow-[3px_3px_0px_0px_#000] w-full flex flex-col items-center">
             <ShibaAvatar
+              characterId={profile.activeCharacter}
               level={profile.level}
               equippedItemIds={profile.equippedIds}
               size={80}

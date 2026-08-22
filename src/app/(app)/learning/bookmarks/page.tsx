@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getBookmarkedItems } from "@/actions/bookmark";
 import { BookmarkButton } from "@/components/bookmark/BookmarkButton";
+import { RubyText } from "@/components/learningDiary/RubyText";
+import { buildRubySegments } from "@/lib/rubyParser";
 
 export default async function BookmarksPage() {
   const session = await getServerSession(authOptions);
@@ -60,10 +62,16 @@ export default async function BookmarksPage() {
                     >
                       <div>
                         <div className="flex items-center gap-2">
-                          <p className="font-black text-type-black text-base">{item.word}</p>
-                          {item.reading && (
-                            <span className="text-xs text-type-black/60 font-bold">({item.reading})</span>
-                          )}
+                          <p className="font-black text-type-black text-base pt-1">
+                            {item.reading ? (
+                              <RubyText
+                                segments={buildRubySegments(item.word, item.reading)}
+                                showRuby={true}
+                              />
+                            ) : (
+                              item.word
+                            )}
+                          </p>
                         </div>
                         <p className="text-sm font-bold text-type-black/80 mt-0.5">{item.meaning}</p>
                         <p className="text-[10px] font-bold text-type-black/40 mt-1">출처: {item.source}</p>

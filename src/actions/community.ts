@@ -7,11 +7,12 @@ import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { assertCommentOwner } from "@/lib/community";
 import { CommentInputSchema, ReportInputSchema } from "@/lib/validation";
+import { hasKorean } from "@/lib/japaneseInput";
 
 const USER_SELECT = {
   id: true,
   name: true,
-  progress: { select: { level: true } },
+  progress: { select: { level: true, activeCharacter: true } },
   wardrobeItems: {
     where: { equippedAt: { not: null } },
     select: { wardrobeItemId: true },
@@ -115,6 +116,10 @@ export async function addComment(diaryId: string, content: string) {
 
   const validated = CommentInputSchema.parse({ content });
 
+  if (hasKorean(validated.content)) {
+    throw new Error("댓글은 일본어 또는 영어로만 입력할 수 있습니다.");
+  }
+
   await prisma.comment.create({
     data: { userId: session.user.id, diaryId, content: validated.content },
   });
@@ -154,7 +159,7 @@ export async function blockUser(targetUserId: string) {
 }
 
 export async function reportContent(
-  targetType: "diary" | "comment",
+  targetType: "diary" | "comment" | "post",
   targetId: string,
   reason?: string
 ) {
@@ -206,24 +211,42 @@ export async function getUnreadCount() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return 0;
 
-  const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  // 마지막으로 반응 탭을 확인한 시각 (없으면 30일 전 기준)
+  const progress = await prisma.userProgress.findUnique({
+    where: { userId: session.user.id },
+    select: { reactionsReadAt: true },
+  });
+  const since = progress?.reactionsReadAt
+    ? progress.reactionsReadAt
+    : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
   const [likeCount, commentCount] = await Promise.all([
     prisma.like.count({
       where: {
         diary: { userId: session.user.id },
         userId: { not: session.user.id },
-        createdAt: { gte: since },
+        createdAt: { gt: since },
       },
     }),
     prisma.comment.count({
       where: {
         diary: { userId: session.user.id },
         userId: { not: session.user.id },
-        createdAt: { gte: since },
+        createdAt: { gt: since },
       },
     }),
   ]);
 
   return likeCount + commentCount;
+}
+
+export async function markReactionsRead() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) return;
+
+  await prisma.userProgress.upsert({
+    where: { userId: session.user.id },
+    update: { reactionsReadAt: new Date() },
+    create: { userId: session.user.id, reactionsReadAt: new Date() },
+  });
 }

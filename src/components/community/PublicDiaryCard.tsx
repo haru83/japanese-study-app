@@ -12,7 +12,7 @@ type Props = {
     user: {
       id: string;
       name: string | null;
-      progress: { level: number } | null;
+      progress: { level: number; activeCharacter: string } | null;
       wardrobeItems: { wardrobeItemId: string }[];
     };
     _count: { likes: number; comments: number };
@@ -23,6 +23,7 @@ type Props = {
 export function PublicDiaryCard({ diary, onAvatarClick }: Props) {
   const level = diary.user.progress?.level ?? 1;
   const equippedIds = diary.user.wardrobeItems.map((w) => w.wardrobeItemId);
+  const characterId = diary.user.progress?.activeCharacter ?? "shiba";
 
   function handleUserClick(e: React.MouseEvent) {
     if (onAvatarClick) {
@@ -39,6 +40,7 @@ export function PublicDiaryCard({ diary, onAvatarClick }: Props) {
     >
       <div className="flex items-center gap-3 mb-3 cursor-pointer" onClick={handleUserClick}>
         <ShibaAvatar
+          characterId={characterId}
           level={level}
           size={40}
           sticker

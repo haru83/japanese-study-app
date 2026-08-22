@@ -5,7 +5,7 @@ import { useState, useTransition } from "react";
 import { reportContent } from "@/actions/community";
 
 type ModalProps = {
-  targetType: "diary" | "comment";
+  targetType: "diary" | "comment" | "post";
   targetId: string;
   onClose: () => void;
 };
@@ -99,7 +99,7 @@ export function ReportButton({
   targetType,
   targetId,
 }: {
-  targetType: "diary" | "comment";
+  targetType: "diary" | "comment" | "post";
   targetId: string;
 }) {
   const [open, setOpen] = useState(false);

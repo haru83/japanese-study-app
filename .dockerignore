@@ -1,0 +1,16 @@
+Dockerfile
+.dockerignore
+node_modules
+npm-debug.log
+README.md
+.next
+.git
+.env*.local
+.env.development
+coverage
+test-results
+tests
+.agents
+.superpowers
+prisma/dev.db
+prisma/dev.db-journal

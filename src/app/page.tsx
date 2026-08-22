@@ -60,22 +60,15 @@ export default function SplashPage() {
           href="/login?mode=signup"
           className="w-full flex items-center justify-center gap-2 bg-sakura-pink text-type-black font-black text-base py-4 rounded-[15px] border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] active:scale-95 transition-all"
         >
-          ✉️ 이메일로 가입하기
+          ✨ 무료로 시작하기
         </Link>
 
         <Link
-          href="/home"
-          className="w-full flex items-center justify-center gap-2 bg-canvas-almond text-type-black font-black text-base py-3.5 rounded-[15px] border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] active:scale-95 transition-all"
+          href="/login"
+          className="w-full flex items-center justify-center gap-2 bg-paper-white text-type-black font-black text-base py-3.5 rounded-[15px] border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] active:scale-95 transition-all"
         >
-          ▶ 로그인 없이 학습 시작
+          🔑 로그인
         </Link>
-
-        <p className="text-sm font-bold text-type-black/70">
-          이미 계정이 있으신가요?{" "}
-          <Link href="/login" className="text-grape-punch font-black underline underline-offset-2">
-            로그인
-          </Link>
-        </p>
       </footer>
     </div>
   );

@@ -14,7 +14,7 @@ interface Props {
     user: {
       id: string;
       name: string | null;
-      progress: { level: number } | null;
+      progress: { level: number; activeCharacter: string } | null;
       wardrobeItems: { wardrobeItemId: string }[];
     };
     _count: { likes: number; comments: number };

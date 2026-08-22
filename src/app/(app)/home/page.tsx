@@ -43,7 +43,7 @@ function GuestHomeView() {
           <ShibaAvatar level={1} size={56} sticker wobble="wobbly-3" className="-mt-3 -ml-6 relative z-10" />
         </div>
         <p className="text-type-black/70 text-sm font-bold">
-          로그인 없이 학습을 시작해보세요! 👋
+          가입하고 나만의 일본어 학습을 시작해보세요! 👋
         </p>
       </div>
 

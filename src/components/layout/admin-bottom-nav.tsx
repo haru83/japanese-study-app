@@ -11,7 +11,7 @@ const ADMIN_NAV_ITEMS = [
   { href: "/admin/reports", icon: "flag", label: "신고" },
 ];
 
-export function AdminBottomNav() {
+export function AdminBottomNav({ pendingReports = 0 }: { pendingReports?: number }) {
   const pathname = usePathname();
 
   return (
@@ -27,7 +27,7 @@ export function AdminBottomNav() {
               isActive ? "scale-105" : "scale-100 opacity-60"
             }`}
           >
-            <div className="relative flex items-center justify-center h-7 w-7 overflow-hidden">
+            <div className="relative flex items-center justify-center h-7 w-7">
               <span
                 aria-hidden="true"
                 className="material-symbols-outlined text-2xl text-black select-none leading-none block"
@@ -37,6 +37,11 @@ export function AdminBottomNav() {
               >
                 {item.icon}
               </span>
+              {item.href === '/admin/reports' && pendingReports > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border border-white text-white text-[9px] font-black flex items-center justify-center">
+                  {pendingReports > 9 ? '9+' : pendingReports}
+                </span>
+              )}
             </div>
             <span
               className={`text-[11px] font-bold text-black leading-tight mt-0.5 truncate max-w-full ${

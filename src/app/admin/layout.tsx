@@ -2,6 +2,7 @@ import { AdminBottomNav } from "@/components/layout/admin-bottom-nav";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { prisma } from "@/lib/db";
 
 export default async function AdminLayout({
   children,
@@ -12,10 +13,12 @@ export default async function AdminLayout({
 
   if (session?.user?.role !== "admin") redirect("/home");
 
+  const pendingReports = await prisma.report.count({ where: { resolved: false } });
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-bg-dark">
       <main className="flex-1 pb-[100px]">{children}</main>
-      <AdminBottomNav />
+      <AdminBottomNav pendingReports={pendingReports} />
     </div>
   );
 }

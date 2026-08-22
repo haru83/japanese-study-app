@@ -47,11 +47,16 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
+        if (user.disabled) {
+          return null; // 비활성화된 계정 로그인 차단
+        }
+
         return {
           id: user.id,
           email: user.email,
           name: user.name,
           role: user.role,
+          disabled: user.disabled,
         };
       },
     }),
@@ -71,14 +76,15 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.role = (user as { role?: string }).role ?? "user";
       }
-      // 로그인 이후 요청에서도 DB role 변경 즉시 반영
+      // 로그인 이후 요청에서도 DB role/disabled 변경 즉시 반영
       if (token.id) {
         const dbUser = await prisma.user.findUnique({
           where: { id: token.id as string },
-          select: { role: true },
+          select: { role: true, disabled: true },
         });
         if (dbUser) {
           token.role = dbUser.role;
+          token.disabled = dbUser.disabled;
         }
       }
       return token;
@@ -87,6 +93,7 @@ export const authOptions: NextAuthOptions = {
       if (token && session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
+        session.user.disabled = token.disabled as boolean;
       }
       return session;
     },

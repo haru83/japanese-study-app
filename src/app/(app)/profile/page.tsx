@@ -8,6 +8,7 @@ import { ProgressBar } from "@/components/ui/ProgressBar";
 import { ShibaAvatar } from "@/components/mascot/ShibaAvatar";
 import NicknameEditor from "./NicknameEditor";
 import { LogoutButton } from "./LogoutButton";
+import { DeleteAccountButton } from "./DeleteAccountButton";
 import { LearningCalendar } from "@/components/profile/LearningCalendar";
 
 const LEVEL_TITLES = [
@@ -201,6 +202,7 @@ export default async function ProfilePage() {
               </div>
             </div>
             <LogoutButton />
+            <DeleteAccountButton />
           </div>
         </section>
       </div>

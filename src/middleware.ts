@@ -15,6 +15,7 @@ const AUTH_REQUIRED_PATTERNS = [
   /^\/community/,
   /^\/study/,
   /^\/learning/,
+  /^\/entertainment/,
 ];
 
 /** NextAuth 세션 쿠키 이름
@@ -31,12 +32,19 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const hasSessionCookie = SESSION_COOKIES.some((name) => req.cookies.get(name)?.value);
 
+  // ─── 토큰 공통 로드 (admin + disabled 체크에 재사용) ───
+  const token = await getToken({
+    req,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
+
+  // ─── Disabled 유저 차단 ───
+  if (token?.disabled && pathname !== "/login") {
+    return NextResponse.redirect(new URL("/login?reason=disabled", req.url));
+  }
+
   // ─── Admin 경로 보호 ───
   if (isAdminPath(pathname)) {
-    const token = await getToken({
-      req,
-      secret: process.env.NEXTAUTH_SECRET,
-    });
     if (!token || token.role !== "admin") {
       return NextResponse.redirect(new URL("/home", req.url));
     }
@@ -68,5 +76,6 @@ export const config = {
     "/community/:path*",
     "/study/:path*",
     "/learning/:path*",
+    "/entertainment/:path*",
   ],
 };

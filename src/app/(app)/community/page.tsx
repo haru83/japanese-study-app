@@ -2,8 +2,10 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { getPublicDiaries, getReceivedReactions } from "@/actions/community";
+import { getPublicDiaries, getReceivedReactions, markReactionsRead } from "@/actions/community";
+import { getCommunityPosts } from "@/actions/communityPost";
 import { FeedTabClient } from "@/components/community/FeedTabClient";
+import { BoardTabClient } from "@/components/community/BoardTabClient";
 
 export default async function CommunityPage({
   searchParams,
@@ -11,7 +13,7 @@ export default async function CommunityPage({
   searchParams: Promise<{ tab?: string }>;
 }) {
   const { tab } = await searchParams;
-  const activeTab = tab === "reactions" ? "reactions" : "feed";
+  const activeTab = tab === "reactions" ? "reactions" : tab === "board" ? "board" : "feed";
   const session = await getServerSession(authOptions);
 
   return (
@@ -30,6 +32,16 @@ export default async function CommunityPage({
             모두의 일기
           </Link>
           <Link
+            href="/community?tab=board"
+            className={`flex-1 py-2.5 text-center text-sm font-black border-b-4 transition-colors ${
+              activeTab === "board"
+                ? "border-sakura-pink text-type-black"
+                : "border-transparent text-type-black/40"
+            }`}
+          >
+            자유게시판
+          </Link>
+          <Link
             href="/community?tab=reactions"
             className={`flex-1 py-2.5 text-center text-sm font-black border-b-4 transition-colors ${
               activeTab === "reactions"
@@ -45,6 +57,8 @@ export default async function CommunityPage({
       <div className="px-5 py-5 flex flex-col gap-3 pb-24">
         {activeTab === "feed" ? (
           <FeedTab />
+        ) : activeTab === "board" ? (
+          <BoardTab />
         ) : (
           <ReactionsTab userId={session?.user?.id} />
         )}
@@ -71,6 +85,11 @@ async function FeedTab() {
   return <FeedTabClient diaries={diaries} />;
 }
 
+async function BoardTab() {
+  const posts = await getCommunityPosts();
+  return <BoardTabClient posts={posts} />;
+}
+
 async function ReactionsTab({ userId }: { userId?: string }) {
   if (!userId) {
     return (
@@ -86,6 +105,9 @@ async function ReactionsTab({ userId }: { userId?: string }) {
       </div>
     );
   }
+
+  // 탭 진입 시 읽음 처리
+  await markReactionsRead();
 
   const { likes, comments } = await getReceivedReactions();
 

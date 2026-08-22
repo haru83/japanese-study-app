@@ -17,15 +17,15 @@ export function RubyText({ segments, showRuby, showPitchAccent = false, classNam
         const hasKanji = seg.text ? /[一-龯㐀-䶿]/.test(seg.text) : false;
 
         return seg.ruby && showRuby && hasKanji ? (
-          <ruby key={i} className="relative inline-block text-center align-baseline">
+          <ruby key={i} className="[ruby-align:center] [ruby-position:over]">
+            {seg.text}
             <rt
-              className={`absolute bottom-full left-1/2 -translate-x-1/2 translate-y-[6px] text-[0.55em] text-type-black/60 whitespace-nowrap leading-none pointer-events-none ${
-                isHighPitch ? "border-t-2 border-grape-punch text-grape-punch font-bold" : ""
+              className={`text-[0.55em] font-medium text-type-black/60 select-none leading-none pointer-events-none ${
+                isHighPitch ? "border-t border-grape-punch text-grape-punch font-bold" : ""
               }`}
             >
               {seg.ruby}
             </rt>
-            <span>{seg.text}</span>
           </ruby>
         ) : (
           <span key={i}>{seg.text}</span>

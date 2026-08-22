@@ -2,6 +2,8 @@ import Link from "next/link";
 import { getCompletedVocab } from "@/actions/learning";
 import { BookmarkButton } from "@/components/bookmark/BookmarkButton";
 import { getBookmarkMap } from "@/actions/bookmark";
+import { RubyText } from "@/components/learningDiary/RubyText";
+import { buildRubySegments } from "@/lib/rubyParser";
 
 export default async function VocabularyPage() {
   const [vocab, bookmarkMap] = await Promise.all([
@@ -49,14 +51,20 @@ export default async function VocabularyPage() {
             >
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2">
-                  <span className="font-black text-type-black text-base">{v.word}</span>
+                  <span className="font-black text-type-black text-base pt-1">
+                    {v.reading ? (
+                      <RubyText
+                        segments={buildRubySegments(v.word, v.reading)}
+                        showRuby={true}
+                      />
+                    ) : (
+                      v.word
+                    )}
+                  </span>
                   <span className="text-[10px] text-type-black/50 font-bold shrink-0 mt-0.5">
                     {v.source}
                   </span>
                 </div>
-                {v.reading && (
-                  <p className="text-xs text-type-black/50 font-bold mt-0.5">{v.reading}</p>
-                )}
                 <p className="text-sm text-grape-punch font-black mt-1">{v.meaning}</p>
               </div>
               <BookmarkButton

@@ -23,6 +23,7 @@ export default async function CommunityDiaryPage({
 
   const level = diary.user.progress?.level ?? 1;
   const equippedIds = diary.user.wardrobeItems.map((w) => w.wardrobeItemId);
+  const characterId = diary.user.progress?.activeCharacter ?? "shiba";
   const tutorReviewData =
     diary.isTutorPublic && diary.tutorReview
       ? (JSON.parse(diary.tutorReview) as TutorReviewResult)
@@ -44,6 +45,7 @@ export default async function CommunityDiaryPage({
         </div>
         <div className="flex items-center gap-3">
           <ShibaAvatar
+            characterId={characterId}
             level={level}
             size={48}
             sticker

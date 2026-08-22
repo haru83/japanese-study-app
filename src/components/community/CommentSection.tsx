@@ -5,6 +5,8 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { addComment } from "@/actions/community";
 import { CommentItem } from "./CommentItem";
+import { filterCommentInput, hasKorean } from "@/lib/japaneseInput";
+
 
 type Comment = {
   id: string;
@@ -27,7 +29,19 @@ type Props = {
 
 export function CommentSection({ diaryId, comments, currentUserId }: Props) {
   const [text, setText] = useState("");
+  const [koreanBlocked, setKoreanBlocked] = useState(false);
   const [isPending, startTransition] = useTransition();
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const raw = e.target.value;
+    if (hasKorean(raw)) {
+      setKoreanBlocked(true);
+      setText(filterCommentInput(raw));
+    } else {
+      setKoreanBlocked(false);
+      setText(raw);
+    }
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -37,11 +51,13 @@ export function CommentSection({ diaryId, comments, currentUserId }: Props) {
       try {
         await addComment(diaryId, value);
         setText("");
+        setKoreanBlocked(false);
       } catch {
         // keep text so user can retry
       }
     });
   }
+
 
   return (
     <div>
@@ -62,21 +78,28 @@ export function CommentSection({ diaryId, comments, currentUserId }: Props) {
         )}
       </div>
       {currentUserId ? (
-        <form onSubmit={handleSubmit} className="flex gap-2">
-          <input
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="응원 댓글을 남겨보세요 🌸"
-            className="flex-1 px-4 py-3 rounded-2xl border-2 border-black bg-paper-white font-bold text-sm focus:outline-none focus:ring-2 focus:ring-sakura-pink"
-          />
-          <button
-            type="submit"
-            disabled={!text.trim() || isPending}
-            className="bg-sakura-pink font-black text-sm px-4 py-3 rounded-2xl border-2 border-black shadow-[3px_3px_0px_0px_#000] hover:shadow-[1px_1px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all disabled:opacity-50"
-          >
-            등록
-          </button>
-        </form>
+        <div className="flex flex-col gap-1">
+          <form onSubmit={handleSubmit} className="flex gap-2">
+            <input
+              value={text}
+              onChange={handleChange}
+              placeholder="日本語または英語でコメントを入力 🌸"
+              className={`flex-1 px-4 py-3 rounded-2xl border-2 bg-paper-white font-bold text-sm focus:outline-none focus:ring-2 focus:ring-sakura-pink ${koreanBlocked ? "border-red-400" : "border-black"}`}
+            />
+            <button
+              type="submit"
+              disabled={!text.trim() || isPending}
+              className="bg-sakura-pink font-black text-sm px-4 py-3 rounded-2xl border-2 border-black shadow-[3px_3px_0px_0px_#000] hover:shadow-[1px_1px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all disabled:opacity-50"
+            >
+              登録
+            </button>
+          </form>
+          {koreanBlocked && (
+            <p className="text-xs font-bold text-red-500 px-1">
+              ⚠️ このコメント欄では日本語・英語のみ入力できます
+            </p>
+          )}
+        </div>
       ) : (
         <p className="text-sm text-center text-type-black/50 font-bold py-3">
           댓글을 쓰려면{" "}

@@ -8,6 +8,7 @@ import { XP_REWARDS, computeXpResult } from "@/lib/xp";
 import { shouldIncrementStreak } from "@/lib/streak";
 import { DiaryInputSchema } from "@/lib/validation";
 import { incrementChallengeProgress } from "@/actions/dailyChallenge";
+import { triggerAiReactionForDiary } from "@/lib/aiActivityEngine";
 
 export async function getDiaries() {
   const session = await getServerSession(authOptions);
@@ -85,6 +86,10 @@ export async function saveDiary(data: {
 
   if (data.isPublic) {
     revalidatePath("/community");
+    // 실제 유저 공개 일기에 AI 자동 응원 반응 트리거 (비동기)
+    triggerAiReactionForDiary(diary.id, userId).catch((err) =>
+      console.error("AI diary reaction error:", err)
+    );
   }
 
   return { diary, xpResult };

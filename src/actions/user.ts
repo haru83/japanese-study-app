@@ -36,7 +36,10 @@ export async function getPublicUserProfile(targetUserId: string): Promise<Public
     where: { id: targetUserId },
     include: {
       progress: true,
-      wardrobeItems: { select: { wardrobeItemId: true } },
+      wardrobeItems: {
+        where: { equippedAt: { not: null } },
+        select: { wardrobeItemId: true },
+      },
       diaries: {
         where: { isPublic: true },
         select: { id: true, title: true, createdAt: true },
@@ -149,5 +152,37 @@ export async function getUserStudyDates(): Promise<string[]> {
   if (progress?.lastStudyAt) addDate(progress.lastStudyAt);
 
   return Array.from(dateSet);
+}
+
+/** 회원 탈퇴 (계정 및 모든 연관 데이터 영구 삭제) */
+export async function deleteAccount() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) throw new Error("로그인이 필요합니다.");
+
+  const userId = session.user.id;
+
+  await prisma.$transaction(async (tx) => {
+    // 1. 연관 데이터 정리
+    await tx.like.deleteMany({ where: { userId } });
+    await tx.comment.deleteMany({ where: { userId } });
+    await tx.communityPostLike.deleteMany({ where: { userId } });
+    await tx.communityPostComment.deleteMany({ where: { userId } });
+    await tx.communityPost.deleteMany({ where: { userId } });
+    await tx.diary.deleteMany({ where: { userId } });
+    await tx.keigoLessonProgress.deleteMany({ where: { userId } });
+    await tx.learningDiaryProgress.deleteMany({ where: { userId } });
+    await tx.userWardrobeItem.deleteMany({ where: { userId } });
+    await tx.vocabReview.deleteMany({ where: { userId } });
+    await tx.dailyChallenge.deleteMany({ where: { userId } });
+    await tx.userProgress.deleteMany({ where: { userId } });
+    await tx.report.deleteMany({ where: { reporterId: userId } });
+    await tx.account.deleteMany({ where: { userId } });
+    await tx.session.deleteMany({ where: { userId } });
+
+    // 2. 유저 삭제
+    await tx.user.delete({ where: { id: userId } });
+  });
+
+  return { success: true };
 }
 

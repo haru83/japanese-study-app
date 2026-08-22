@@ -15,7 +15,7 @@ export const CommentInputSchema = z.object({
 });
 
 export const ReportInputSchema = z.object({
-  targetType: z.enum(["diary", "comment"]),
+  targetType: z.enum(["diary", "comment", "post"]),
   targetId: z.string().min(1, "대상 ID가 필요합니다"),
   reason: z.string().max(500, "신고 사유는 500자 이내여야 합니다").optional(),
 });

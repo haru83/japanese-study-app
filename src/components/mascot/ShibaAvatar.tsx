@@ -21,48 +21,112 @@ export const CHARACTER_BASES: Record<string, string> = {
  */
 export const CHARACTER_ITEM_MASCOTS: Record<string, Record<string, string>> = {
   shiba: {
-    "hachimaki": "/mascot/shiba-lv2-hachimaki.webp",
-    "item-headband": "/mascot/shiba-lv2-hachimaki.webp",
+    "hachimaki": "/mascot/shiba-hachimaki.png",
+    "item-headband": "/mascot/shiba-hachimaki.png",
     "bandana": "/mascot/shiba-bandana.png",
     "hat-cap": "/mascot/shiba-hat-cap.png",
+    "hat-santa": "/mascot/shiba-hat-santa.png",
     "glasses": "/mascot/shiba-glasses.png",
     "item-glasses": "/mascot/shiba-glasses.png",
     "crown": "/mascot/shiba-crown.png",
     "item-crown": "/mascot/shiba-crown.png",
+    "flower-crown": "/mascot/shiba-flower-crown.png",
     "scarf": "/mascot/shiba-scarf.png",
     "item-scarf": "/mascot/shiba-scarf.png",
-    "hakama": "/mascot/shiba-lv4-kimono.webp",
-    "item-kimono": "/mascot/shiba-lv4-kimono.webp",
+    "muffler": "/mascot/shiba-muffler.png",
+    "bow-tie": "/mascot/shiba-bow-tie.png",
+    "necklace-pearl": "/mascot/shiba-necklace-pearl.png",
+    "hakama": "/mascot/shiba-hakama.png",
+    "item-kimono": "/mascot/shiba-hakama.png",
+    "armor-samurai": "/mascot/shiba-armor-samurai.png",
+    "cape": "/mascot/shiba-cape.png",
+    "horns": "/mascot/shiba-horns.png",
+    "halo": "/mascot/shiba-halo.png",
+    "mask-fox": "/mascot/shiba-mask-fox.png",
+    "mask-oni": "/mascot/shiba-mask-oni.png",
+    "earring-gold": "/mascot/shiba-earring-gold.png",
+    "stud-ear": "/mascot/shiba-stud-ear.png",
   },
   poodle: {
     "hachimaki": "/mascot/poodle-hachimaki.png",
     "item-headband": "/mascot/poodle-hachimaki.png",
     "bandana": "/mascot/poodle-bandana.png",
     "hat-cap": "/mascot/poodle-hat-cap.png",
+    "hat-santa": "/mascot/poodle-hat-santa.png",
     "glasses": "/mascot/poodle-glasses.png",
     "item-glasses": "/mascot/poodle-glasses.png",
     "crown": "/mascot/poodle-crown.png",
     "item-crown": "/mascot/poodle-crown.png",
+    "flower-crown": "/mascot/poodle-flower-crown.png",
+    "scarf": "/mascot/poodle-scarf.png",
+    "item-scarf": "/mascot/poodle-scarf.png",
+    "muffler": "/mascot/poodle-muffler.png",
+    "bow-tie": "/mascot/poodle-bow-tie.png",
+    "necklace-pearl": "/mascot/poodle-necklace-pearl.png",
+    "hakama": "/mascot/poodle-hakama.png",
+    "item-kimono": "/mascot/poodle-hakama.png",
+    "armor-samurai": "/mascot/poodle-armor-samurai.png",
+    "cape": "/mascot/poodle-cape.png",
+    "horns": "/mascot/poodle-horns.png",
+    "halo": "/mascot/poodle-halo.png",
+    "mask-fox": "/mascot/poodle-mask-fox.png",
+    "mask-oni": "/mascot/poodle-mask-oni.png",
+    "earring-gold": "/mascot/poodle-earring-gold.png",
+    "stud-ear": "/mascot/poodle-stud-ear.png",
   },
   beagle: {
     "hachimaki": "/mascot/beagle-hachimaki.png",
     "item-headband": "/mascot/beagle-hachimaki.png",
     "bandana": "/mascot/beagle-bandana.png",
     "hat-cap": "/mascot/beagle-hat-cap.png",
+    "hat-santa": "/mascot/beagle-hat-santa.png",
     "glasses": "/mascot/beagle-glasses.png",
     "item-glasses": "/mascot/beagle-glasses.png",
     "crown": "/mascot/beagle-crown.png",
     "item-crown": "/mascot/beagle-crown.png",
+    "flower-crown": "/mascot/beagle-flower-crown.png",
+    "scarf": "/mascot/beagle-scarf.png",
+    "item-scarf": "/mascot/beagle-scarf.png",
+    "muffler": "/mascot/beagle-muffler.png",
+    "bow-tie": "/mascot/beagle-bow-tie.png",
+    "necklace-pearl": "/mascot/beagle-necklace-pearl.png",
+    "hakama": "/mascot/beagle-hakama.png",
+    "item-kimono": "/mascot/beagle-hakama.png",
+    "armor-samurai": "/mascot/beagle-armor-samurai.png",
+    "cape": "/mascot/beagle-cape.png",
+    "horns": "/mascot/beagle-horns.png",
+    "halo": "/mascot/beagle-halo.png",
+    "mask-fox": "/mascot/beagle-mask-fox.png",
+    "mask-oni": "/mascot/beagle-mask-oni.png",
+    "earring-gold": "/mascot/beagle-earring-gold.png",
+    "stud-ear": "/mascot/beagle-stud-ear.png",
   },
   pomeranian: {
     "hachimaki": "/mascot/pomeranian-hachimaki.png",
     "item-headband": "/mascot/pomeranian-hachimaki.png",
     "bandana": "/mascot/pomeranian-bandana.png",
     "hat-cap": "/mascot/pomeranian-hat-cap.png",
+    "hat-santa": "/mascot/pomeranian-hat-santa.png",
     "glasses": "/mascot/pomeranian-glasses.png",
     "item-glasses": "/mascot/pomeranian-glasses.png",
     "crown": "/mascot/pomeranian-crown.png",
     "item-crown": "/mascot/pomeranian-crown.png",
+    "flower-crown": "/mascot/pomeranian-flower-crown.png",
+    "scarf": "/mascot/pomeranian-scarf.png",
+    "item-scarf": "/mascot/pomeranian-scarf.png",
+    "muffler": "/mascot/pomeranian-muffler.png",
+    "bow-tie": "/mascot/pomeranian-bow-tie.png",
+    "necklace-pearl": "/mascot/pomeranian-necklace-pearl.png",
+    "hakama": "/mascot/pomeranian-hakama.png",
+    "item-kimono": "/mascot/pomeranian-hakama.png",
+    "armor-samurai": "/mascot/pomeranian-armor-samurai.png",
+    "cape": "/mascot/pomeranian-cape.png",
+    "horns": "/mascot/pomeranian-horns.png",
+    "halo": "/mascot/pomeranian-halo.png",
+    "mask-fox": "/mascot/pomeranian-mask-fox.png",
+    "mask-oni": "/mascot/pomeranian-mask-oni.png",
+    "earring-gold": "/mascot/pomeranian-earring-gold.png",
+    "stud-ear": "/mascot/pomeranian-stud-ear.png",
   },
 };
 
@@ -406,13 +470,21 @@ export function ShibaAvatar({
   circular = false,
   triggerLevelUp,
 }: ShibaAvatarProps) {
-  const rawEquippedId = equippedItemIds && equippedItemIds.length > 0 ? equippedItemIds[0] : null;
-  const equippedItemId = rawEquippedId ? normalizeItemId(rawEquippedId) : null;
-  
-  const fittedMascotSrc = equippedItemId
-    ? (CHARACTER_ITEM_MASCOTS[characterId]?.[equippedItemId] || 
-       CHARACTER_ITEM_MASCOTS[characterId]?.[rawEquippedId!])
-    : null;
+  let fittedMascotSrc: string | null = null;
+  if (equippedItemIds && equippedItemIds.length > 0) {
+    for (const rawId of equippedItemIds) {
+      const normalized = normalizeItemId(rawId);
+      const matched =
+        CHARACTER_ITEM_MASCOTS[characterId]?.[normalized] ||
+        CHARACTER_ITEM_MASCOTS[characterId]?.[rawId] ||
+        CHARACTER_ITEM_MASCOTS.shiba?.[normalized] ||
+        CHARACTER_ITEM_MASCOTS.shiba?.[rawId];
+      if (matched) {
+        fittedMascotSrc = matched;
+        break;
+      }
+    }
+  }
 
   const baseImage = (characterId && CHARACTER_BASES[characterId]) || CHARACTER_BASES.shiba;
   const useOverlay = fittedMascotSrc ? false : shouldUseOverlayMode(equippedItemIds);

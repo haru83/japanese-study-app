@@ -7,6 +7,10 @@ import {
   hasNonJapanese,
   hasUnconvertedRomaji,
   findFirstNonJapanese,
+  isKoreanChar,
+  isCommentInputAllowed,
+  filterCommentInput,
+  hasKorean,
 } from "../japaneseInput";
 
 describe("isJapaneseChar", () => {
@@ -205,3 +209,70 @@ describe("findFirstNonJapanese", () => {
     expect(findFirstNonJapanese("Hello")).toBe(0);
   });
 });
+
+describe("isKoreanChar", () => {
+  it("완성형 한글을 감지한다", () => {
+    expect(isKoreanChar("가")).toBe(true);
+    expect(isKoreanChar("힣")).toBe(true);
+    expect(isKoreanChar("한")).toBe(true);
+  });
+
+  it("자모 및 호환 자모를 감지한다", () => {
+    expect(isKoreanChar("ㄱ")).toBe(true);
+    expect(isKoreanChar("ㅏ")).toBe(true);
+  });
+
+  it("일본어, 영문, 숫자는 false", () => {
+    expect(isKoreanChar("あ")).toBe(false);
+    expect(isKoreanChar("A")).toBe(false);
+    expect(isKoreanChar("1")).toBe(false);
+    expect(isKoreanChar(" ")).toBe(false);
+  });
+});
+
+describe("isCommentInputAllowed", () => {
+  it("일본어, 영문, 숫자, 구두점, 이모지를 허용한다", () => {
+    expect(isCommentInputAllowed("あ")).toBe(true);
+    expect(isCommentInputAllowed("日")).toBe(true);
+    expect(isCommentInputAllowed("A")).toBe(true);
+    expect(isCommentInputAllowed("z")).toBe(true);
+    expect(isCommentInputAllowed("5")).toBe(true);
+    expect(isCommentInputAllowed("!")).toBe(true);
+    expect(isCommentInputAllowed("~")).toBe(true);
+    expect(isCommentInputAllowed(" ")).toBe(true);
+    expect(isCommentInputAllowed("🌸")).toBe(true);
+    expect(isCommentInputAllowed("👍")).toBe(true);
+  });
+
+  it("한글을 거부한다", () => {
+    expect(isCommentInputAllowed("한")).toBe(false);
+    expect(isCommentInputAllowed("글")).toBe(false);
+    expect(isCommentInputAllowed("ㄱ")).toBe(false);
+  });
+});
+
+describe("filterCommentInput", () => {
+  it("일본어 + 영문 + 이모지는 유지한다", () => {
+    expect(filterCommentInput("すごいですね！ Nice post 🌸")).toBe(
+      "すごいですね！ Nice post 🌸"
+    );
+  });
+
+  it("한글만 제거한다", () => {
+    expect(filterCommentInput("すごいですね 대단해요! Nice post")).toBe(
+      "すごいですね ! Nice post"
+    );
+  });
+});
+
+describe("hasKorean", () => {
+  it("한글이 포함되어 있으면 true", () => {
+    expect(hasKorean("Good job 잘했어요")).toBe(true);
+    expect(hasKorean("ㄱ")).toBe(true);
+  });
+
+  it("일본어, 영문, 이모지만 있으면 false", () => {
+    expect(hasKorean("お疲れ様でした！ Good luck 🌸")).toBe(false);
+  });
+});
+

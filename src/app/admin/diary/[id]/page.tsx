@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { upsertLearningDiaryEntry, deleteLearningDiaryEntry } from "@/actions/admin-content";
 import { DIARY_CATEGORIES } from "@/types/learningDiary";
 import { JsonTextarea } from "@/components/admin/JsonTextarea";
+import { DeleteConfirmButton } from "@/components/admin/DeleteConfirmButton";
 
 export default async function AdminDiaryEditPage({
   params,
@@ -166,14 +167,10 @@ export default async function AdminDiaryEditPage({
             저장
           </button>
           {!isNew && (
-            <form action={handleDelete}>
-              <button
-                type="submit"
-                className="px-6 py-3 bg-red-500 text-white font-black rounded-xl border-2 border-black shadow-[3px_3px_0px_0px_#000]"
-              >
-                삭제
-              </button>
-            </form>
+            <DeleteConfirmButton
+              action={handleDelete}
+              itemLabel="학습 일기"
+            />
           )}
         </div>
       </form>

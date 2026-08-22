@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   devIndicators: false,
   images: {
     remotePatterns: [
@@ -12,7 +13,13 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     serverActions: {
-      allowedOrigins: ["localhost:3000", "localhost:8000", "34.10.198.226", "34.10.198.226:8000"],
+      allowedOrigins: [
+        "localhost:3000",
+        "localhost:8000",
+        "34.10.198.226",
+        "34.10.198.226:8000",
+        "*.run.app",
+      ],
     },
   },
 };

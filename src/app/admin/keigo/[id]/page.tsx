@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { upsertKeigoLesson, deleteKeigoLesson } from "@/actions/admin-content";
 import { JsonTextarea } from "@/components/admin/JsonTextarea";
+import { DeleteConfirmButton } from "@/components/admin/DeleteConfirmButton";
 
 export default async function AdminKeigoEditPage({
   params,
@@ -134,17 +135,10 @@ export default async function AdminKeigoEditPage({
             저장
           </button>
           {!isNew && (
-            <form action={handleDelete}>
-              <button
-                type="submit"
-                className="px-6 py-3 bg-red-500 text-white font-black rounded-xl border-2 border-black shadow-[3px_3px_0px_0px_#000]"
-                onClick={(e) => {
-                  if (!confirm("정말 삭제하시겠습니까?")) e.preventDefault();
-                }}
-              >
-                삭제
-              </button>
-            </form>
+            <DeleteConfirmButton
+              action={handleDelete}
+              itemLabel="경어 레슨"
+            />
           )}
         </div>
       </form>

@@ -99,3 +99,67 @@ export function findFirstNonJapanese(text: string): number {
 export function hasUnconvertedRomaji(text: string): boolean {
   return /[a-zA-Z0-9]/.test(text);
 }
+
+/**
+ * 커뮤니티 댓글 입력용 필터
+ *
+ * 허용:
+ * - 일본어 (히라가나·가타카나·한자·구두점)
+ * - 영문 (a-z, A-Z)
+ * - 숫자 (0-9)
+ * - 기본 ASCII 구두점·기호 (! @ # … 등)
+ * - 이모지 (U+1F000~)
+ * - 공백·개행
+ *
+ * 차단:
+ * - 한글 (U+AC00~U+D7A3, U+1100~U+11FF, U+3130~U+318F)
+ */
+
+/** 단일 문자가 한글인지 확인 */
+export function isKoreanChar(char: string): boolean {
+  const code = char.codePointAt(0);
+  if (code === undefined) return false;
+  return (
+    (code >= 0xac00 && code <= 0xd7a3) || // 완성형 한글
+    (code >= 0x1100 && code <= 0x11ff) || // 자모
+    (code >= 0x3130 && code <= 0x318f) || // 호환 자모
+    (code >= 0xa960 && code <= 0xa97f) || // 자모 확장 A
+    (code >= 0xd7b0 && code <= 0xd7ff)    // 자모 확장 B
+  );
+}
+
+/** 댓글 입력 허용 여부 — 일본어·영어·이모지 허용, 한글 차단 */
+export function isCommentInputAllowed(char: string): boolean {
+  const code = char.codePointAt(0);
+  if (code === undefined) return false;
+
+  // 한글은 명시적으로 false
+  if (isKoreanChar(char)) return false;
+
+  // 공백·개행 허용
+  if (code === 0x0020 || code === 0x0009 || code === 0x000a || code === 0x000d || code === 0x3000) return true;
+  // ASCII 구두점·기호 (U+0021~U+007E, 영문·숫자 포함)
+  if (code >= 0x0021 && code <= 0x007e) return true;
+  // 전각 기호 및 문자 (U+FF01~U+FFEF: ！, ？, 전각 로마자 등)
+  if (code >= 0xff01 && code <= 0xffef) return true;
+  // 이모지 (기본 이모지 블록)
+  if (code >= 0x1f000) return true;
+  // 이모지 보충 기호
+  if (code >= 0x2600 && code <= 0x27bf) return true;
+  // 일본어 범위
+  if (JP_RANGES.some(([lo, hi]) => code >= lo && code <= hi)) return true;
+
+  return false;
+}
+
+/** 댓글 텍스트에서 한글 차단 — 한글 포함 시 필터된 텍스트 반환 */
+export function filterCommentInput(text: string): string {
+  return Array.from(text)
+    .filter((char) => isCommentInputAllowed(char))
+    .join("");
+}
+
+/** 텍스트에 한글이 포함되어 있는지 확인 */
+export function hasKorean(text: string): boolean {
+  return Array.from(text).some(isKoreanChar);
+}
