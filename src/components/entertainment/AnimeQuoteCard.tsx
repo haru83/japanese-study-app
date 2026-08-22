@@ -7,6 +7,7 @@ import { BookmarkButton } from "@/components/bookmark/BookmarkButton";
 import { RubyText } from "@/components/learningDiary/RubyText";
 import { buildRubySegments } from "@/lib/rubyParser";
 import { AnimeQuoteQuiz } from "@/components/entertainment/AnimeQuoteQuiz";
+import { TtsButton } from "@/components/ui/TtsButton";
 
 interface Props {
   quote: AnimeQuoteItem;
@@ -15,7 +16,6 @@ interface Props {
 
 export function AnimeQuoteCard({ quote, initialBookmarkMap }: Props) {
   const [activeTab, setActiveTab] = useState<"vocab" | "grammar" | "quiz" | null>("vocab");
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [showRuby, setShowRuby] = useState(true);
 
   const animeCat = useMemo(() => {
@@ -28,25 +28,6 @@ export function AnimeQuoteCard({ quote, initialBookmarkMap }: Props) {
     }
     return [{ text: quote.quoteJa }];
   }, [quote.quoteJa, quote.quoteReading]);
-
-  const handlePlaySpeech = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
-      alert("이 브라우저에서는 음성 합성을 지원하지 않습니다.");
-      return;
-    }
-
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(quote.quoteJa);
-    utterance.lang = "ja-JP";
-    utterance.rate = 0.9; // 약간 여유 있는 속도
-
-    utterance.onstart = () => setIsPlayingAudio(true);
-    utterance.onend = () => setIsPlayingAudio(false);
-    utterance.onerror = () => setIsPlayingAudio(false);
-
-    window.speechSynthesis.speak(utterance);
-  };
 
   const toggleTab = (tab: "vocab" | "grammar" | "quiz") => {
     setActiveTab((prev) => (prev === tab ? null : tab));
@@ -81,7 +62,7 @@ export function AnimeQuoteCard({ quote, initialBookmarkMap }: Props) {
           </div>
 
           {/* Action Buttons: Audio & Ruby Toggle */}
-          <div className="flex items-center gap-1 shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0">
             <button
               type="button"
               onClick={() => setShowRuby((prev) => !prev)}
@@ -93,18 +74,7 @@ export function AnimeQuoteCard({ quote, initialBookmarkMap }: Props) {
               あ
             </button>
 
-            <button
-              type="button"
-              onClick={handlePlaySpeech}
-              aria-label="일본어 발음 듣기"
-              className={`p-2 rounded-xl border border-black shadow-[2px_2px_0px_0px_#000] transition-transform active:scale-95 flex items-center justify-center ${
-                isPlayingAudio ? "bg-sakura-pink animate-pulse" : "bg-paper-white hover:bg-shiba-orange/20"
-              }`}
-            >
-              <span className="material-symbols-outlined text-lg text-type-black leading-none block">
-                {isPlayingAudio ? "volume_up" : "volume_up"}
-              </span>
-            </button>
+            <TtsButton text={quote.quoteJa} size="md" />
           </div>
         </div>
 
@@ -180,14 +150,17 @@ export function AnimeQuoteCard({ quote, initialBookmarkMap }: Props) {
                   <p className="text-xs font-bold text-type-black/70">{vocab.meaning}</p>
                 </div>
 
-                <BookmarkButton
-                  word={vocab.word}
-                  itemType="vocab"
-                  reading={vocab.reading}
-                  meaning={vocab.meaning}
-                  source={`${quote.animeTitleKo} - ${quote.characterKo}`}
-                  initialBookmarked={!!initialBookmarkMap[vocab.word]}
-                />
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <TtsButton text={vocab.word} size="sm" />
+                  <BookmarkButton
+                    word={vocab.word}
+                    itemType="vocab"
+                    reading={vocab.reading}
+                    meaning={vocab.meaning}
+                    source={`${quote.animeTitleKo} - ${quote.characterKo}`}
+                    initialBookmarked={!!initialBookmarkMap[vocab.word]}
+                  />
+                </div>
               </div>
             ))}
           </div>

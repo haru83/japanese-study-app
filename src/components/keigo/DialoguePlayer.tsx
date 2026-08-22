@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { RubyText } from "@/components/learningDiary/RubyText";
 import { buildRubySegments } from "@/lib/rubyParser";
+import { TtsButton } from "@/components/ui/TtsButton";
 
 interface DialogueLine {
   speaker: string;
@@ -24,10 +25,15 @@ export function DialoguePlayer({ dialogue }: DialoguePlayerProps) {
     [dialogue]
   );
 
+  const fullDialogueText = useMemo(
+    () => dialogue.map((line) => line.text).join("。 "),
+    [dialogue]
+  );
+
   return (
     <div>
-      {/* Toggle buttons */}
-      <div className="flex gap-2 mb-4">
+      {/* Toggle buttons & TTS */}
+      <div className="flex items-center gap-2 mb-4">
         <button
           onClick={() => setShowPronunciation((v) => !v)}
           className={`flex-1 py-2 rounded-xl text-xs font-black border-2 border-black transition-all ${
@@ -48,6 +54,13 @@ export function DialoguePlayer({ dialogue }: DialoguePlayerProps) {
         >
           한국어 해석 {showTranslation ? "표시" : "숨김"}
         </button>
+        <TtsButton
+          text={fullDialogueText}
+          size="lg"
+          showLabel={true}
+          label="전체 듣기"
+          className="border-2 border-black py-2 rounded-xl"
+        />
       </div>
 
       {/* Dialogue lines */}
@@ -70,8 +83,11 @@ export function DialoguePlayer({ dialogue }: DialoguePlayerProps) {
               </div>
 
               {/* Bubble */}
-              <div className={`max-w-[75%] flex flex-col gap-1 ${isLeft ? "" : "items-end"}`}>
-                <p className="text-xs text-type-black/60 font-bold">{line.speaker}</p>
+              <div className={`max-w-[78%] flex flex-col gap-1 ${isLeft ? "" : "items-end"}`}>
+                <div className={`flex items-center gap-1.5 ${isLeft ? "" : "flex-row-reverse"}`}>
+                  <p className="text-xs text-type-black/60 font-bold">{line.speaker}</p>
+                  <TtsButton text={line.text} size="sm" />
+                </div>
                 <div
                   className={`rounded-[15px] px-4 py-2.5 border-2 border-black ${
                     isLeft

@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { TOPIC_CATEGORIES, TOPIC_WORDS, type TopicWord } from "@/data/topicVocab";
 import { BookmarkButton } from "@/components/bookmark/BookmarkButton";
+import { TtsButton } from "@/components/ui/TtsButton";
 import { RubyText } from "@/components/learningDiary/RubyText";
 import { buildRubySegments } from "@/lib/rubyParser";
 
@@ -157,7 +158,8 @@ export function TopicVocabClient({ initialBookmarkMap }: Props) {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1 shrink-0">
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <TtsButton text={item.word} size="sm" />
                     <BookmarkButton
                       word={item.word}
                       itemType="vocab"

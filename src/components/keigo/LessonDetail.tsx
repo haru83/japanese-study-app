@@ -12,6 +12,7 @@ import { GuestUpsellModal } from "@/components/guest/GuestUpsellModal";
 import { RubyText } from "@/components/learningDiary/RubyText";
 import { buildRubySegments } from "@/lib/rubyParser";
 import { BookmarkButton } from "@/components/bookmark/BookmarkButton";
+import { TtsButton } from "@/components/ui/TtsButton";
 import type { Lesson } from "@/types/lesson";
 import type { XpResult } from "@/lib/xp";
 
@@ -152,14 +153,17 @@ export function LessonDetail({ lesson, bookmarkMap }: Props) {
                   <RubyText segments={vocabSegments[i]} showRuby={true} />
                 </span>
                 <span className="text-sm text-grape-punch font-black shrink-0">{v.meaning}</span>
-                <BookmarkButton
-                  word={v.word}
-                  itemType="vocab"
-                  reading={(v as Record<string, unknown>).reading as string | undefined}
-                  meaning={v.meaning}
-                  source={lesson.title}
-                  initialBookmarked={bookmarkMap?.[v.word] ?? false}
-                />
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <TtsButton text={v.word} size="sm" />
+                  <BookmarkButton
+                    word={v.word}
+                    itemType="vocab"
+                    reading={(v as Record<string, unknown>).reading as string | undefined}
+                    meaning={v.meaning}
+                    source={lesson.title}
+                    initialBookmarked={bookmarkMap?.[v.word] ?? false}
+                  />
+                </div>
               </div>
             ))}
           </div>

@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { IDIOM_CATEGORIES, IDIOMS_DATA, type JapaneseIdiom } from "@/data/idioms";
 import { BookmarkButton } from "@/components/bookmark/BookmarkButton";
+import { TtsButton } from "@/components/ui/TtsButton";
 import { RubyText } from "@/components/learningDiary/RubyText";
 import { buildRubySegments } from "@/lib/rubyParser";
 
@@ -170,6 +171,7 @@ export function IdiomsClient({ initialBookmarkMap }: Props) {
                   </div>
 
                   <div className="flex items-center gap-1 shrink-0">
+                    <TtsButton text={item.idiom} size="sm" />
                     <BookmarkButton
                       word={item.idiom}
                       itemType="vocab"

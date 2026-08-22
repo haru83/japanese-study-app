@@ -9,6 +9,7 @@ import { QuizSection } from "@/components/keigo/QuizSection";
 import { LessonCompleteBanner } from "@/components/keigo/LessonCompleteBanner";
 import { GuestUpsellModal } from "@/components/guest/GuestUpsellModal";
 import { BookmarkButton } from "@/components/bookmark/BookmarkButton";
+import { TtsButton } from "@/components/ui/TtsButton";
 import type { LearningDiary } from "@/types/learningDiary";
 import type { XpResult } from "@/lib/xp";
 
@@ -105,7 +106,7 @@ export function DiaryDetail({ diary, bookmarkMap }: Props) {
           >
             {section === "원문" && (
               <div className="space-y-3">
-                <div className="flex gap-2">
+                <div className="flex items-center gap-2">
                   <button
                     onClick={() => setShowRuby((v) => !v)}
                     className={`flex-1 py-2 rounded-xl text-xs font-black border-2 border-black transition-all ${
@@ -126,6 +127,13 @@ export function DiaryDetail({ diary, bookmarkMap }: Props) {
                   >
                     한국어 해석 {showKorean ? "표시" : "숨김"}
                   </button>
+                  <TtsButton
+                    text={diary.contentJp.map((s) => s.text).join("")}
+                    size="lg"
+                    showLabel={true}
+                    label="일기 듣기"
+                    className="border-2 border-black py-2 rounded-xl"
+                  />
                 </div>
 
                 <div className="bg-paper-white rounded-[15px] p-5 border-2 border-black shadow-[4px_4px_0px_0px_#000]">
@@ -153,21 +161,24 @@ export function DiaryDetail({ diary, bookmarkMap }: Props) {
                 {diary.vocabulary.map((v, i) => (
                   <div
                     key={i}
-                    className="bg-paper-white rounded-[15px] p-4 border-2 border-black shadow-[4px_4px_0px_0px_#000] flex items-center gap-4"
+                    className="bg-paper-white rounded-[15px] p-4 border-2 border-black shadow-[4px_4px_0px_0px_#000] flex items-center gap-3"
                   >
                     <div className="flex-1 min-w-0">
                       <p className="font-black text-type-black">{v.word}</p>
                       <p className="text-xs text-type-black/60 font-bold">{v.reading}</p>
                     </div>
                     <span className="text-sm text-grape-punch font-black shrink-0">{v.meaning}</span>
-                    <BookmarkButton
-                      word={v.word}
-                      itemType="vocab"
-                      reading={v.reading}
-                      meaning={v.meaning}
-                      source={diary.title}
-                      initialBookmarked={bookmarkMap?.[v.word] ?? false}
-                    />
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <TtsButton text={v.word} size="sm" />
+                      <BookmarkButton
+                        word={v.word}
+                        itemType="vocab"
+                        reading={v.reading}
+                        meaning={v.meaning}
+                        source={diary.title}
+                        initialBookmarked={bookmarkMap?.[v.word] ?? false}
+                      />
+                    </div>
                   </div>
                 ))}
               </div>
