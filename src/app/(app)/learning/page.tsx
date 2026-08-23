@@ -2,21 +2,28 @@ import Link from "next/link";
 
 export default function VocabHubPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-sakura-blush px-5 pt-8 pb-24 space-y-6">
-      {/* Header */}
-      <header>
-        <div className="bg-canvas-almond rounded-[20px] border-2 border-black p-5 shadow-[4px_4px_0px_0px_#000]">
-          <h1 className="text-2xl font-black text-type-black flex items-center gap-2">
-            <span className="text-2xl">📚</span> 어휘
-          </h1>
-          <p className="text-xs font-bold text-type-black/60 mt-1">
-            수집한 학습 아카이브부터 어휘·문법 추가 학습까지 한곳에서 관리해요
-          </p>
+    <div className="min-h-screen bg-sakura-blush">
+      {/* Unified Full-Width Header */}
+      <header className="bg-canvas-almond px-5 pt-10 pb-4 border-b-4 border-black">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl font-black text-type-black tracking-tight flex items-center gap-2">
+              <span>어휘</span>
+              <span className="text-xl">📚</span>
+            </h1>
+            <p className="text-xs font-bold text-type-black/60 mt-1">
+              수집한 학습 아카이브부터 어휘·문법 추가 학습까지 한곳에서 관리해요
+            </p>
+          </div>
+          <div className="w-12 h-12 rounded-[14px] bg-paper-white border-2 border-black shadow-[2px_2px_0px_0px_#000] flex items-center justify-center text-2xl shrink-0 wobbly-2">
+            ⚡
+          </div>
         </div>
       </header>
 
-      {/* SRS & Bookmarks Quick Action Cards */}
-      <section className="grid grid-cols-2 gap-3">
+      <main className="px-5 py-5 pb-24 space-y-6">
+        {/* SRS & Bookmarks Quick Action Cards */}
+        <section className="grid grid-cols-2 gap-3">
         <Link
           href="/learning/review"
           className="bg-sakura-pink rounded-[15px] border-2 border-black shadow-[4px_4px_0px_0px_#000] p-4 flex items-center gap-3 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] transition-all"
@@ -174,6 +181,7 @@ export default function VocabHubPage() {
           </Link>
         </div>
       </section>
-    </div>
+    </main>
+  </div>
   );
 }

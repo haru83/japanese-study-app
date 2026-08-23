@@ -2,26 +2,33 @@ import Link from "next/link";
 
 export default function EntertainmentHubPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-sakura-blush px-5 pt-8 pb-24 space-y-6">
-      {/* Header */}
-      <header>
-        <div className="bg-canvas-almond rounded-[20px] border-2 border-black p-5 shadow-[4px_4px_0px_0px_#000]">
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-black text-type-black flex items-center gap-2">
-              <span className="text-2xl">🍿</span> 엔터 일본어
-            </h1>
-            <span className="text-[10px] font-black bg-sakura-pink px-2.5 py-1 rounded-full border border-black shadow-[1px_1px_0px_0px_#000]">
-              CULTURE HUB
-            </span>
+    <div className="min-h-screen bg-sakura-blush">
+      {/* Unified Full-Width Header */}
+      <header className="bg-canvas-almond px-5 pt-10 pb-4 border-b-4 border-black">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-black text-type-black tracking-tight flex items-center gap-2">
+                <span>엔터 일본어</span>
+                <span className="text-xl">🍿</span>
+              </h1>
+              <span className="text-[10px] font-black bg-sakura-pink px-2.5 py-0.5 rounded-full border border-black shadow-[1px_1px_0px_0px_#000]">
+                CULTURE HUB
+              </span>
+            </div>
+            <p className="text-xs font-bold text-type-black/60 mt-1">
+              애니 캐릭터 말투, 음악 등 서브컬처 테마로 즐겁게 일본어를 마스터해요!
+            </p>
           </div>
-          <p className="text-xs font-bold text-type-black/60 mt-1.5">
-            애니 캐릭터 말투, 음악 등 서브컬처 테마로 즐겁게 일본어를 마스터해요!
-          </p>
+          <div className="w-12 h-12 rounded-[14px] bg-paper-white border-2 border-black shadow-[2px_2px_0px_0px_#000] flex items-center justify-center text-2xl shrink-0 wobbly-1">
+            🎬
+          </div>
         </div>
       </header>
 
-      {/* Main Entertainment Menu Cards */}
-      <section className="space-y-4">
+      <main className="px-5 py-5 pb-24 space-y-6">
+        {/* Main Entertainment Menu Cards */}
+        <section className="space-y-4">
         <h2 className="text-base font-black text-type-black flex items-center gap-2">
           <span>🎬</span> 엔터테인먼트 학습 코스
         </h2>
@@ -103,6 +110,7 @@ export default function EntertainmentHubPage() {
           대사 속 마음에 드는 단어는 별표(⭐)를 눌러 북마크에 저장하고, 어휘 탭의 <strong>플래시카드 복습(SRS)</strong>으로 기억을 장기화해 보세요!
         </p>
       </section>
-    </div>
+    </main>
+  </div>
   );
 }

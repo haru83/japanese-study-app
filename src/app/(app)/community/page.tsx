@@ -18,41 +18,54 @@ export default async function CommunityPage({
 
   return (
     <div className="min-h-screen bg-sakura-blush">
-      <div className="bg-canvas-almond px-5 pt-10 pb-0 border-b-4 border-black">
-        <h1 className="text-xl font-black text-type-black mb-4">커뮤니티 🌸</h1>
+      <header className="bg-canvas-almond px-5 pt-10 pb-0 border-b-4 border-black">
+        <div className="flex items-start justify-between gap-3 mb-4">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl font-black text-type-black tracking-tight flex items-center gap-2">
+              <span>커뮤니티</span>
+              <span className="text-xl">🌸</span>
+            </h1>
+            <p className="text-xs font-bold text-type-black/60 mt-1">
+              학습자들과 일본어 일기를 공유하고 소통해보세요
+            </p>
+          </div>
+          <div className="w-12 h-12 rounded-[14px] bg-paper-white border-2 border-black shadow-[2px_2px_0px_0px_#000] flex items-center justify-center text-2xl shrink-0 wobbly-2">
+            💬
+          </div>
+        </div>
         <div className="flex">
           <Link
             href="/community"
-            className={`flex-1 py-2.5 text-center text-sm font-black border-b-4 transition-colors ${
+            className={`flex-1 py-2.5 text-center text-xs font-black border-b-4 transition-colors ${
               activeTab === "feed"
                 ? "border-sakura-pink text-type-black"
-                : "border-transparent text-type-black/40"
+                : "border-transparent text-type-black/40 hover:text-type-black/70"
             }`}
           >
             모두의 일기
           </Link>
           <Link
             href="/community?tab=board"
-            className={`flex-1 py-2.5 text-center text-sm font-black border-b-4 transition-colors ${
+            className={`flex-1 py-2.5 text-center text-xs font-black border-b-4 transition-colors ${
               activeTab === "board"
                 ? "border-sakura-pink text-type-black"
-                : "border-transparent text-type-black/40"
+                : "border-transparent text-type-black/40 hover:text-type-black/70"
             }`}
           >
             자유게시판
           </Link>
           <Link
             href="/community?tab=reactions"
-            className={`flex-1 py-2.5 text-center text-sm font-black border-b-4 transition-colors ${
+            className={`flex-1 py-2.5 text-center text-xs font-black border-b-4 transition-colors ${
               activeTab === "reactions"
                 ? "border-sakura-pink text-type-black"
-                : "border-transparent text-type-black/40"
+                : "border-transparent text-type-black/40 hover:text-type-black/70"
             }`}
           >
             받은 반응
           </Link>
         </div>
-      </div>
+      </header>
 
       <div className="px-5 py-5 flex flex-col gap-3 pb-24">
         {activeTab === "feed" ? (

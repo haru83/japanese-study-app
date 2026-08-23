@@ -36,15 +36,25 @@ export function KeigoLessonList({ lessons, completedIds, totalCount, userLevel }
 
   return (
     <div className="min-h-screen bg-sakura-blush">
-      <div className="bg-canvas-almond px-5 pt-12 pb-5 border-b-4 border-black">
-        <h1 className="text-2xl font-black text-type-black">경어 레슨 🎯</h1>
-        <p className="text-sm text-type-black/60 font-bold mt-0.5">
-          {completedIds.length} / {totalCount} 완료 · 현재 레벨 {userLevel}
-        </p>
-        <div className="mt-3">
-          <ProgressBar value={(completedIds.length / totalCount) * 100} color="grape" />
+      <header className="bg-canvas-almond px-5 pt-10 pb-4 border-b-4 border-black">
+        <div className="flex items-start justify-between gap-3 mb-3">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl font-black text-type-black tracking-tight flex items-center gap-2">
+              <span>경어 레슨</span>
+              <span className="text-xl">🎯</span>
+            </h1>
+            <p className="text-xs font-bold text-type-black/60 mt-1">
+              {completedIds.length} / {totalCount} 완료 · 현재 레벨 {userLevel}
+            </p>
+          </div>
+          <div className="w-12 h-12 rounded-[14px] bg-paper-white border-2 border-black shadow-[2px_2px_0px_0px_#000] flex items-center justify-center text-2xl shrink-0 wobbly-3">
+            💼
+          </div>
         </div>
-      </div>
+        <div>
+          <ProgressBar value={totalCount > 0 ? (completedIds.length / totalCount) * 100 : 0} color="grape" />
+        </div>
+      </header>
 
       <div className="px-5 py-4">
         <input

@@ -192,47 +192,56 @@ export default async function DiaryPage({
   const isLearn = tab === "learn";
 
   return (
-    <main className="flex-1 overflow-y-auto px-5 pt-4 pb-24 space-y-4 bg-sakura-blush min-h-screen">
-      {/* Mascot header */}
-      <header className="flex flex-col items-center justify-center text-center gap-3 mb-2">
-    <ShibaAvatar level={1} size={72} sticker wobble="wobbly-2" />
-    <div>
-      <h1 className="text-2xl font-black text-type-black tracking-tight leading-tight">일기</h1>
-      <p className="text-sm text-type-black/60 font-bold mt-1">오늘도 참 잘했어요! 🎉</p>
+    <div className="min-h-screen bg-sakura-blush">
+      {/* Unified Full-Width Header */}
+      <header className="bg-canvas-almond px-5 pt-10 pb-4 border-b-4 border-black">
+        <div className="flex items-start justify-between gap-3 mb-4">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl font-black text-type-black tracking-tight flex items-center gap-2">
+              <span>일기</span>
+              <span className="text-xl">📔</span>
+            </h1>
+            <p className="text-xs font-bold text-type-black/60 mt-1">
+              매일 쓰는 나만의 일본어 일기 & 300개의 레벨별 학습 일기
+            </p>
+          </div>
+          <ShibaAvatar level={1} size={52} sticker wobble="wobbly-2" className="shrink-0" />
+        </div>
+
+        {/* Integrated Tabs */}
+        <div className="flex gap-1 bg-paper-white p-1 rounded-full border-2 border-black shadow-[2px_2px_0px_0px_#000]">
+          <Link
+            href="/diary"
+            className={`flex-1 text-center text-xs font-black py-2 rounded-full transition-all ${
+              !isLearn
+                ? "bg-sakura-pink text-type-black border-2 border-black shadow-[2px_2px_0px_0px_#000]"
+                : "text-type-black/60 hover:text-type-black"
+            }`}
+          >
+            내 일기
+          </Link>
+          <Link
+            href="/diary?tab=learn"
+            className={`flex-1 text-center text-xs font-black py-2 rounded-full transition-all ${
+              isLearn
+                ? "bg-sakura-pink text-type-black border-2 border-black shadow-[2px_2px_0px_0px_#000]"
+                : "text-type-black/60 hover:text-type-black"
+            }`}
+          >
+            학습 일기
+          </Link>
         </div>
       </header>
 
-      {/* Tabs */}
-      <div className="flex gap-1 bg-canvas-almond p-1 rounded-full border-2 border-black">
-        <Link
-          href="/diary"
-          className={`flex-1 text-center text-sm font-black py-2 rounded-full transition-all ${
-            !isLearn
-              ? "bg-paper-white text-type-black border-2 border-black shadow-[2px_2px_0px_0px_#000]"
-              : "text-type-black/60"
-          }`}
-        >
-          내 일기
-        </Link>
-        <Link
-          href="/diary?tab=learn"
-          className={`flex-1 text-center text-sm font-black py-2 rounded-full transition-all ${
-            isLearn
-              ? "bg-paper-white text-type-black border-2 border-black shadow-[2px_2px_0px_0px_#000]"
-              : "text-type-black/60"
-          }`}
-        >
-          학습 일기
-        </Link>
-      </div>
-
-      {isLearn ? (
-        <LearnDiariesPreview />
-      ) : session?.user?.id ? (
-        <MyDiaries />
-      ) : (
-        <GuestMyDiaryView />
-      )}
-    </main>
+      <main className="px-5 py-5 pb-24 space-y-4">
+        {isLearn ? (
+          <LearnDiariesPreview />
+        ) : session?.user?.id ? (
+          <MyDiaries />
+        ) : (
+          <GuestMyDiaryView />
+        )}
+      </main>
+    </div>
   );
 }

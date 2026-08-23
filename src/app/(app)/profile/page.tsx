@@ -45,8 +45,11 @@ export default async function ProfilePage() {
   return (
     <div className="min-h-screen bg-sakura-blush">
       {/* Header */}
-      <div className="bg-canvas-almond px-5 pt-10 pb-6 border-b-4 border-black">
-        <h2 className="text-xl font-black text-type-black mb-5">내 프로필 ⚙️</h2>
+      <header className="bg-canvas-almond px-5 pt-10 pb-6 border-b-4 border-black">
+        <h1 className="text-2xl font-black text-type-black tracking-tight mb-5 flex items-center gap-2">
+          <span>내 프로필</span>
+          <span className="text-xl">⚙️</span>
+        </h1>
 
         {/* 아바타 + 닉네임 */}
         <div className="flex items-center gap-4 mb-5">
@@ -86,7 +89,7 @@ export default async function ProfilePage() {
             <Link href="/shop" className="text-xs font-black text-grape-punch">상점에서 사용 →</Link>
           </div>
         </div>
-      </div>
+      </header>
 
       <div className="px-5 py-5 flex flex-col gap-[24px]">
         {/* ── 아바타 코디 ── */}
