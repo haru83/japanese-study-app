@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export type VoiceGender = "female" | "male" | "neutral";
 
@@ -112,6 +112,7 @@ export function TtsButton({
   showLabel = false,
 }: TtsButtonProps) {
   const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     // Pre-load voices
@@ -120,19 +121,26 @@ export function TtsButton({
     }
 
     return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
-        if (isPlaying) {
-          window.speechSynthesis.cancel();
-        }
+        window.speechSynthesis.cancel();
       }
     };
-  }, [isPlaying]);
+  }, []);
 
   const handlePlay = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
     if (isPlaying) {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+        audioRef.current = null;
+      }
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
         window.speechSynthesis.cancel();
       }
@@ -142,11 +150,21 @@ export function TtsButton({
 
     if (audioSrc && typeof window !== "undefined") {
       try {
+        if (audioRef.current) {
+          audioRef.current.pause();
+          audioRef.current.currentTime = 0;
+        }
         const audio = new Audio(audioSrc);
+        audioRef.current = audio;
         setIsPlaying(true);
-        audio.onended = () => setIsPlaying(false);
+
+        audio.onended = () => {
+          setIsPlaying(false);
+          audioRef.current = null;
+        };
+
         audio.onerror = () => {
-          // Fallback to speech synthesis if audio file fails
+          audioRef.current = null;
           speakJapanese({
             text,
             rate,
@@ -157,17 +175,22 @@ export function TtsButton({
             onError: () => setIsPlaying(false),
           });
         };
-        audio.play().catch(() => {
-          speakJapanese({
-            text,
-            rate,
-            pitch,
-            gender,
-            onStart: () => setIsPlaying(true),
-            onEnd: () => setIsPlaying(false),
-            onError: () => setIsPlaying(false),
+
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(() => {
+            audioRef.current = null;
+            speakJapanese({
+              text,
+              rate,
+              pitch,
+              gender,
+              onStart: () => setIsPlaying(true),
+              onEnd: () => setIsPlaying(false),
+              onError: () => setIsPlaying(false),
+            });
           });
-        });
+        }
         return;
       } catch {
         // Fallback below

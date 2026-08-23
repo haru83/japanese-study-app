@@ -3,188 +3,151 @@ const fs = require('fs');
 const https = require('https');
 const path = require('path');
 
-const CHARACTER_VOICE_CONFIGS = {
+const CHIRP_VOICE_CONFIGS = {
   // ── 🔥 1. 열혈 주인공 (HERO) ──
   "aq-hero-01": {
-    voice: "ja-JP-Neural2-C",
-    gender: "MALE",
-    ssml: `<speak><prosody rate="105%" pitch="+2st" volume="+2dB">世界一の冒険者に、<break time="150ms"/>おれはなる！</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Puck",
+    text: "世界一の冒険者に、おれはなる！"
   },
   "aq-hero-02": {
-    voice: "ja-JP-Neural2-C",
-    gender: "MALE",
-    ssml: `<speak><prosody rate="108%" pitch="+2.5st" volume="+2dB">まっすぐ自分の決めた道は<break time="100ms"/>曲げねぇ！</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Puck",
+    text: "まっすぐ自分の決めた道は曲げねぇ！"
   },
   "aq-hero-03": {
-    voice: "ja-JP-Neural2-C",
-    gender: "MALE",
-    ssml: `<speak><prosody rate="102%" pitch="+1.5st" volume="+3dB">大切な仲間を傷つける奴は、<break time="200ms"/><emphasis level="strong">絶対に許さない！</emphasis></prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Puck",
+    text: "大切な仲間を傷つける奴は、絶対に許さない！"
   },
   "aq-hero-04": {
-    voice: "ja-JP-Neural2-C",
-    gender: "MALE",
-    ssml: `<speak><prosody rate="112%" pitch="+3st" volume="+3dB">これで終わりだ！<break time="150ms"/>オレの全力を喰らえ！</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Puck",
+    text: "これで終わりだ！オレの全力を喰らえ！"
   },
 
   // ── ⚡ 2. 쿨한 라이벌 (RIVAL) ──
   "aq-rival-01": {
-    voice: "ja-JP-Neural2-D",
-    gender: "MALE",
-    ssml: `<speak><prosody rate="94%" pitch="-1.5st">背中の傷は、<break time="250ms"/>剣士の恥だ。</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Orus",
+    text: "背中の傷は、剣士の恥だ。"
   },
   "aq-rival-02": {
-    voice: "ja-JP-Neural2-D",
-    gender: "MALE",
-    ssml: `<speak><prosody rate="96%" pitch="-1st">フン、<break time="150ms"/>勘違いするな。<break time="200ms"/>お前를助けたわけじゃない。</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Orus",
+    text: "フン、勘違いするな。お前を助けたわけじゃない。"
   },
   "aq-rival-03": {
-    voice: "ja-JP-Neural2-D",
-    gender: "MALE",
-    ssml: `<speak><prosody rate="95%" pitch="-1.5st">これで決着をつける。<break time="200ms"/>手加減は無用だ。</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Orus",
+    text: "これで決着をつける。手加減は無用だ。"
   },
   "aq-rival-04": {
-    voice: "ja-JP-Neural2-D",
-    gender: "MALE",
-    ssml: `<speak><prosody rate="98%" pitch="-1st">行くぞ。<break time="200ms"/>オレの背中は任せた。</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Orus",
+    text: "行くぞ。オレの背中は任せた。"
   },
 
   // ── 🕶️ 3. 카리스마 스승 (MASTER) ──
   "aq-master-01": {
-    voice: "ja-JP-Neural2-D",
-    gender: "MALE",
-    ssml: `<speak><prosody rate="85%" pitch="-1st">あきらめたら、<break time="200ms"/>そこで試合終了ですよ…？</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Charon",
+    text: "あきらめたら、そこで試合終了ですよ…？"
   },
   "aq-master-02": {
-    voice: "ja-JP-Neural2-D",
-    gender: "MALE",
-    ssml: `<speak><prosody rate="90%" pitch="-2.5st">悔いが残らない方を、<break time="200ms"/>自分で選べ。</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Charon",
+    text: "悔いが残らない方を、自分で選べ。"
   },
   "aq-master-03": {
-    voice: "ja-JP-Neural2-D",
-    gender: "MALE",
-    ssml: `<speak><prosody rate="98%" pitch="-1.5st" volume="+2dB">一番大切な才能とは、<break time="150ms"/>決してあきらめぬ根性だ！</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Fenrir",
+    text: "一番大切な才能とは、決してあきらめぬ根性だ！"
   },
   "aq-master-04": {
-    voice: "ja-JP-Neural2-D",
-    gender: "MALE",
-    ssml: `<speak><prosody rate="94%" pitch="-2st" volume="+2dB">我が隊員たちよ、<break time="200ms"/>未来のために全力を捧げよ！</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Fenrir",
+    text: "我が隊員たちよ、未来のために全力を捧げよ！"
   },
 
   // ── 🐱 4. 츤데레 (TSUNDERE) ──
   "aq-tsundere-01": {
-    voice: "ja-JP-Neural2-B",
-    gender: "FEMALE",
-    ssml: `<speak><prosody rate="106%" pitch="+3.5st">べ、<break time="100ms"/>別にあんたのために作ったんじゃないんだからね！</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Zephyr",
+    text: "べ、別にあんたのために作ったんじゃないんだからね！"
   },
   "aq-tsundere-02": {
-    voice: "ja-JP-Neural2-B",
-    gender: "FEMALE",
-    ssml: `<speak><prosody rate="108%" pitch="+3st">ちょっと、<break time="150ms"/>いつまで寝てるの？<break time="150ms"/>早く起きてよね！</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Zephyr",
+    text: "ちょっと、いつまで寝てるの？早く起きてよね！"
   },
   "aq-tsundere-03": {
-    voice: "ja-JP-Neural2-B",
-    gender: "FEMALE",
-    ssml: `<speak><prosody rate="110%" pitch="+4st">バカ！<break time="200ms"/>心配なんてしてないわよ！</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Zephyr",
+    text: "バカ！心配なんてしてないわよ！"
   },
   "aq-tsundere-04": {
-    voice: "ja-JP-Neural2-B",
-    gender: "FEMALE",
-    ssml: `<speak><prosody rate="92%" pitch="+2st">…今日だけは、<break time="200ms"/>隣にいてあげてもいいわよ。</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Zephyr",
+    text: "…今日だけは、隣にいてあげてもいいわよ。"
   },
 
   // ── 🦹 5. 지능형 빌런 (VILLAIN) ──
   "aq-villain-01": {
-    voice: "ja-JP-Neural2-D",
-    gender: "MALE",
-    ssml: `<speak><prosody rate="88%" pitch="-2st">あまり強い言葉を使うなよ。<break time="300ms"/>弱く見えるぞ。</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Rasalgethi",
+    text: "あまり強い言葉を使うなよ。弱く見えるぞ。"
   },
   "aq-villain-02": {
-    voice: "ja-JP-Neural2-D",
-    gender: "MALE",
-    ssml: `<speak><prosody rate="90%" pitch="-1.5st">すべては、<break time="200ms"/>私の計画通りに進んでいる。</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Rasalgethi",
+    text: "すべては、私の計画通りに進んでいる。"
   },
   "aq-villain-03": {
-    voice: "ja-JP-Neural2-D",
-    gender: "MALE",
-    ssml: `<speak><prosody rate="86%" pitch="-2st">憧れとは、<break time="250ms"/>理解から最も遠い感情だよ。</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Charon",
+    text: "憧れとは、理解から最も遠い感情だよ。"
   },
   "aq-villain-04": {
-    voice: "ja-JP-Neural2-D",
-    gender: "MALE",
-    ssml: `<speak><prosody rate="92%" pitch="-3st">この世界の理を変えるのは、<break time="200ms"/>力ある者のみだ。</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Rasalgethi",
+    text: "この世界の理を変えるのは、力ある者のみだ。"
   },
 
   // ── 🪄 6. 신비한 마법사 (MYSTIC) ──
   "aq-mystic-01": {
-    voice: "ja-JP-Neural2-B",
-    gender: "FEMALE",
-    ssml: `<speak><prosody rate="88%" pitch="+0.5st">人間の寿命は短いのに…<break time="300ms"/>なんでもっと知ろうとしなかったんだろう。</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Leda",
+    text: "人間の寿命は短いのに…なんでもっと知ろうとしなかったんだろう。"
   },
   "aq-mystic-02": {
-    voice: "ja-JP-Neural2-C",
-    gender: "MALE",
-    ssml: `<speak><prosody rate="95%" pitch="+0.5st">くだらなくて楽しい旅が、<break time="200ms"/>僕は好きなんだ。</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Enceladus",
+    text: "くだらなくて楽しい旅が、僕は好きなんだ。"
   },
   "aq-mystic-03": {
-    voice: "ja-JP-Neural2-B",
-    gender: "FEMALE",
-    ssml: `<speak><prosody rate="92%" pitch="-1st">我が魔力の前では、<break time="200ms"/>小細工など無意味だ。</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Aoede",
+    text: "我が魔力の前では、小細工など無意味だ。"
   },
   "aq-mystic-04": {
-    voice: "ja-JP-Neural2-B",
-    gender: "FEMALE",
-    ssml: `<speak><prosody rate="84%" pitch="+1.5st">時の流れは静かに、<break time="250ms"/>すべてを癒してくれるでしょう。</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Leda",
+    text: "時の流れは静かに、すべてを癒してくれるでしょう。"
   },
 
   // ── 🏀 7. 열정 스포츠맨 (SPORTS) ──
   "aq-sports-01": {
-    voice: "ja-JP-Neural2-C",
-    gender: "MALE",
-    ssml: `<speak><prosody rate="92%" pitch="+0.5st">左手は<break time="150ms"/>そえるだけ…！</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Puck",
+    text: "左手はそえるだけ…！"
   },
   "aq-sports-02": {
-    voice: "ja-JP-Neural2-C",
-    gender: "MALE",
-    ssml: `<speak><prosody rate="85%" pitch="+1.5st">先生…！！<break time="300ms"/>もう一度、<break time="150ms"/>みんなとバスケがしたいです……</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Enceladus",
+    text: "先生…！！もう一度、みんなとバスケがしたいです……"
   },
   "aq-sports-03": {
-    voice: "ja-JP-Neural2-C",
-    gender: "MALE",
-    ssml: `<speak><prosody rate="106%" pitch="+2st" volume="+2dB">オレの栄光時代は…<break time="200ms"/>オレは今なんだよ！！</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Puck",
+    text: "オレの栄光時代は…オレは今なんだよ！！"
   },
   "aq-sports-04": {
-    voice: "ja-JP-Neural2-C",
-    gender: "MALE",
-    ssml: `<speak><prosody rate="110%" pitch="+2.5st" volume="+3dB">最後まで絶対に足を止めるな！<break time="150ms"/>勝ちに行くぞ！</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Fenrir",
+    text: "最後まで絶対に足を止めるな！勝ちに行くぞ！"
   },
 
   // ── 🤖 8. 고뇌하는 소년 (PILOT) ──
   "aq-pilot-01": {
-    voice: "ja-JP-Neural2-C",
-    gender: "MALE",
-    ssml: `<speak><prosody rate="104%" pitch="+2st">逃げちゃダメだ、<break time="150ms"/>逃げちゃダメだ、<break time="150ms"/><emphasis level="strong">逃げちゃダメだ！</emphasis></prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Enceladus",
+    text: "逃げちゃダメだ、逃げちゃダメだ、逃げちゃダメだ！"
   },
   "aq-pilot-02": {
-    voice: "ja-JP-Neural2-B",
-    gender: "FEMALE",
-    ssml: `<speak><prosody rate="88%" pitch="-1st">ごめんなさい。<break time="250ms"/>こういう時、<break time="150ms"/>どんな顔をすればいいか分からないの。</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Despina",
+    text: "ごめんなさい。こういう時、どんな顔をすればいいか分からないの。"
   },
   "aq-pilot-03": {
-    voice: "ja-JP-Neural2-D",
-    gender: "MALE",
-    ssml: `<speak><prosody rate="88%" pitch="-3st">覚悟があるなら乗れ。<break time="250ms"/>でなければ今すぐ立ち去れ。</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Charon",
+    text: "覚悟があるなら乗れ。でなければ今すぐ立ち去れ。"
   },
   "aq-pilot-04": {
-    voice: "ja-JP-Neural2-B",
-    gender: "FEMALE",
-    ssml: `<speak><prosody rate="95%" pitch="+1st">無事に帰ってきたら、<break time="200ms"/>続きのお祝いをしましょう。</prosody></speak>`
+    voice: "ja-JP-Chirp3-HD-Zephyr",
+    text: "無事に帰ってきたら、続きのお祝いをしましょう。"
   }
 };
-
-// Check for Korean characters in SSML before processing
-for (const [id, cfg] of Object.entries(CHARACTER_VOICE_CONFIGS)) {
-  cfg.ssml = cfg.ssml.replace(/お前를/g, 'お前を');
-}
 
 const outputDir = path.join(__dirname, '..', 'public', 'audio', 'anime-quotes');
 if (!fs.existsSync(outputDir)) {
@@ -198,11 +161,10 @@ function getGCloudToken() {
 function synthesizeSpeech(token, id, config) {
   return new Promise((resolve, reject) => {
     const body = JSON.stringify({
-      input: { ssml: config.ssml },
+      input: { text: config.text },
       voice: {
         languageCode: 'ja-JP',
-        name: config.voice,
-        ssmlGender: config.gender
+        name: config.voice
       },
       audioConfig: {
         audioEncoding: 'MP3',
@@ -246,12 +208,12 @@ function synthesizeSpeech(token, id, config) {
 async function main() {
   console.log('Fetching gcloud token...');
   const token = getGCloudToken();
-  const ids = Object.keys(CHARACTER_VOICE_CONFIGS);
-  console.log(`Starting generation for ${ids.length} anime quotes...`);
+  const ids = Object.keys(CHIRP_VOICE_CONFIGS);
+  console.log(`Starting generation for ${ids.length} anime quotes with Google Chirp3-HD Studio models...`);
 
   for (let i = 0; i < ids.length; i++) {
     const id = ids[i];
-    const config = CHARACTER_VOICE_CONFIGS[id];
+    const config = CHIRP_VOICE_CONFIGS[id];
     process.stdout.write(`[${i + 1}/${ids.length}] Generating ${id} (${config.voice})... `);
     try {
       const res = await synthesizeSpeech(token, id, config);
@@ -260,10 +222,10 @@ async function main() {
       console.error(`✗ Error:`, err.message);
     }
     // Rate limit safety
-    await new Promise(r => setTimeout(r, 120));
+    await new Promise(r => setTimeout(r, 150));
   }
 
-  console.log('\n🎉 All 32 anime quote TTS audio files generated successfully!');
+  console.log('\n🎉 All 32 anime quote Chirp3-HD audio files generated successfully!');
 }
 
 main().catch(console.error);
