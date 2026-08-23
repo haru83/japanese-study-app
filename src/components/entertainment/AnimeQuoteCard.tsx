@@ -48,48 +48,50 @@ export function AnimeQuoteCard({ quote, initialBookmarkMap }: Props) {
             {quote.characterKo}
           </span>
         </div>
-
-        <span className="text-[11px] font-black bg-canvas-almond text-type-black/80 px-2 py-0.5 rounded-md border border-black/30">
-          #{quote.tag}
-        </span>
       </div>
 
       {/* Main Quote Area */}
-      <div className="bg-sakura-blush/40 rounded-xl border-2 border-black/80 p-4 space-y-2 relative">
-        <div className="flex items-start justify-between gap-3">
-          <div className="text-lg sm:text-xl font-black text-type-black leading-loose tracking-wide break-words">
-            <RubyText segments={rubySegments} showRuby={showRuby} />
-          </div>
+      <div className="bg-sakura-blush/40 rounded-xl border-2 border-black/80 p-4 space-y-2.5 relative">
+        {/* Top Control Bar with Tag & Icon-only Action Buttons */}
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-[11px] font-black bg-canvas-almond text-type-black/80 px-2 py-0.5 rounded-md border border-black/30">
+            #{quote.tag}
+          </span>
 
-          {/* Action Buttons: Audio & Ruby Toggle */}
-          <div className="flex items-center gap-1.5 shrink-0">
+          {/* Action Buttons: Audio & Ruby Toggle (Icon only, matched size) */}
+          <div className="flex items-center gap-2 shrink-0">
             <button
               type="button"
               onClick={() => setShowRuby((prev) => !prev)}
               aria-label={showRuby ? "요미가나 숨기기" : "요미가나 보기"}
-              className={`py-1.5 px-2.5 rounded-xl text-xs font-black border-2 border-black shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all flex items-center gap-1 ${
+              title={showRuby ? "요미가나 숨기기" : "요미가나 보기"}
+              className={`w-8 h-8 rounded-lg border-2 border-black shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all flex items-center justify-center ${
                 showRuby
                   ? "bg-grape-punch text-white"
                   : "bg-paper-white text-type-black/70 hover:bg-canvas-almond/60"
               }`}
             >
-              <span className="material-symbols-outlined text-sm leading-none block select-none">
+              <span className="material-symbols-outlined text-base leading-none block select-none">
                 translate
               </span>
-              <span>요미가나</span>
             </button>
 
             <TtsButton
               text={quote.quoteJa}
-              size="md"
+              size="sm"
               gender={quote.gender}
-              showLabel={true}
-              label="듣기"
+              className="w-8 h-8 !p-0"
             />
           </div>
         </div>
 
-        <p className="text-sm font-bold text-type-black/75 pt-1 border-t border-black/10">
+        {/* Japanese Quote Text (Full width below buttons) */}
+        <div className="text-lg sm:text-xl font-black text-type-black leading-loose tracking-wide break-words pt-1">
+          <RubyText segments={rubySegments} showRuby={showRuby} />
+        </div>
+
+        {/* Korean Translation */}
+        <p className="text-sm font-bold text-type-black/75 pt-1.5 border-t border-black/10">
           {quote.quoteKo}
         </p>
       </div>

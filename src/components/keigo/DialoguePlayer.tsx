@@ -105,7 +105,7 @@ export function DialoguePlayer({ dialogue }: DialoguePlayerProps) {
           <span className="material-symbols-outlined text-sm leading-none block select-none">
             translate
           </span>
-          <span>요미가나 {showPronunciation ? "표시" : "숨김"}</span>
+          <span>요미가나</span>
         </button>
         <button
           onClick={() => setShowTranslation((v) => !v)}
@@ -118,7 +118,7 @@ export function DialoguePlayer({ dialogue }: DialoguePlayerProps) {
           <span className="material-symbols-outlined text-sm leading-none block select-none">
             subtitles
           </span>
-          <span>한국어 해석 {showTranslation ? "표시" : "숨김"}</span>
+          <span>한국어</span>
         </button>
 
         {/* 2-Voice Sequential Dialogue Player Button */}
@@ -134,7 +134,7 @@ export function DialoguePlayer({ dialogue }: DialoguePlayerProps) {
           <span className="material-symbols-outlined text-base leading-none block select-none">
             {activePlayingIndex !== null ? "stop_circle" : "record_voice_over"}
           </span>
-          <span>{activePlayingIndex !== null ? "재생 중지" : "대화 듣기"}</span>
+          <span>{activePlayingIndex !== null ? "중지" : "듣기"}</span>
         </button>
       </div>
 

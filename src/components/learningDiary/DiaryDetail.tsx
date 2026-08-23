@@ -140,7 +140,7 @@ export function DiaryDetail({ diary, bookmarkMap }: Props) {
                     <span className="material-symbols-outlined text-sm leading-none block select-none">
                       translate
                     </span>
-                    <span>요미가나 {showRuby ? "표시" : "숨김"}</span>
+                    <span>요미가나</span>
                   </button>
                   <button
                     onClick={() => setShowKorean((v) => !v)}
@@ -153,13 +153,13 @@ export function DiaryDetail({ diary, bookmarkMap }: Props) {
                     <span className="material-symbols-outlined text-sm leading-none block select-none">
                       subtitles
                     </span>
-                    <span>한국어 해석 {showKorean ? "표시" : "숨김"}</span>
+                    <span>한국어</span>
                   </button>
                   <TtsButton
                     text={diary.contentJp.map((s) => s.text).join("")}
                     size="lg"
                     showLabel={true}
-                    label="일기 듣기"
+                    label="듣기"
                   />
                 </div>
 
