@@ -90,6 +90,7 @@ export function speakJapanese({
 
 interface TtsButtonProps {
   text: string;
+  audioSrc?: string;
   rate?: number;
   pitch?: number;
   gender?: VoiceGender;
@@ -101,6 +102,7 @@ interface TtsButtonProps {
 
 export function TtsButton({
   text,
+  audioSrc,
   rate = 0.9,
   pitch,
   gender = "female",
@@ -131,9 +133,45 @@ export function TtsButton({
     e.stopPropagation();
 
     if (isPlaying) {
-      window.speechSynthesis.cancel();
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
       setIsPlaying(false);
       return;
+    }
+
+    if (audioSrc && typeof window !== "undefined") {
+      try {
+        const audio = new Audio(audioSrc);
+        setIsPlaying(true);
+        audio.onended = () => setIsPlaying(false);
+        audio.onerror = () => {
+          // Fallback to speech synthesis if audio file fails
+          speakJapanese({
+            text,
+            rate,
+            pitch,
+            gender,
+            onStart: () => setIsPlaying(true),
+            onEnd: () => setIsPlaying(false),
+            onError: () => setIsPlaying(false),
+          });
+        };
+        audio.play().catch(() => {
+          speakJapanese({
+            text,
+            rate,
+            pitch,
+            gender,
+            onStart: () => setIsPlaying(true),
+            onEnd: () => setIsPlaying(false),
+            onError: () => setIsPlaying(false),
+          });
+        });
+        return;
+      } catch {
+        // Fallback below
+      }
     }
 
     speakJapanese({

@@ -78,6 +78,7 @@ export function AnimeQuoteCard({ quote, initialBookmarkMap }: Props) {
 
             <TtsButton
               text={quote.quoteJa}
+              audioSrc={`/audio/anime-quotes/${quote.id}.mp3`}
               size="sm"
               gender={quote.gender}
               className="w-8 h-8 !p-0"
