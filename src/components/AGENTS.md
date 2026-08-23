@@ -19,10 +19,13 @@ src/components/
 │   └── ShibaAvatar.tsx     # Overlay layers + animations
 ├── keigo/                  # Honorific lesson UI
 │   ├── LessonCard.tsx
-│   └── DialoguePlayer.tsx
+│   ├── LessonDetail.tsx    # Gated section tabs & detail view
+│   ├── DialoguePlayer.tsx  # 2-Voice sequential player
+│   └── QuizSection.tsx     # 60% pass threshold & retry
 ├── learningDiary/          # Learning diary UI
 │   ├── RubyText.tsx        # Furigana ruby parser
 │   ├── DiaryList.tsx
+│   ├── DiaryDetail.tsx     # Gated section tabs & detail view
 │   └── LearningDiaryCard.tsx
 ├── diary/                  # Personal diary + AI tutor
 │   ├── AiTutorReview.tsx

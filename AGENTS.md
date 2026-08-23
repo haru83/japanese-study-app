@@ -53,6 +53,7 @@ japanese-study-app/
 | `xp.ts` | Logic | `src/lib/` | XP thresholds, level calculation |
 | `streak.ts` | Logic | `src/lib/` | Timezone-aware streak calculation |
 | `wardrobe.ts` | Logic | `src/lib/` | Item equip/unequip, z-index layers |
+| `quiz.ts` | Logic | `src/lib/` | Quiz passing threshold (60%) & score validation |
 | `japaneseInput.ts` | Utility | `src/lib/` | IME input filter (hiragana/katakana only) |
 | `rubyParser.ts` | Utility | `src/lib/` | Furigana ruby text parser & Mono-Ruby parser |
 | `fsrs.ts` | Logic | `src/lib/` | FSRS-4.5 machine learning spaced repetition engine |
@@ -122,4 +123,5 @@ npx prisma studio  # manually change User.role to "admin"
 - **Server Actions origins** hardcoded to `localhost:3000/8000` + production IP `34.10.198.226`
 - **Guest users** can browse community but login required for reactions/comments
 - **Level Gating System**: 30 content items per level (Lv1: 1~30, Lv2: 31~60 ... Lv10: 271~300)
+- **Lesson Completion Requirements**: Requires viewing all preceding sections (dialogue/text, grammar, vocab) to unlock quiz + minimum 60% quiz score to complete
 - **Vocab Hub Routes**: `/learning` (어휘 Main Hub), `/learning/vocabulary` (학습한 단어), `/learning/grammar` (학습한 문법), `/learning/topics` (주제별 단어), `/learning/idioms` (재미있는 숙어), `/learning/confusing-grammar` (헷갈리는 문법), `/learning/bookmarks` (북마크)

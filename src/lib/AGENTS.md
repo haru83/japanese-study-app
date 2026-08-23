@@ -14,16 +14,17 @@ src/lib/
 ├── xp.ts                   # XP thresholds, level calculation
 ├── streak.ts               # Timezone-aware streak logic
 ├── wardrobe.ts             # Item equip/unequip, z-index layers
+├── quiz.ts                 # Quiz passing threshold and score validation
 ├── japaneseInput.ts        # IME filter (hiragana/katakana only)
 ├── rubyParser.ts           # Furigana ruby text parser
 ├── lessonUtils.ts          # Lesson completion helpers
 ├── jsonUtils.ts            # JSON validation helpers
 ├── validation.ts           # Zod schemas for Server Actions
 ├── admin-paths.ts          # Admin route path utilities
-├── __tests__/              # Co-located tests (13 files, 177 tests)
+├── __tests__/              # Co-located tests
 │   ├── streak.test.ts
 │   ├── xp.test.ts
-│   ├── wardrobe.test.ts
+│   ├── quiz.test.ts
 │   └── ...
 ```
 
@@ -33,6 +34,7 @@ src/lib/
 | Modify auth flow | `auth.ts` + `admin-auth.ts` | Check middleware.ts too |
 | Adjust XP/levels | `xp.ts` | Thresholds array + level calculation |
 | Fix streak logic | `streak.ts` | Timezone-aware, idempotent |
+| Quiz pass criteria | `quiz.ts` | Threshold (60%) & score check |
 | Add wardrobe item | `wardrobe.ts` | Update z-index layers |
 | Validate inputs | `validation.ts` | Zod schemas reused in actions |
 | Parse Japanese text | `rubyParser.ts` | Furigana annotation |
