@@ -131,30 +131,35 @@ export function DiaryDetail({ diary, bookmarkMap }: Props) {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setShowRuby((v) => !v)}
-                    className={`flex-1 py-2 rounded-xl text-xs font-black border-2 border-black transition-all ${
+                    className={`flex-1 py-2 px-2 rounded-xl text-xs font-black border-2 border-black transition-all flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 ${
                       showRuby
-                        ? "bg-grape-punch text-white shadow-[2px_2px_0px_0px_#000]"
-                        : "bg-paper-white text-type-black/60"
+                        ? "bg-grape-punch text-white"
+                        : "bg-paper-white text-type-black/70 hover:bg-canvas-almond/60"
                     }`}
                   >
-                    요미가나 {showRuby ? "표시" : "숨김"}
+                    <span className="material-symbols-outlined text-sm leading-none block select-none">
+                      translate
+                    </span>
+                    <span>요미가나 {showRuby ? "표시" : "숨김"}</span>
                   </button>
                   <button
                     onClick={() => setShowKorean((v) => !v)}
-                    className={`flex-1 py-2 rounded-xl text-xs font-black border-2 border-black transition-all ${
+                    className={`flex-1 py-2 px-2 rounded-xl text-xs font-black border-2 border-black transition-all flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 ${
                       showKorean
-                        ? "bg-sakura-pink text-black shadow-[2px_2px_0px_0px_#000]"
-                        : "bg-paper-white text-type-black/60"
+                        ? "bg-sakura-pink text-black"
+                        : "bg-paper-white text-type-black/70 hover:bg-canvas-almond/60"
                     }`}
                   >
-                    한국어 해석 {showKorean ? "표시" : "숨김"}
+                    <span className="material-symbols-outlined text-sm leading-none block select-none">
+                      subtitles
+                    </span>
+                    <span>한국어 해석 {showKorean ? "표시" : "숨김"}</span>
                   </button>
                   <TtsButton
                     text={diary.contentJp.map((s) => s.text).join("")}
                     size="lg"
                     showLabel={true}
                     label="일기 듣기"
-                    className="border-2 border-black py-2 rounded-xl"
                   />
                 </div>
 

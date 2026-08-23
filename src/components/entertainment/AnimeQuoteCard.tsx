@@ -66,15 +66,26 @@ export function AnimeQuoteCard({ quote, initialBookmarkMap }: Props) {
             <button
               type="button"
               onClick={() => setShowRuby((prev) => !prev)}
-              aria-label={showRuby ? "후리가나 숨기기" : "후리가나 보기"}
-              className={`px-2 py-1 text-[11px] font-black rounded-lg border border-black shadow-[1px_1px_0px_0px_#000] transition-transform active:scale-95 ${
-                showRuby ? "bg-matcha-green text-type-black" : "bg-paper-white text-type-black/50"
+              aria-label={showRuby ? "요미가나 숨기기" : "요미가나 보기"}
+              className={`py-1.5 px-2.5 rounded-xl text-xs font-black border-2 border-black shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all flex items-center gap-1 ${
+                showRuby
+                  ? "bg-grape-punch text-white"
+                  : "bg-paper-white text-type-black/70 hover:bg-canvas-almond/60"
               }`}
             >
-              あ
+              <span className="material-symbols-outlined text-sm leading-none block select-none">
+                translate
+              </span>
+              <span>요미가나</span>
             </button>
 
-            <TtsButton text={quote.quoteJa} size="md" gender={quote.gender} />
+            <TtsButton
+              text={quote.quoteJa}
+              size="md"
+              gender={quote.gender}
+              showLabel={true}
+              label="듣기"
+            />
           </div>
         </div>
 

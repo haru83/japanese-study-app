@@ -96,39 +96,45 @@ export function DialoguePlayer({ dialogue }: DialoguePlayerProps) {
       <div className="flex items-center gap-2 mb-4">
         <button
           onClick={() => setShowPronunciation((v) => !v)}
-          className={`flex-1 py-2 rounded-xl text-xs font-black border-2 border-black transition-all ${
+          className={`flex-1 py-2 px-2 rounded-xl text-xs font-black border-2 border-black transition-all flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 ${
             showPronunciation
-              ? "bg-grape-punch text-white shadow-[2px_2px_0px_0px_#000]"
-              : "bg-paper-white text-type-black/60"
+              ? "bg-grape-punch text-white"
+              : "bg-paper-white text-type-black/70 hover:bg-canvas-almond/60"
           }`}
         >
-          요미가나 {showPronunciation ? "표시" : "숨김"}
+          <span className="material-symbols-outlined text-sm leading-none block select-none">
+            translate
+          </span>
+          <span>요미가나 {showPronunciation ? "표시" : "숨김"}</span>
         </button>
         <button
           onClick={() => setShowTranslation((v) => !v)}
-          className={`flex-1 py-2 rounded-xl text-xs font-black border-2 border-black transition-all ${
+          className={`flex-1 py-2 px-2 rounded-xl text-xs font-black border-2 border-black transition-all flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 ${
             showTranslation
-              ? "bg-sakura-pink text-black shadow-[2px_2px_0px_0px_#000]"
-              : "bg-paper-white text-type-black/60"
+              ? "bg-sakura-pink text-black"
+              : "bg-paper-white text-type-black/70 hover:bg-canvas-almond/60"
           }`}
         >
-          한국어 해석 {showTranslation ? "표시" : "숨김"}
+          <span className="material-symbols-outlined text-sm leading-none block select-none">
+            subtitles
+          </span>
+          <span>한국어 해석 {showTranslation ? "표시" : "숨김"}</span>
         </button>
 
         {/* 2-Voice Sequential Dialogue Player Button */}
         <button
           type="button"
           onClick={handleToggleFullPlay}
-          className={`py-2 px-3 rounded-xl text-xs font-black border-2 border-black shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all flex items-center gap-1.5 shrink-0 ${
+          className={`py-2 px-2.5 rounded-xl text-xs font-black border-2 border-black shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 shrink-0 ${
             activePlayingIndex !== null
               ? "bg-sakura-pink text-type-black animate-pulse"
               : "bg-paper-white hover:bg-shiba-orange/20 text-type-black"
           }`}
         >
-          <span className="material-symbols-outlined text-base leading-none block">
+          <span className="material-symbols-outlined text-base leading-none block select-none">
             {activePlayingIndex !== null ? "stop_circle" : "record_voice_over"}
           </span>
-          <span>{activePlayingIndex !== null ? "재생 중지" : "전체 대화 듣기"}</span>
+          <span>{activePlayingIndex !== null ? "재생 중지" : "대화 듣기"}</span>
         </button>
       </div>
 

@@ -148,15 +148,15 @@ export function TtsButton({
   };
 
   const sizeClasses = {
-    sm: "p-1 rounded-lg text-sm",
-    md: "p-1.5 rounded-xl text-base",
-    lg: "px-3 py-1.5 rounded-xl text-xs font-black",
+    sm: "p-1.5 rounded-lg text-xs font-bold",
+    md: "py-1.5 px-2.5 rounded-xl text-xs font-black",
+    lg: "py-2 px-2.5 rounded-xl text-xs font-black",
   };
 
   const iconSizes = {
-    sm: "text-base",
-    md: "text-lg",
-    lg: "text-lg",
+    sm: "text-sm",
+    md: "text-base",
+    lg: "text-base",
   };
 
   return (
@@ -165,16 +165,16 @@ export function TtsButton({
       onClick={handlePlay}
       aria-label={isPlaying ? "음성 중지" : `${label || text} 일본어 발음 듣기`}
       title={isPlaying ? "음성 중지" : "일본어 발음 듣기"}
-      className={`border border-black shadow-[1.5px_1.5px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all flex items-center justify-center gap-1 shrink-0 ${
+      className={`border-2 border-black shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all flex items-center justify-center gap-1.5 shrink-0 ${
         isPlaying
           ? "bg-sakura-pink text-type-black animate-pulse"
-          : "bg-paper-white hover:bg-shiba-orange/20 text-type-black/80 hover:text-type-black"
+          : "bg-paper-white hover:bg-shiba-orange/20 text-type-black"
       } ${sizeClasses[size]} ${className}`}
     >
       <span
         className={`material-symbols-outlined ${iconSizes[size]} leading-none block select-none`}
       >
-        {isPlaying ? "volume_up" : "volume_up"}
+        {isPlaying ? "stop_circle" : "volume_up"}
       </span>
       {showLabel && (
         <span className="select-none font-bold">
