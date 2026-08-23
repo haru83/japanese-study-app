@@ -37,14 +37,24 @@ interface Props {
   bookmarkMap?: Record<string, boolean>;
 }
 
+const REQUIRED_SECTIONS: SectionKey[] = ["dialogue", "grammar", "vocab"];
+
 export function LessonDetail({ lesson, bookmarkMap }: Props) {
   const router = useRouter();
   const completeLocal = useProgressStore((s) => s.completeLesson);
 
   const [activeSection, setActiveSection] = useState<SectionKey>("dialogue");
+  const [visitedSections, setVisitedSections] = useState<Set<SectionKey>>(() => new Set(["dialogue"]));
   const [quizDone, setQuizDone] = useState(false);
   const [xpResult, setXpResult] = useState<(XpResult & { quizScore: number; quizTotal: number }) | null>(null);
   const [guestScore, setGuestScore] = useState<{ score: number; total: number } | null>(null);
+
+  const isQuizUnlocked = REQUIRED_SECTIONS.every((s) => visitedSections.has(s));
+
+  const handleSelectSection = (sec: SectionKey) => {
+    setVisitedSections((prev) => new Set([...prev, sec]));
+    setActiveSection(sec);
+  };
 
   const vocabSegments = useMemo(
     () =>
@@ -98,24 +108,49 @@ export function LessonDetail({ lesson, bookmarkMap }: Props) {
 
         {/* Section tabs */}
         <div className="flex border-t-2 border-black -mx-5 px-5">
-          {SECTIONS.map((sec) => (
-            <button
-              key={sec}
-              onClick={() => setActiveSection(sec)}
-              className={`flex-1 py-2.5 text-xs font-black transition-colors ${
-                activeSection === sec
-                  ? "text-grape-punch border-b-2 border-grape-punch"
-                  : "text-type-black/50"
-              }`}
-            >
-              {SECTION_LABELS[sec]}
-            </button>
-          ))}
+          {SECTIONS.map((sec) => {
+            const isVisited = visitedSections.has(sec);
+            const isQuiz = sec === "quiz";
+            const isLocked = isQuiz && !isQuizUnlocked;
+
+            return (
+              <button
+                key={sec}
+                onClick={() => handleSelectSection(sec)}
+                className={`flex-1 py-2.5 text-xs font-black transition-colors flex items-center justify-center gap-1 ${
+                  activeSection === sec
+                    ? "text-grape-punch border-b-2 border-grape-punch"
+                    : isLocked
+                    ? "text-type-black/35"
+                    : "text-type-black/60"
+                }`}
+              >
+                <span>{SECTION_LABELS[sec]}</span>
+                {isVisited && !isQuiz && (
+                  <span className="text-[10px] text-matcha-green font-black">✓</span>
+                )}
+                {isLocked && <span className="text-[11px]">🔒</span>}
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      <div className="px-5 py-5">
-        {activeSection === "dialogue" && <DialoguePlayer dialogue={lesson.dialogue} />}
+      <div className="px-5 py-5 pb-24">
+        {activeSection === "dialogue" && (
+          <div>
+            <DialoguePlayer dialogue={lesson.dialogue} />
+            <div className="mt-6 flex justify-end">
+              <button
+                onClick={() => handleSelectSection("grammar")}
+                className="w-full py-3 px-4 rounded-[15px] border-2 border-black bg-paper-white hover:bg-canvas-almond text-type-black font-black shadow-[3px_3px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2"
+              >
+                <span>문법 포인트 확인하기</span>
+                <span className="material-symbols-outlined text-base">arrow_forward</span>
+              </button>
+            </div>
+          </div>
+        )}
 
         {activeSection === "grammar" && (
           <div className="flex flex-col gap-3">
@@ -138,6 +173,15 @@ export function LessonDetail({ lesson, bookmarkMap }: Props) {
                 />
               </div>
             ))}
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => handleSelectSection("vocab")}
+                className="w-full py-3 px-4 rounded-[15px] border-2 border-black bg-paper-white hover:bg-canvas-almond text-type-black font-black shadow-[3px_3px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2"
+              >
+                <span>어휘 학습하기</span>
+                <span className="material-symbols-outlined text-base">arrow_forward</span>
+              </button>
+            </div>
           </div>
         )}
 
@@ -166,17 +210,62 @@ export function LessonDetail({ lesson, bookmarkMap }: Props) {
                 </div>
               </div>
             ))}
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => handleSelectSection("quiz")}
+                className="w-full py-3 px-4 rounded-[15px] border-2 border-black bg-sakura-pink text-type-black font-black shadow-[3px_3px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2"
+              >
+                <span>{isQuizUnlocked ? "확인 퀴즈 풀기 🎯" : "퀴즈 도전하기 🎯"}</span>
+                <span className="material-symbols-outlined text-base">arrow_forward</span>
+              </button>
+            </div>
           </div>
         )}
 
         {activeSection === "quiz" && !quizDone && (
           <div className="bg-paper-white rounded-[15px] p-5 border-2 border-black shadow-[4px_4px_0px_0px_#000]">
-            <h2 className="font-black text-type-black mb-4">확인 퀴즈 🎯</h2>
-            <QuizSection quiz={lesson.quiz} onComplete={handleQuizComplete} />
+            {!isQuizUnlocked ? (
+              <div className="text-center py-3">
+                <div className="text-4xl mb-2">🔒</div>
+                <h2 className="text-base font-black text-type-black">퀴즈가 아직 잠겨있어요!</h2>
+                <p className="text-xs text-type-black/70 font-bold mt-1 mb-5">
+                  대화, 문법, 어휘를 모두 확인한 후 퀴즈에 도전할 수 있어요.
+                </p>
+
+                <div className="flex flex-col gap-2 max-w-xs mx-auto text-left">
+                  {REQUIRED_SECTIONS.map((sec) => {
+                    const visited = visitedSections.has(sec);
+                    return (
+                      <button
+                        key={sec}
+                        onClick={() => handleSelectSection(sec)}
+                        className={`flex items-center justify-between p-3 rounded-xl border-2 border-black font-bold text-xs transition-all ${
+                          visited
+                            ? "bg-matcha-green/20 text-type-black"
+                            : "bg-paper-white shadow-[2px_2px_0px_0px_#000] hover:bg-canvas-almond"
+                        }`}
+                      >
+                        <span>{SECTION_LABELS[sec]} 확인</span>
+                        <span className="font-black">
+                          {visited ? "✓ 확인 완료" : "학습하러 가기 →"}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              <>
+                <h2 className="font-black text-type-black mb-4">확인 퀴즈 🎯</h2>
+                <QuizSection
+                  quiz={lesson.quiz}
+                  onComplete={handleQuizComplete}
+                  onReview={() => handleSelectSection("dialogue")}
+                />
+              </>
+            )}
           </div>
         )}
-
-
       </div>
 
       {guestScore && (

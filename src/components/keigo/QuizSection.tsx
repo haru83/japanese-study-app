@@ -2,23 +2,27 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { isQuizPassed, QUIZ_PASS_THRESHOLD } from "@/lib/quiz";
 
 interface QuizItem {
   question: string;
   options: string[];
   answer: string;
+  explanation?: string;
 }
 
 interface QuizSectionProps {
   quiz: QuizItem[];
   onComplete: (score: number, total: number) => void;
+  onReview?: () => void;
 }
 
-export function QuizSection({ quiz, onComplete }: QuizSectionProps) {
+export function QuizSection({ quiz, onComplete, onReview }: QuizSectionProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
+  const [isPassed, setIsPassed] = useState(false);
 
   const current = quiz[currentIndex];
 
@@ -27,6 +31,7 @@ export function QuizSection({ quiz, onComplete }: QuizSectionProps) {
     setSelected(option);
 
     const isCorrect = option === current.answer;
+    const nextScore = isCorrect ? score + 1 : score;
     if (isCorrect) setScore((s) => s + 1);
 
     setTimeout(() => {
@@ -34,28 +39,77 @@ export function QuizSection({ quiz, onComplete }: QuizSectionProps) {
         setCurrentIndex((i) => i + 1);
         setSelected(null);
       } else {
-        const finalScore = isCorrect ? score + 1 : score;
+        const passed = isQuizPassed(nextScore, quiz.length);
+        setIsPassed(passed);
         setFinished(true);
-        onComplete(finalScore, quiz.length);
+        if (passed) {
+          onComplete(nextScore, quiz.length);
+        }
       }
     }, 1200);
   }
 
+  function handleRetry() {
+    setCurrentIndex(0);
+    setSelected(null);
+    setScore(0);
+    setFinished(false);
+    setIsPassed(false);
+  }
+
   if (finished) {
-    const pct = Math.round((score / quiz.length) * 100);
+    const pct = quiz.length > 0 ? Math.round((score / quiz.length) * 100) : 100;
+    const passPct = Math.round(QUIZ_PASS_THRESHOLD * 100);
+
     return (
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         className="text-center py-6"
       >
-        <div className="text-6xl mb-3">{pct === 100 ? "🌟" : pct >= 60 ? "⭐" : "📚"}</div>
+        <div className="text-6xl mb-3">{isPassed ? (pct === 100 ? "🌟" : "⭐") : "📚"}</div>
         <p className="text-xl font-black text-type-black">
-          {score} / {quiz.length} 정답
+          {score} / {quiz.length} 정답 ({pct}%)
         </p>
-        <p className="text-type-black/60 font-bold text-sm mt-1">
-          {pct === 100 ? "완벽해요! +5 보너스 XP 🎉" : pct >= 60 ? "잘했어요!" : "다시 도전해보세요!"}
-        </p>
+
+        {isPassed ? (
+          <p className="text-type-black/60 font-bold text-sm mt-1">
+            {pct === 100 ? "완벽해요! +5 보너스 XP 🎉" : "잘했어요! 학습을 완료했어요! 🎉"}
+          </p>
+        ) : (
+          <div className="mt-2 mb-6">
+            <p className="text-red-600 font-black text-sm">
+              통과 기준({passPct}% 이상)에 도달하지 못했어요.
+            </p>
+            <p className="text-type-black/60 font-bold text-xs mt-1">
+              내용을 다시 복습하거나 퀴즈를 다시 풀어보세요!
+            </p>
+          </div>
+        )}
+
+        {!isPassed && (
+          <div className="flex flex-col sm:flex-row gap-2.5 justify-center mt-5">
+            <button
+              onClick={handleRetry}
+              className="py-3 px-5 rounded-[15px] border-2 border-black bg-sakura-pink text-type-black font-black shadow-[3px_3px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5"
+            >
+              <span className="material-symbols-outlined text-base">refresh</span>
+              <span>다시 도전하기</span>
+            </button>
+            {onReview && (
+              <button
+                onClick={() => {
+                  handleRetry();
+                  onReview();
+                }}
+                className="py-3 px-5 rounded-[15px] border-2 border-black bg-paper-white text-type-black font-black shadow-[3px_3px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5"
+              >
+                <span className="material-symbols-outlined text-base">menu_book</span>
+                <span>내용 복습하러 가기</span>
+              </button>
+            )}
+          </div>
+        )}
       </motion.div>
     );
   }

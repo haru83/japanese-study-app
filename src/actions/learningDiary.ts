@@ -7,12 +7,15 @@ import { prisma } from "@/lib/db";
 import { computeXpResult, XP_REWARDS } from "@/lib/xp";
 import { shouldIncrementStreak } from "@/lib/streak";
 import { addVocabToReview } from "@/actions/review";
+import { isQuizPassed } from "@/lib/quiz";
 
 export async function completeLearningDiary(
   diaryId: string,
   quizScore: number,
   quizTotal: number
 ) {
+  if (!isQuizPassed(quizScore, quizTotal)) return null;
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return null;
 

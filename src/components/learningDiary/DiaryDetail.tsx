@@ -27,9 +27,12 @@ interface Props {
   bookmarkMap?: Record<string, boolean>;
 }
 
+const REQUIRED_SECTIONS: Section[] = ["원문", "어휘", "문법"];
+
 export function DiaryDetail({ diary, bookmarkMap }: Props) {
   const router = useRouter();
   const [section, setSection] = useState<Section>("원문");
+  const [visitedSections, setVisitedSections] = useState<Set<Section>>(() => new Set(["원문"]));
   const [showRuby, setShowRuby] = useState(false);
   const [showKorean, setShowKorean] = useState(false);
   const [xpResult, setXpResult] = useState<XpResult | null>(null);
@@ -37,6 +40,13 @@ export function DiaryDetail({ diary, bookmarkMap }: Props) {
   const [quizTotal, setQuizTotal] = useState(0);
   const [guestScore, setGuestScore] = useState<{ score: number; total: number } | null>(null);
   const [, startTransition] = useTransition();
+
+  const isQuizUnlocked = REQUIRED_SECTIONS.every((s) => visitedSections.has(s));
+
+  const handleSelectSection = (s: Section) => {
+    setVisitedSections((prev) => new Set([...prev, s]));
+    setSection(s);
+  };
 
   function handleQuizComplete(score: number, total: number) {
     setQuizScore(score);
@@ -79,19 +89,31 @@ export function DiaryDetail({ diary, bookmarkMap }: Props) {
         </div>
 
         <div className="flex border-t-2 border-black -mx-4 px-4">
-          {SECTIONS.map((s) => (
-            <button
-              key={s}
-              onClick={() => setSection(s)}
-              className={`flex-1 py-2.5 text-xs font-black transition-colors ${
-                section === s
-                  ? "text-grape-punch border-b-2 border-grape-punch"
-                  : "text-type-black/50"
-              }`}
-            >
-              {s}
-            </button>
-          ))}
+          {SECTIONS.map((s) => {
+            const isVisited = visitedSections.has(s);
+            const isQuiz = s === "퀴즈";
+            const isLocked = isQuiz && !isQuizUnlocked;
+
+            return (
+              <button
+                key={s}
+                onClick={() => handleSelectSection(s)}
+                className={`flex-1 py-2.5 text-xs font-black transition-colors flex items-center justify-center gap-1 ${
+                  section === s
+                    ? "text-grape-punch border-b-2 border-grape-punch"
+                    : isLocked
+                    ? "text-type-black/35"
+                    : "text-type-black/60"
+                }`}
+              >
+                <span>{s}</span>
+                {isVisited && !isQuiz && (
+                  <span className="text-[10px] text-matcha-green font-black">✓</span>
+                )}
+                {isLocked && <span className="text-[11px]">🔒</span>}
+              </button>
+            );
+          })}
         </div>
       </header>
 
@@ -153,6 +175,16 @@ export function DiaryDetail({ diary, bookmarkMap }: Props) {
                     </p>
                   </motion.div>
                 )}
+
+                <div className="pt-2 flex justify-end">
+                  <button
+                    onClick={() => handleSelectSection("어휘")}
+                    className="w-full py-3 px-4 rounded-[15px] border-2 border-black bg-paper-white hover:bg-canvas-almond text-type-black font-black shadow-[3px_3px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2"
+                  >
+                    <span>어휘 학습하기</span>
+                    <span className="material-symbols-outlined text-base">arrow_forward</span>
+                  </button>
+                </div>
               </div>
             )}
 
@@ -181,6 +213,16 @@ export function DiaryDetail({ diary, bookmarkMap }: Props) {
                     </div>
                   </div>
                 ))}
+
+                <div className="pt-2 flex justify-end">
+                  <button
+                    onClick={() => handleSelectSection("문법")}
+                    className="w-full py-3 px-4 rounded-[15px] border-2 border-black bg-paper-white hover:bg-canvas-almond text-type-black font-black shadow-[3px_3px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2"
+                  >
+                    <span>문법 포인트 확인하기</span>
+                    <span className="material-symbols-outlined text-base">arrow_forward</span>
+                  </button>
+                </div>
               </div>
             )}
 
@@ -204,11 +246,62 @@ export function DiaryDetail({ diary, bookmarkMap }: Props) {
                     />
                   </div>
                 ))}
+
+                <div className="pt-2 flex justify-end">
+                  <button
+                    onClick={() => handleSelectSection("퀴즈")}
+                    className="w-full py-3 px-4 rounded-[15px] border-2 border-black bg-sakura-pink text-type-black font-black shadow-[3px_3px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2"
+                  >
+                    <span>{isQuizUnlocked ? "확인 퀴즈 풀기 🎯" : "퀴즈 도전하기 🎯"}</span>
+                    <span className="material-symbols-outlined text-base">arrow_forward</span>
+                  </button>
+                </div>
               </div>
             )}
 
             {section === "퀴즈" && (
-              <QuizSection quiz={diary.quiz} onComplete={handleQuizComplete} />
+              <div className="bg-paper-white rounded-[15px] p-5 border-2 border-black shadow-[4px_4px_0px_0px_#000]">
+                {!isQuizUnlocked ? (
+                  <div className="text-center py-3">
+                    <div className="text-4xl mb-2">🔒</div>
+                    <h2 className="text-base font-black text-type-black">퀴즈가 아직 잠겨있어요!</h2>
+                    <p className="text-xs text-type-black/70 font-bold mt-1 mb-5">
+                      원문, 어휘, 문법을 모두 확인한 후 퀴즈에 도전할 수 있어요.
+                    </p>
+
+                    <div className="flex flex-col gap-2 max-w-xs mx-auto text-left">
+                      {REQUIRED_SECTIONS.map((sec) => {
+                        const visited = visitedSections.has(sec);
+                        return (
+                          <button
+                            key={sec}
+                            onClick={() => handleSelectSection(sec)}
+                            className={`flex items-center justify-between p-3 rounded-xl border-2 border-black font-bold text-xs transition-all ${
+                              visited
+                                ? "bg-matcha-green/20 text-type-black"
+                                : "bg-paper-white shadow-[2px_2px_0px_0px_#000] hover:bg-canvas-almond"
+                            }`}
+                          >
+                            <span>{sec} 확인</span>
+                            <span className="font-black">
+                              {visited ? "✓ 확인 완료" : "학습하러 가기 →"}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <h2 className="font-black text-type-black mb-4">확인 퀴즈 🎯</h2>
+                    <QuizSection
+                      quiz={diary.quiz}
+                      onComplete={handleQuizComplete}
+                      onReview={() => handleSelectSection("원문")}
+                    />
+                  </>
+                )}
+              </div>
             )}
           </motion.div>
         </AnimatePresence>
