@@ -14,6 +14,25 @@ import {
 import { SocialProfileModal } from "@/components/community/SocialProfileModal";
 import { ReportButton } from "@/components/community/ReportModal";
 import { filterCommentInput, hasKorean } from "@/lib/japaneseInput";
+import { ReactionPicker } from "@/components/community/ReactionPicker";
+import { ReactionGroup, CommentWithReplies } from "@/lib/community";
+
+interface CommentUser {
+  id: string;
+  name: string | null;
+  isBot?: boolean;
+  progress: { level: number; activeCharacter: string } | null;
+  wardrobeItems: { wardrobeItemId: string }[];
+}
+
+export interface PostCommentItem {
+  id: string;
+  content: string;
+  createdAt: Date;
+  userId: string;
+  parentId?: string | null;
+  user: CommentUser;
+}
 
 interface Props {
   post: {
@@ -23,26 +42,15 @@ interface Props {
     category: string;
     createdAt: Date;
     userId: string;
-    isLiked: boolean;
     user: {
       id: string;
       name: string | null;
       progress: { level: number; activeCharacter: string } | null;
       wardrobeItems: { wardrobeItemId: string }[];
     };
-    likes: { userId: string }[];
-    comments: {
-      id: string;
-      content: string;
-      createdAt: Date;
-      userId: string;
-      user: {
-        id: string;
-        name: string | null;
-        progress: { level: number; activeCharacter: string } | null;
-        wardrobeItems: { wardrobeItemId: string }[];
-      };
-    }[];
+    reactions?: ReactionGroup[];
+    organizedComments?: CommentWithReplies<PostCommentItem>[];
+    comments?: PostCommentItem[];
   };
   currentUserId?: string;
   isAdmin?: boolean;
@@ -51,11 +59,17 @@ interface Props {
 export function PostDetailClient({ post, currentUserId, isAdmin }: Props) {
   const router = useRouter();
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  const [isLiked, setIsLiked] = useState(post.isLiked);
-  const [likeCount, setLikeCount] = useState(post.likes.length);
+  
+  // 댓글 입력 상태
   const [commentText, setCommentText] = useState("");
   const [koreanBlocked, setKoreanBlocked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // 대댓글(답글) 입력 상태
+  const [replyingToCommentId, setReplyingToCommentId] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState("");
+  const [replyKoreanBlocked, setReplyKoreanBlocked] = useState(false);
+  const [isSubmittingReply, setIsSubmittingReply] = useState(false);
 
   const handleCommentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
@@ -68,25 +82,24 @@ export function PostDetailClient({ post, currentUserId, isAdmin }: Props) {
     }
   };
 
+  const handleReplyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    if (hasKorean(raw)) {
+      setReplyKoreanBlocked(true);
+      setReplyText(filterCommentInput(raw));
+    } else {
+      setReplyKoreanBlocked(false);
+      setReplyText(raw);
+    }
+  };
+
   const authorLevel = post.user.progress?.level ?? 1;
   const authorEquipped = post.user.wardrobeItems.map((w) => w.wardrobeItemId);
   const authorChar = post.user.progress?.activeCharacter ?? "shiba";
   const categoryInfo = POST_CATEGORIES[post.category] ?? POST_CATEGORIES.chat;
 
-  const handleLike = async () => {
-    if (!currentUserId) {
-      router.push("/login");
-      return;
-    }
-    const nextState = !isLiked;
-    setIsLiked(nextState);
-    setLikeCount((prev) => (nextState ? prev + 1 : Math.max(0, prev - 1)));
-    try {
-      await toggleCommunityPostLike(post.id);
-    } catch {
-      setIsLiked(!nextState);
-      setLikeCount((prev) => (!nextState ? prev + 1 : Math.max(0, prev - 1)));
-    }
+  const handleToggleReaction = async (targetId: string, emoji: string) => {
+    await toggleCommunityPostLike(targetId, emoji);
   };
 
   const handleCommentSubmit = async (e: React.FormEvent) => {
@@ -110,6 +123,28 @@ export function PostDetailClient({ post, currentUserId, isAdmin }: Props) {
     }
   };
 
+  const handleReplySubmit = async (e: React.FormEvent, parentId: string) => {
+    e.preventDefault();
+    if (!currentUserId) {
+      router.push("/login");
+      return;
+    }
+    if (!replyText.trim()) return;
+
+    setIsSubmittingReply(true);
+    try {
+      await addCommunityPostComment(post.id, replyText.trim(), parentId);
+      setReplyText("");
+      setReplyingToCommentId(null);
+      setReplyKoreanBlocked(false);
+      router.refresh();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "답글 작성 실패");
+    } finally {
+      setIsSubmittingReply(false);
+    }
+  };
+
   const handleDeletePost = async () => {
     if (!confirm("정말 이 게시글을 삭제하시겠습니까?")) return;
     try {
@@ -129,6 +164,12 @@ export function PostDetailClient({ post, currentUserId, isAdmin }: Props) {
       alert(err instanceof Error ? err.message : "삭제 실패");
     }
   };
+
+  // 계층형 댓글 목록
+  const rootComments = post.organizedComments ?? [];
+  const totalCommentsCount =
+    post.comments?.length ??
+    rootComments.reduce((acc, c) => acc + 1 + (c.replies?.length ?? 0), 0);
 
   return (
     <div className="flex flex-col gap-4 pb-24">
@@ -190,22 +231,19 @@ export function PostDetailClient({ post, currentUserId, isAdmin }: Props) {
           {post.content}
         </p>
 
-        {/* 하단 좋아요 & 신고 영역 */}
-        <div className="flex items-center justify-between pt-3 border-t-2 border-black/10">
-          <button
-            onClick={handleLike}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-black font-black text-xs transition-all ${
-              isLiked
-                ? "bg-sakura-pink text-type-black shadow-[2px_2px_0px_0px_#000]"
-                : "bg-canvas-almond/30 text-type-black/70 hover:bg-canvas-almond"
-            }`}
-          >
-            <span>{isLiked ? "❤️" : "🤍"}</span>
-            <span>좋아요 {likeCount}</span>
-          </button>
+        {/* 하단 다양한 이모지 리액션 & 신고 영역 */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t-2 border-black/10">
+          <ReactionPicker
+            targetId={post.id}
+            reactions={post.reactions ?? []}
+            onToggle={handleToggleReaction}
+            currentUserId={currentUserId}
+          />
 
           {currentUserId && currentUserId !== post.userId && (
-            <ReportButton targetType="post" targetId={post.id} />
+            <div className="self-end sm:self-auto">
+              <ReportButton targetType="post" targetId={post.id} />
+            </div>
           )}
         </div>
       </div>
@@ -213,12 +251,12 @@ export function PostDetailClient({ post, currentUserId, isAdmin }: Props) {
       {/* 댓글 섹션 */}
       <div className="bg-paper-white rounded-[20px] border-2 border-black shadow-[4px_4px_0px_0px_#000] p-5">
         <h3 className="font-black text-type-black text-sm mb-3">
-          댓글 💬 ({post.comments.length})
+          댓글 💬 ({totalCommentsCount})
         </h3>
 
         {/* 댓글 입력창 */}
         {currentUserId ? (
-          <div className="flex flex-col gap-1 mb-4">
+          <div className="flex flex-col gap-1 mb-5">
             <form onSubmit={handleCommentSubmit} className="flex gap-2">
               <input
                 type="text"
@@ -226,12 +264,12 @@ export function PostDetailClient({ post, currentUserId, isAdmin }: Props) {
                 onChange={handleCommentChange}
                 placeholder="日本語または英語でコメントを入力 🌸"
                 maxLength={500}
-                className={`flex-1 px-3.5 py-2 bg-canvas-almond/20 border-2 rounded-xl text-xs font-bold text-type-black focus:outline-none focus:bg-white ${koreanBlocked ? "border-red-400" : "border-black"}`}
+                className={`flex-1 px-3.5 py-2.5 bg-canvas-almond/20 border-2 rounded-xl text-xs font-bold text-type-black focus:outline-none focus:bg-white ${koreanBlocked ? "border-red-400" : "border-black"}`}
               />
               <button
                 type="submit"
                 disabled={isSubmitting || !commentText.trim()}
-                className="px-4 py-2 bg-sakura-pink text-type-black font-black text-xs rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_#000] disabled:opacity-50 shrink-0"
+                className="px-4 py-2.5 bg-sakura-pink text-type-black font-black text-xs rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_#000] disabled:opacity-50 shrink-0"
               >
                 登録
               </button>
@@ -248,66 +286,191 @@ export function PostDetailClient({ post, currentUserId, isAdmin }: Props) {
           </div>
         )}
 
-        {/* 댓글 목록 */}
-        <div className="flex flex-col gap-2.5">
-          {post.comments.length === 0 ? (
+        {/* 계층형 댓글 & 대댓글 목록 */}
+        <div className="flex flex-col gap-3">
+          {rootComments.length === 0 ? (
             <p className="text-center py-6 text-xs font-bold text-type-black/40">
               아직 댓글이 없습니다. 첫 번째 댓글을 남겨보세요!
             </p>
           ) : (
-            post.comments.map((comment) => {
+            rootComments.map((comment) => {
               const cLevel = comment.user.progress?.level ?? 1;
               const cEquipped = comment.user.wardrobeItems.map((w) => w.wardrobeItemId);
               const cChar = comment.user.progress?.activeCharacter ?? "shiba";
+              const isReplying = replyingToCommentId === comment.id;
 
               return (
-                <div
-                  key={comment.id}
-                  className="bg-canvas-almond/20 rounded-xl p-3 border border-black/10 flex items-start gap-2.5"
-                >
-                  <div
-                    className="cursor-pointer shrink-0 mt-0.5"
-                    onClick={() => setSelectedUserId(comment.user.id)}
-                  >
-                    <ShibaAvatar
-                      characterId={cChar}
-                      level={cLevel}
-                      size={32}
-                      sticker
-                      equippedItemIds={cEquipped}
-                    />
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-1 mb-0.5">
-                      <div className="flex items-center gap-1.5">
-                        <span
-                          className="font-black text-xs text-type-black hover:underline cursor-pointer"
-                          onClick={() => setSelectedUserId(comment.user.id)}
-                        >
-                          {comment.user.name ?? "학습자"}
-                        </span>
-                        <span className="bg-grape-punch text-white text-[8px] font-black px-1.5 py-0.2 rounded-full border border-black">
-                          Lv.{cLevel}
-                        </span>
-                      </div>
-                      <span className="text-[10px] text-type-black/40 font-bold">
-                        {new Date(comment.createdAt).toLocaleDateString("ko-KR")}
-                      </span>
+                <div key={comment.id} className="flex flex-col gap-2">
+                  {/* 부모 댓글 카드 */}
+                  <div className="bg-canvas-almond/20 rounded-xl p-3 border-2 border-black/10 flex items-start gap-2.5">
+                    <div
+                      className="cursor-pointer shrink-0 mt-0.5"
+                      onClick={() => setSelectedUserId(comment.user.id)}
+                    >
+                      <ShibaAvatar
+                        characterId={cChar}
+                        level={cLevel}
+                        size={32}
+                        sticker
+                        equippedItemIds={cEquipped}
+                      />
                     </div>
 
-                    <p className="text-xs font-bold text-type-black/90 whitespace-pre-wrap leading-relaxed">
-                      {comment.content}
-                    </p>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-1 mb-0.5">
+                        <div className="flex items-center gap-1.5">
+                          <span
+                            className="font-black text-xs text-type-black hover:underline cursor-pointer"
+                            onClick={() => setSelectedUserId(comment.user.id)}
+                          >
+                            {comment.user.name ?? "학습자"}
+                          </span>
+                          <span className="bg-grape-punch text-white text-[8px] font-black px-1.5 py-0.2 rounded-full border border-black">
+                            Lv.{cLevel}
+                          </span>
+                        </div>
+                        <span className="text-[10px] text-type-black/40 font-bold">
+                          {new Date(comment.createdAt).toLocaleDateString("ko-KR")}
+                        </span>
+                      </div>
+
+                      <p className="text-xs font-bold text-type-black/90 whitespace-pre-wrap leading-relaxed mb-2">
+                        {comment.content}
+                      </p>
+
+                      {/* 액션 버튼 (답글 달기 & 삭제) */}
+                      <div className="flex items-center gap-3">
+                        {currentUserId && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (isReplying) {
+                                setReplyingToCommentId(null);
+                                setReplyText("");
+                              } else {
+                                setReplyingToCommentId(comment.id);
+                                setReplyText("");
+                              }
+                            }}
+                            className="text-[11px] font-black text-type-black/70 hover:text-sakura-pink flex items-center gap-1 transition-colors"
+                          >
+                            <span>💬</span>
+                            <span>{isReplying ? "답글 취소" : "답글달기"}</span>
+                          </button>
+                        )}
+
+                        {(currentUserId === comment.userId || isAdmin) && (
+                          <button
+                            onClick={() => handleDeleteComment(comment.id)}
+                            className="text-[10px] font-bold text-red-500 hover:text-red-700"
+                          >
+                            삭제
+                          </button>
+                        )}
+                      </div>
+                    </div>
                   </div>
 
-                  {(currentUserId === comment.userId || isAdmin) && (
-                    <button
-                      onClick={() => handleDeleteComment(comment.id)}
-                      className="text-[10px] font-bold text-red-500 hover:text-red-700 shrink-0 ml-1"
-                    >
-                      삭제
-                    </button>
+                  {/* 인라인 대댓글 작성 폼 */}
+                  {isReplying && currentUserId && (
+                    <div className="ml-6 pl-3 border-l-2 border-sakura-pink/50">
+                      <form
+                        onSubmit={(e) => handleReplySubmit(e, comment.id)}
+                        className="bg-paper-white p-2.5 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_#000] flex flex-col gap-1.5"
+                      >
+                        <div className="text-[10px] font-black text-type-black/60 flex items-center gap-1">
+                          <span>↳</span>
+                          <span>@{comment.user.name ?? "학습자"}님에게 답글 작성</span>
+                        </div>
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={replyText}
+                            onChange={handleReplyChange}
+                            placeholder="日本語または英語で返信を入力 🌸"
+                            maxLength={500}
+                            autoFocus
+                            className={`flex-1 px-3 py-1.5 bg-canvas-almond/20 border-2 rounded-xl text-xs font-bold text-type-black focus:outline-none focus:bg-white ${replyKoreanBlocked ? "border-red-400" : "border-black"}`}
+                          />
+                          <button
+                            type="submit"
+                            disabled={isSubmittingReply || !replyText.trim()}
+                            className="px-3 py-1.5 bg-sakura-pink text-type-black font-black text-xs rounded-xl border-2 border-black shadow-[1px_1px_0px_0px_#000] disabled:opacity-50 shrink-0"
+                          >
+                            返信
+                          </button>
+                        </div>
+                        {replyKoreanBlocked && (
+                          <p className="text-[10px] font-bold text-red-500 px-1">
+                            ⚠️ 日本語または英語のみ入力できます
+                          </p>
+                        )}
+                      </form>
+                    </div>
+                  )}
+
+                  {/* 대댓글(답글) 목록 렌더링 */}
+                  {comment.replies && comment.replies.length > 0 && (
+                    <div className="ml-6 pl-3 border-l-2 border-black/15 flex flex-col gap-2">
+                      {comment.replies.map((reply) => {
+                        const rLevel = reply.user.progress?.level ?? 1;
+                        const rEquipped = reply.user.wardrobeItems.map((w) => w.wardrobeItemId);
+                        const rChar = reply.user.progress?.activeCharacter ?? "shiba";
+
+                        return (
+                          <div
+                            key={reply.id}
+                            className="bg-paper-white rounded-xl p-2.5 border-2 border-black/10 shadow-[1px_1px_0px_0px_rgba(0,0,0,0.05)] flex items-start gap-2"
+                          >
+                            <span className="text-type-black/40 font-bold text-xs mt-0.5">↳</span>
+                            <div
+                              className="cursor-pointer shrink-0 mt-0.5"
+                              onClick={() => setSelectedUserId(reply.user.id)}
+                            >
+                              <ShibaAvatar
+                                characterId={rChar}
+                                level={rLevel}
+                                size={26}
+                                sticker
+                                equippedItemIds={rEquipped}
+                              />
+                            </div>
+
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between gap-1 mb-0.5">
+                                <div className="flex items-center gap-1.5">
+                                  <span
+                                    className="font-black text-[11px] text-type-black hover:underline cursor-pointer"
+                                    onClick={() => setSelectedUserId(reply.user.id)}
+                                  >
+                                    {reply.user.name ?? "학습자"}
+                                  </span>
+                                  <span className="bg-grape-punch text-white text-[8px] font-black px-1.5 py-0.2 rounded-full border border-black">
+                                    Lv.{rLevel}
+                                  </span>
+                                </div>
+                                <span className="text-[9px] text-type-black/40 font-bold">
+                                  {new Date(reply.createdAt).toLocaleDateString("ko-KR")}
+                                </span>
+                              </div>
+
+                              <p className="text-xs font-bold text-type-black/90 whitespace-pre-wrap leading-relaxed">
+                                {reply.content}
+                              </p>
+                            </div>
+
+                            {(currentUserId === reply.userId || isAdmin) && (
+                              <button
+                                onClick={() => handleDeleteComment(reply.id)}
+                                className="text-[10px] font-bold text-red-500 hover:text-red-700 shrink-0 ml-1"
+                              >
+                                삭제
+                              </button>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
                   )}
                 </div>
               );
@@ -324,3 +487,4 @@ export function PostDetailClient({ post, currentUserId, isAdmin }: Props) {
     </div>
   );
 }
+

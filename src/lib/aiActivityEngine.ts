@@ -110,10 +110,17 @@ export async function runPeriodicAiActivity() {
     const commentingBots = otherBots.slice(0, Math.floor(Math.random() * 2) + 2);
 
     for (const b of commentingBots) {
+      const randomEmoji = ["👍", "❤️", "😂", "🌸", "🔥"][Math.floor(Math.random() * 5)];
       await prisma.communityPostLike.upsert({
-        where: { userId_postId: { userId: b.id, postId: post.id } },
+        where: {
+          userId_postId_emoji: {
+            userId: b.id,
+            postId: post.id,
+            emoji: randomEmoji,
+          },
+        },
         update: {},
-        create: { userId: b.id, postId: post.id },
+        create: { userId: b.id, postId: post.id, emoji: randomEmoji },
       });
 
       const randomComment = ENCOURAGING_COMMENTS[Math.floor(Math.random() * ENCOURAGING_COMMENTS.length)];
@@ -144,10 +151,17 @@ export async function runPeriodicAiActivity() {
     const commentingBots = otherBots.slice(0, 2);
 
     for (const b of commentingBots) {
+      const randomEmoji = ["👍", "❤️", "😂", "🌸", "🔥"][Math.floor(Math.random() * 5)];
       await prisma.like.upsert({
-        where: { userId_diaryId: { userId: b.id, diaryId: diary.id } },
+        where: {
+          userId_diaryId_emoji: {
+            userId: b.id,
+            diaryId: diary.id,
+            emoji: randomEmoji,
+          },
+        },
         update: {},
-        create: { userId: b.id, diaryId: diary.id },
+        create: { userId: b.id, diaryId: diary.id, emoji: randomEmoji },
       });
 
       const randomComment = ENCOURAGING_COMMENTS[Math.floor(Math.random() * ENCOURAGING_COMMENTS.length)];
@@ -184,11 +198,17 @@ export async function triggerAiReactionForDiary(diaryId: string, authorId: strin
     const selectedBots = bots.sort(() => 0.5 - Math.random()).slice(0, 2);
 
     for (const bot of selectedBots) {
-      // 좋아요
+      const randomEmoji = ["👍", "❤️", "🌸", "🔥"][Math.floor(Math.random() * 4)];
       await prisma.like.upsert({
-        where: { userId_diaryId: { userId: bot.id, diaryId } },
+        where: {
+          userId_diaryId_emoji: {
+            userId: bot.id,
+            diaryId,
+            emoji: randomEmoji,
+          },
+        },
         update: {},
-        create: { userId: bot.id, diaryId },
+        create: { userId: bot.id, diaryId, emoji: randomEmoji },
       });
 
       // 응원 댓글
@@ -222,11 +242,17 @@ export async function triggerAiReactionForPost(postId: string, authorId: string)
     const selectedBots = bots.sort(() => 0.5 - Math.random()).slice(0, 2);
 
     for (const bot of selectedBots) {
-      // 좋아요
+      const randomEmoji = ["👍", "❤️", "🌸", "🔥"][Math.floor(Math.random() * 4)];
       await prisma.communityPostLike.upsert({
-        where: { userId_postId: { userId: bot.id, postId } },
+        where: {
+          userId_postId_emoji: {
+            userId: bot.id,
+            postId,
+            emoji: randomEmoji,
+          },
+        },
         update: {},
-        create: { userId: bot.id, postId },
+        create: { userId: bot.id, postId, emoji: randomEmoji },
       });
 
       // 댓글

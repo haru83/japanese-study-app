@@ -128,6 +128,7 @@ async function ReactionsTab({ userId }: { userId?: string }) {
     ...likes.map((l) => ({
       type: "like" as const,
       id: l.id,
+      emoji: l.emoji ?? "🌸",
       createdAt: l.createdAt,
       userName: l.user.name,
       diaryId: l.diary.id,
@@ -137,6 +138,7 @@ async function ReactionsTab({ userId }: { userId?: string }) {
     ...comments.map((c) => ({
       type: "comment" as const,
       id: c.id,
+      emoji: "💬",
       createdAt: c.createdAt,
       userName: c.user.name,
       diaryId: c.diary.id,
@@ -170,12 +172,12 @@ async function ReactionsTab({ userId }: { userId?: string }) {
           }`}
         >
           <span className="text-xl shrink-0">
-            {item.type === "like" ? "🌸" : "💬"}
+            {item.emoji}
           </span>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-black text-type-black">
               {item.userName ?? "학습자"}님이{" "}
-              {item.type === "like" ? "공감했어요" : "댓글을 남겼어요"}
+              {item.type === "like" ? `${item.emoji} 반응을 남겼어요` : "댓글을 남겼어요"}
             </p>
             <p className="text-xs text-type-black/60 font-bold truncate">
               {item.type === "comment" && item.commentContent

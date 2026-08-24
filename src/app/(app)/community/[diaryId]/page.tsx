@@ -103,8 +103,8 @@ export default async function CommunityDiaryPage({
           {session?.user?.id ? (
             <LikeButton
               diaryId={diary.id}
-              initialIsLiked={diary.isLiked}
-              initialCount={diary.likes.length}
+              reactions={diary.reactions}
+              currentUserId={session.user.id}
             />
           ) : (
             <Link
@@ -112,7 +112,7 @@ export default async function CommunityDiaryPage({
               className="flex items-center gap-2 px-6 py-3 rounded-2xl border-2 border-black bg-paper-white font-black text-sm text-type-black/70 shadow-[3px_3px_0px_0px_#000]"
             >
               <span>🌸</span>
-              <span>로그인 후 공감하기</span>
+              <span>로그인 후 반응 남기기</span>
             </Link>
           )}
         </div>
@@ -120,6 +120,7 @@ export default async function CommunityDiaryPage({
         <CommentSection
           diaryId={diary.id}
           comments={diary.comments}
+          organizedComments={diary.organizedComments}
           currentUserId={session?.user?.id}
         />
       </div>

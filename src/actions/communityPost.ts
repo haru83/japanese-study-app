@@ -8,6 +8,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { triggerAiReactionForPost } from "@/lib/aiActivityEngine";
 import { hasKorean } from "@/lib/japaneseInput";
+import { groupReactions, organizeCommentsWithReplies } from "@/lib/community";
 
 const PostInputSchema = z.object({
   title: z.string().min(2, "제목은 최소 2글자 이상이어야 합니다.").max(100, "제목은 최대 100자까지 작성할 수 있습니다."),
@@ -55,15 +56,21 @@ export async function getCommunityPosts(category?: string) {
     whereClause.category = category;
   }
 
-  return prisma.communityPost.findMany({
+  const posts = await prisma.communityPost.findMany({
     where: whereClause,
     include: {
       user: { select: USER_SELECT },
+      likes: { select: { emoji: true, userId: true } },
       _count: { select: { likes: true, comments: true } },
     },
     orderBy: { createdAt: "desc" },
     take: 50,
   });
+
+  return posts.map((post) => ({
+    ...post,
+    reactionGroups: groupReactions(post.likes, session?.user?.id),
+  }));
 }
 
 export async function getCommunityPost(postId: string) {
@@ -73,7 +80,7 @@ export async function getCommunityPost(postId: string) {
     where: { id: postId },
     include: {
       user: { select: USER_SELECT },
-      likes: { select: { userId: true } },
+      likes: { select: { userId: true, emoji: true } },
       comments: {
         include: {
           user: {
@@ -108,11 +115,14 @@ export async function getCommunityPost(postId: string) {
     if (block) return null;
   }
 
-  const isLiked = session?.user?.id
-    ? post.likes.some((l) => l.userId === session.user!.id)
-    : false;
+  const reactions = groupReactions(post.likes, session?.user?.id);
+  const organizedComments = organizeCommentsWithReplies(post.comments);
 
-  return { ...post, isLiked };
+  return {
+    ...post,
+    reactions,
+    organizedComments,
+  };
 }
 
 export async function createCommunityPost(input: {
@@ -169,19 +179,25 @@ export async function deleteCommunityPost(postId: string) {
   revalidatePath("/community");
 }
 
-export async function toggleCommunityPostLike(postId: string) {
+export async function toggleCommunityPostLike(postId: string, emoji = "❤️") {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) throw new Error("로그인이 필요합니다.");
 
   const existing = await prisma.communityPostLike.findUnique({
-    where: { userId_postId: { userId: session.user.id, postId } },
+    where: {
+      userId_postId_emoji: {
+        userId: session.user.id,
+        postId,
+        emoji,
+      },
+    },
   });
 
   if (existing) {
     await prisma.communityPostLike.delete({ where: { id: existing.id } });
   } else {
     await prisma.communityPostLike.create({
-      data: { userId: session.user.id, postId },
+      data: { userId: session.user.id, postId, emoji },
     });
   }
 
@@ -189,7 +205,11 @@ export async function toggleCommunityPostLike(postId: string) {
   revalidatePath("/community");
 }
 
-export async function addCommunityPostComment(postId: string, content: string) {
+export async function addCommunityPostComment(
+  postId: string,
+  content: string,
+  parentId?: string
+) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) throw new Error("로그인이 필요합니다.");
 
@@ -202,11 +222,22 @@ export async function addCommunityPostComment(postId: string, content: string) {
     throw new Error("댓글은 일본어 또는 영어로만 입력할 수 있습니다.");
   }
 
+  if (parentId) {
+    const parent = await prisma.communityPostComment.findUnique({
+      where: { id: parentId },
+      select: { postId: true },
+    });
+    if (!parent || parent.postId !== postId) {
+      throw new Error("답글을 달 대상 댓글이 존재하지 않습니다.");
+    }
+  }
+
   await prisma.communityPostComment.create({
     data: {
       userId: session.user.id,
       postId,
       content: trimmed,
+      parentId: parentId || null,
     },
   });
 
@@ -237,3 +268,4 @@ export async function deleteCommunityPostComment(commentId: string) {
   await prisma.communityPostComment.delete({ where: { id: commentId } });
   revalidatePath(`/community/posts/${comment.postId}`);
 }
+

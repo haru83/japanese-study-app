@@ -12,6 +12,8 @@ export const POST_CATEGORIES: Record<string, { label: string; bg: string; text: 
   review: { label: "📝 후기", bg: "bg-emerald-100", text: "text-emerald-900" },
 };
 
+import { ReactionGroup } from "@/lib/community";
+
 export type CommunityPostItem = {
   id: string;
   title: string;
@@ -24,6 +26,7 @@ export type CommunityPostItem = {
     progress: { level: number; activeCharacter: string } | null;
     wardrobeItems: { wardrobeItemId: string }[];
   };
+  reactionGroups?: ReactionGroup[];
   _count: { likes: number; comments: number };
 };
 
@@ -45,6 +48,10 @@ export function PostCard({ post, onAvatarClick }: Props) {
       onAvatarClick(post.user.id);
     }
   }
+
+  const activeReactions = (post.reactionGroups ?? [])
+    .filter((r) => r.count > 0)
+    .sort((a, b) => b.count - a.count);
 
   return (
     <Link
@@ -89,8 +96,25 @@ export function PostCard({ post, onAvatarClick }: Props) {
         {post.content}
       </p>
 
-      <div className="flex items-center gap-3.5 mt-3 text-xs font-bold text-type-black/50">
-        <span>❤️ {post._count.likes}</span>
+      <div className="flex items-center justify-between gap-3.5 mt-3 text-xs font-bold text-type-black/60">
+        <div className="flex items-center gap-2 flex-wrap">
+          {activeReactions.length > 0 ? (
+            activeReactions.slice(0, 3).map((r) => (
+              <span
+                key={r.emoji}
+                className="inline-flex items-center gap-1 bg-canvas-almond/30 px-2 py-0.5 rounded-lg border border-black/10 text-[11px]"
+              >
+                <span>{r.emoji}</span>
+                <span>{r.count}</span>
+              </span>
+            ))
+          ) : (
+            <span className="inline-flex items-center gap-1 text-[11px] text-type-black/40">
+              <span>❤️</span>
+              <span>{post._count.likes}</span>
+            </span>
+          )}
+        </div>
         <span>💬 {post._count.comments}</span>
       </div>
     </Link>

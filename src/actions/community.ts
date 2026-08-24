@@ -5,7 +5,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { assertCommentOwner } from "@/lib/community";
+import { assertCommentOwner, groupReactions, organizeCommentsWithReplies } from "@/lib/community";
 import { CommentInputSchema, ReportInputSchema } from "@/lib/validation";
 import { hasKorean } from "@/lib/japaneseInput";
 
@@ -40,17 +40,23 @@ export async function getPublicDiaries() {
     ];
   }
 
-  return prisma.diary.findMany({
+  const diaries = await prisma.diary.findMany({
     where: {
       isPublic: true,
       ...(excludedUserIds.length > 0 ? { userId: { notIn: excludedUserIds } } : {}),
     },
     include: {
       user: { select: USER_SELECT },
+      likes: { select: { emoji: true, userId: true } },
       _count: { select: { likes: true, comments: true } },
     },
     orderBy: { createdAt: "desc" },
   });
+
+  return diaries.map((diary) => ({
+    ...diary,
+    reactionGroups: groupReactions(diary.likes, session?.user?.id),
+  }));
 }
 
 export async function getPublicDiary(diaryId: string) {
@@ -60,7 +66,7 @@ export async function getPublicDiary(diaryId: string) {
     where: { id: diaryId, isPublic: true },
     include: {
       user: { select: USER_SELECT },
-      likes: { select: { userId: true } },
+      likes: { select: { userId: true, emoji: true } },
       comments: {
         include: {
           user: {
@@ -86,31 +92,47 @@ export async function getPublicDiary(diaryId: string) {
     if (block) return null;
   }
 
-  const isLiked = session?.user?.id
-    ? diary.likes.some((l) => l.userId === session.user!.id)
-    : false;
+  const reactions = groupReactions(diary.likes, session?.user?.id);
+  const organizedComments = organizeCommentsWithReplies(diary.comments);
 
-  return { ...diary, isLiked };
+  return {
+    ...diary,
+    reactions,
+    organizedComments,
+  };
 }
 
-export async function toggleLike(diaryId: string) {
+export async function toggleLike(diaryId: string, emoji = "🌸") {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) throw new Error("로그인이 필요합니다.");
 
   const existing = await prisma.like.findUnique({
-    where: { userId_diaryId: { userId: session.user.id, diaryId } },
+    where: {
+      userId_diaryId_emoji: {
+        userId: session.user.id,
+        diaryId,
+        emoji,
+      },
+    },
   });
 
   if (existing) {
     await prisma.like.delete({ where: { id: existing.id } });
   } else {
-    await prisma.like.create({ data: { userId: session.user.id, diaryId } });
+    await prisma.like.create({
+      data: { userId: session.user.id, diaryId, emoji },
+    });
   }
 
   revalidatePath(`/community/${diaryId}`);
+  revalidatePath("/community");
 }
 
-export async function addComment(diaryId: string, content: string) {
+export async function addComment(
+  diaryId: string,
+  content: string,
+  parentId?: string
+) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) throw new Error("로그인이 필요합니다.");
 
@@ -120,11 +142,27 @@ export async function addComment(diaryId: string, content: string) {
     throw new Error("댓글은 일본어 또는 영어로만 입력할 수 있습니다.");
   }
 
+  if (parentId) {
+    const parent = await prisma.comment.findUnique({
+      where: { id: parentId },
+      select: { diaryId: true },
+    });
+    if (!parent || parent.diaryId !== diaryId) {
+      throw new Error("답글을 달 대상 댓글이 존재하지 않습니다.");
+    }
+  }
+
   await prisma.comment.create({
-    data: { userId: session.user.id, diaryId, content: validated.content },
+    data: {
+      userId: session.user.id,
+      diaryId,
+      content: validated.content,
+      parentId: parentId || null,
+    },
   });
 
   revalidatePath(`/community/${diaryId}`);
+  revalidatePath("/community");
 }
 
 export async function deleteComment(commentId: string) {
@@ -138,6 +176,7 @@ export async function deleteComment(commentId: string) {
 
   await prisma.comment.delete({ where: { id: commentId } });
   revalidatePath(`/community/${comment.diaryId}`);
+  revalidatePath("/community");
 }
 
 export async function blockUser(targetUserId: string) {
@@ -250,3 +289,4 @@ export async function markReactionsRead() {
     create: { userId: session.user.id, reactionsReadAt: new Date() },
   });
 }
+

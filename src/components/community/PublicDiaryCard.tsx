@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { ShibaAvatar } from "@/components/mascot/ShibaAvatar";
 
+import { ReactionGroup } from "@/lib/community";
+
 type Props = {
   diary: {
     id: string;
@@ -15,6 +17,7 @@ type Props = {
       progress: { level: number; activeCharacter: string } | null;
       wardrobeItems: { wardrobeItemId: string }[];
     };
+    reactionGroups?: ReactionGroup[];
     _count: { likes: number; comments: number };
   };
   onAvatarClick?: (userId: string) => void;
@@ -32,6 +35,10 @@ export function PublicDiaryCard({ diary, onAvatarClick }: Props) {
       onAvatarClick(diary.user.id);
     }
   }
+
+  const activeReactions = (diary.reactionGroups ?? [])
+    .filter((r) => r.count > 0)
+    .sort((a, b) => b.count - a.count);
 
   return (
     <Link
@@ -66,8 +73,25 @@ export function PublicDiaryCard({ diary, onAvatarClick }: Props) {
       <p className="text-xs text-type-black/70 font-bold line-clamp-2">
         {diary.content}
       </p>
-      <div className="flex items-center gap-4 mt-3 text-xs font-bold text-type-black/50">
-        <span>🌸 {diary._count.likes}</span>
+      <div className="flex items-center justify-between gap-4 mt-3 text-xs font-bold text-type-black/60">
+        <div className="flex items-center gap-2 flex-wrap">
+          {activeReactions.length > 0 ? (
+            activeReactions.slice(0, 3).map((r) => (
+              <span
+                key={r.emoji}
+                className="inline-flex items-center gap-1 bg-canvas-almond/30 px-2 py-0.5 rounded-lg border border-black/10 text-[11px]"
+              >
+                <span>{r.emoji}</span>
+                <span>{r.count}</span>
+              </span>
+            ))
+          ) : (
+            <span className="inline-flex items-center gap-1 text-[11px] text-type-black/40">
+              <span>🌸</span>
+              <span>{diary._count.likes}</span>
+            </span>
+          )}
+        </div>
         <span>💬 {diary._count.comments}</span>
       </div>
     </Link>

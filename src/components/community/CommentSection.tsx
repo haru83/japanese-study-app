@@ -4,30 +4,23 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { addComment } from "@/actions/community";
-import { CommentItem } from "./CommentItem";
+import { CommentItem, DiaryCommentType } from "./CommentItem";
 import { filterCommentInput, hasKorean } from "@/lib/japaneseInput";
-
-
-type Comment = {
-  id: string;
-  content: string;
-  createdAt: Date;
-  userId: string;
-  diaryId: string;
-  user: {
-    id: string;
-    name: string | null;
-    progress: { level: number } | null;
-  };
-};
+import { CommentWithReplies, organizeCommentsWithReplies } from "@/lib/community";
 
 type Props = {
   diaryId: string;
-  comments: Comment[];
+  comments: DiaryCommentType[];
+  organizedComments?: CommentWithReplies<DiaryCommentType>[];
   currentUserId?: string;
 };
 
-export function CommentSection({ diaryId, comments, currentUserId }: Props) {
+export function CommentSection({
+  diaryId,
+  comments,
+  organizedComments,
+  currentUserId,
+}: Props) {
   const [text, setText] = useState("");
   const [koreanBlocked, setKoreanBlocked] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -58,20 +51,22 @@ export function CommentSection({ diaryId, comments, currentUserId }: Props) {
     });
   }
 
+  const rootComments = organizedComments ?? organizeCommentsWithReplies(comments);
+  const totalCommentsCount = comments.length;
 
   return (
     <div>
       <h3 className="font-black text-type-black text-sm mb-3">
-        댓글 {comments.length}개
+        댓글 {totalCommentsCount}개
       </h3>
       <div className="bg-paper-white rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_#000] overflow-hidden mb-4">
-        {comments.length === 0 ? (
+        {rootComments.length === 0 ? (
           <p className="px-4 py-6 text-sm text-type-black/50 font-bold text-center">
             아직 댓글이 없어요. 첫 응원을 남겨보세요! 🌸
           </p>
         ) : (
-          <div className="px-4 py-2">
-            {comments.map((c) => (
+          <div className="px-4 py-2 flex flex-col gap-1">
+            {rootComments.map((c) => (
               <CommentItem key={c.id} comment={c} currentUserId={currentUserId} />
             ))}
           </div>
@@ -112,3 +107,4 @@ export function CommentSection({ diaryId, comments, currentUserId }: Props) {
     </div>
   );
 }
+
