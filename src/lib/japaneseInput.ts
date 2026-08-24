@@ -128,6 +128,18 @@ export function isKoreanChar(char: string): boolean {
   );
 }
 
+/** 일기 입력 허용 여부 — 일본어·영문·숫자·기호·이모지 허용, 한글 차단 */
+export function isDiaryInputAllowed(char: string): boolean {
+  return isCommentInputAllowed(char);
+}
+
+/** 일기 텍스트에서 한글 차단 — 한글 제외한 모든 영문/숫자/기호/일본어/이모지 유지 */
+export function filterDiaryInput(text: string): string {
+  return Array.from(text)
+    .filter((char) => isDiaryInputAllowed(char))
+    .join("");
+}
+
 /** 댓글 입력 허용 여부 — 일본어·영어·이모지 허용, 한글 차단 */
 export function isCommentInputAllowed(char: string): boolean {
   const code = char.codePointAt(0);
@@ -163,3 +175,4 @@ export function filterCommentInput(text: string): string {
 export function hasKorean(text: string): boolean {
   return Array.from(text).some(isKoreanChar);
 }
+

@@ -8,6 +8,8 @@ import {
   hasUnconvertedRomaji,
   findFirstNonJapanese,
   isKoreanChar,
+  isDiaryInputAllowed,
+  filterDiaryInput,
   isCommentInputAllowed,
   filterCommentInput,
   hasKorean,
@@ -227,6 +229,37 @@ describe("isKoreanChar", () => {
     expect(isKoreanChar("A")).toBe(false);
     expect(isKoreanChar("1")).toBe(false);
     expect(isKoreanChar(" ")).toBe(false);
+  });
+});
+
+describe("isDiaryInputAllowed", () => {
+  it("일본어, 영문(브랜드명), 숫자(시간), 구두점, 이모지를 허용한다", () => {
+    expect(isDiaryInputAllowed("日")).toBe(true);
+    expect(isDiaryInputAllowed("本")).toBe(true);
+    expect(isDiaryInputAllowed("Starbucks")).toBe(true);
+    expect(isDiaryInputAllowed("7")).toBe(true);
+    expect(isDiaryInputAllowed(":")).toBe(true);
+    expect(isDiaryInputAllowed("0")).toBe(true);
+    expect(isDiaryInputAllowed("☕")).toBe(true);
+  });
+
+  it("한글을 거부한다", () => {
+    expect(isDiaryInputAllowed("한")).toBe(false);
+    expect(isDiaryInputAllowed("글")).toBe(false);
+  });
+});
+
+describe("filterDiaryInput", () => {
+  it("일본어 + 영문(브랜드명) + 숫자(시간)를 온전히 유지한다", () => {
+    expect(
+      filterDiaryInput("今日7:00にStarbucksでコーヒーを飲みました。")
+    ).toBe("今日7:00にStarbucksでコーヒーを飲みました。");
+  });
+
+  it("한글만 제거하고 영문/숫자는 보존한다", () => {
+    expect(
+      filterDiaryInput("오늘 7時に Starbucks에 갔습니다.")
+    ).toBe(" 7時に Starbucks .");
   });
 });
 

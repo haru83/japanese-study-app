@@ -5,9 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { saveDiary } from "@/actions/diary";
 import { reviewDiary, type TutorReviewResult } from "@/actions/diaryTutor";
 import {
-  filterRomajiInput,
-  filterJapaneseOnly,
-  hasUnconvertedRomaji,
+  filterDiaryInput,
 } from "@/lib/japaneseInput";
 import { Button } from "@/components/ui/Button";
 import { TutorReview } from "@/components/diary/TutorReview";
@@ -44,11 +42,11 @@ function DiaryWriteForm() {
   const [isPublic, setIsPublic] = useState(false);
   const [isTutorPublic, setIsTutorPublic] = useState(false);
 
-  /** 입력 핸들러: 영문(로마지) + 일본어 허용, 한글 등은 차단 */
+  /** 입력 핸들러: 일본어 + 영문 + 숫자 + 기호 허용, 한글 차단 */
   const handleTitleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const raw = e.target.value;
-      const filtered = filterRomajiInput(raw);
+      const filtered = filterDiaryInput(raw);
       setTitle(filtered);
       setTitleBlocked(raw !== filtered);
     },
@@ -58,7 +56,7 @@ function DiaryWriteForm() {
   const handleContentChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       const raw = e.target.value;
-      const filtered = filterRomajiInput(raw);
+      const filtered = filterDiaryInput(raw);
       setContent(filtered);
       setContentBlocked(raw !== filtered);
     },
@@ -67,39 +65,40 @@ function DiaryWriteForm() {
 
   /** AI 튜터 리뷰 요청 */
   async function handleReview() {
-    if (!content.trim()) return;
+    const trimmedContent = content.trim();
+    if (!trimmedContent) return;
     setReviewLoading(true);
     setShowReview(true);
     setReviewResult(null);
     try {
-      // 리뷰 시에는 일본어만 전달
-      const jpContent = filterJapaneseOnly(content);
-      const jpTitle = filterJapaneseOnly(title);
-      const result = await reviewDiary({ title: jpTitle, content: jpContent });
+      const result = await reviewDiary({
+        title: title.trim(),
+        content: trimmedContent,
+      });
       setReviewResult(result);
     } catch {
       setReviewResult({
         overallScore: 0,
         overallComment: "리뷰를 불러오지 못했습니다. 다시 시도해주세요.",
         reviews: [],
-        improvedText: filterJapaneseOnly(content),
+        improvedText: trimmedContent,
       });
     } finally {
       setReviewLoading(false);
     }
   }
 
-  /** 일기 저장 — 저장 시 영문/숫자는 제거 */
+  /** 일기 저장 — 일본어, 영문, 숫자 그대로 저장 */
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const jpContent = filterJapaneseOnly(content);
-    if (!jpContent.trim()) return;
+    const trimmedContent = content.trim();
+    if (!trimmedContent) return;
     setLoading(true);
 
     try {
       const result = await saveDiary({
-        title: filterJapaneseOnly(title) || `${topicKo} 일기`,
-        content: jpContent,
+        title: title.trim() || `${topicKo} 일기`,
+        content: trimmedContent,
         mood,
         isPublic,
         isTutorPublic,
@@ -117,8 +116,6 @@ function DiaryWriteForm() {
     }
   }
 
-  const hasRomajiInTitle = hasUnconvertedRomaji(title);
-  const hasRomajiInContent = hasUnconvertedRomaji(content);
 
   // ─── 완료 화면 ───────────────────────────────────────────
   if (done) {
@@ -175,19 +172,14 @@ function DiaryWriteForm() {
             type="text"
             value={title}
             onChange={handleTitleChange}
-            placeholder="kyou no dekigoto (今日の出来事)"
+            placeholder="kyou no dekigoto / 7時にStarbucksへ"
             className={`w-full px-4 py-3 rounded-2xl border-2 border-black bg-paper-white text-type-black focus:outline-none focus:ring-2 focus:ring-sakura-pink font-bold ${
               titleBlocked ? "ring-2 ring-red-400" : ""
             }`}
           />
           {titleBlocked && (
             <p className="text-xs text-red-500 font-bold mt-1">
-              🚫 한글 등 일본어·로마지 외 문자는 입력할 수 없습니다
-            </p>
-          )}
-          {hasRomajiInTitle && !titleBlocked && (
-            <p className="text-xs text-amber-500 font-bold mt-1">
-              ✏️ 로마지가 포함되어 있습니다 — 저장 시 자동 제거됩니다
+              🚫 한글은 입력할 수 없습니다 (일본어·영문·숫자로 작성해주세요)
             </p>
           )}
         </div>
@@ -224,7 +216,7 @@ function DiaryWriteForm() {
           <textarea
             value={content}
             onChange={handleContentChange}
-            placeholder="kyou wa ii tenki deshita. asagohan o tabete, kouen e ikimashita...&#10;今日はいい天気でした。朝ごはんを食べて、公園へ行きました..."
+            placeholder="今日は7時に起きて、Starbucksでコーヒーを飲みました...&#10;きょうは いい てんきでした..."
             rows={8}
             required
             className={`w-full px-4 py-3 rounded-2xl border-2 border-black bg-paper-white text-type-black focus:outline-none focus:ring-2 focus:ring-sakura-pink resize-none font-bold ${
@@ -233,7 +225,7 @@ function DiaryWriteForm() {
           />
           <div className="flex items-center justify-between mt-1">
             <p className="text-xs text-type-black/60 font-bold">
-              🇯🇵 일본어 + 로마지 입력 가능 · 한글은 차단
+              🇯🇵 일본어 · 영문 · 숫자 입력 가능 · 한글은 차단
             </p>
             <p className="text-xs text-type-black/60 font-bold">
               {content.length}자
@@ -241,13 +233,7 @@ function DiaryWriteForm() {
           </div>
           {contentBlocked && (
             <p className="text-xs text-red-500 font-bold mt-0.5">
-              🚫 한글 등 일본어·로마지 외 문자는 입력할 수 없습니다
-            </p>
-          )}
-          {hasRomajiInContent && !contentBlocked && (
-            <p className="text-xs text-amber-500 font-bold mt-0.5">
-              ✏️ 로마지가 포함되어 있습니다 — 저장 시 영문은 자동 제거되니
-              미리 히라가나/한자로 변환해주세요
+              🚫 한글은 입력할 수 없습니다 (일본어·영문·숫자로 작성해주세요)
             </p>
           )}
         </div>
@@ -339,15 +325,9 @@ function DiaryWriteForm() {
         <Button
           type="submit"
           size="lg"
-          disabled={
-            loading || !filterJapaneseOnly(content).trim()
-          }
+          disabled={loading || !content.trim()}
         >
-          {loading
-            ? "저장 중..."
-            : hasRomajiInContent
-            ? "일기 완성! (영문 자동 제거) (+10 XP)"
-            : "일기 완성! (+10 XP)"}
+          {loading ? "저장 중..." : "일기 완성! (+10 XP)"}
         </Button>
       </form>
     </div>
