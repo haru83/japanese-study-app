@@ -1,43 +1,5 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/db";
-import { DiaryList } from "@/components/learningDiary/DiaryList";
-import type { DiarySummary } from "@/components/learningDiary/DiaryList";
+import { redirect } from "next/navigation";
 
-export default async function LearnDiaryListPage() {
-  const session = await getServerSession(authOptions);
-
-  const [rows, progress, totalCount, userProgress] = await Promise.all([
-    prisma.learningDiaryEntry.findMany({
-      where: { isActive: true },
-      orderBy: { sortOrder: "asc" },
-      select: { id: true, title: true, titleKo: true, category: true, level: true, thumbnail: true, sortOrder: true },
-    }),
-    session?.user?.id
-      ? prisma.learningDiaryProgress.findMany({
-          where: { userId: session.user.id },
-          select: { diaryId: true },
-        })
-      : Promise.resolve([]),
-    prisma.learningDiaryEntry.count({ where: { isActive: true } }),
-    session?.user?.id
-      ? prisma.userProgress.findUnique({
-          where: { userId: session.user.id },
-          select: { level: true },
-        })
-      : Promise.resolve(null),
-  ]);
-
-  const userLevel = userProgress?.level ?? 1;
-  const diaries: DiarySummary[] = rows;
-  const completedIds = progress.map((p) => p.diaryId);
-
-  return (
-    <DiaryList
-      diaries={diaries}
-      completedIds={completedIds}
-      totalCount={totalCount}
-      userLevel={userLevel}
-    />
-  );
+export default function LearnDiaryListPage() {
+  redirect("/diary?tab=learn");
 }

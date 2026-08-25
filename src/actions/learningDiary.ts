@@ -73,6 +73,7 @@ export async function completeLearningDiary(
 
   revalidatePath("/profile");
   revalidatePath("/home");
+  revalidatePath("/diary");
   revalidatePath("/diary/learn");
 
   try {

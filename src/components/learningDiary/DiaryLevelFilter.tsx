@@ -9,6 +9,13 @@ const LEVELS: { label: string; value: DiaryLevel | "전체" }[] = [
   { label: "고급", value: "고급" },
 ];
 
+const LEVEL_ACTIVE_BG: Record<string, string> = {
+  전체: "bg-type-black text-white",
+  초급: "bg-matcha-green text-black",
+  중급: "bg-shiba-orange text-black",
+  고급: "bg-grape-punch text-white",
+};
+
 const CATEGORIES: { label: string; value: DiaryCategory | "전체" }[] = [
   { label: "전체", value: "전체" },
   { label: "일상", value: "일상" },
@@ -37,17 +44,17 @@ export function DiaryLevelFilter({
   onCategoryChange,
 }: DiaryLevelFilterProps) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2.5">
       {/* Level buttons */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         {LEVELS.map((l) => (
           <button
             key={l.value}
             onClick={() => onLevelChange(l.value)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
+            className={`px-3.5 py-1.5 rounded-full text-sm font-bold border-2 border-black transition-all ${
               selectedLevel === l.value
-                ? "bg-primary text-text-main shadow-sm"
-                : "bg-white dark:bg-surface-dark text-text-sub dark:text-text-sub-dark border border-gray-200 dark:border-border-dark"
+                ? `${LEVEL_ACTIVE_BG[l.value] ?? "bg-type-black text-white"} shadow-[3px_3px_0px_0px_#000]`
+                : "bg-paper-white text-type-black shadow-[2px_2px_0px_0px_#000] hover:shadow-[1px_1px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px]"
             }`}
           >
             {l.label}
@@ -56,15 +63,15 @@ export function DiaryLevelFilter({
       </div>
 
       {/* Category chips — horizontal scroll */}
-      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+      <div className="flex gap-2 overflow-x-auto pb-1.5 pt-0.5 scrollbar-hide">
         {CATEGORIES.map((c) => (
           <button
             key={c.value}
             onClick={() => onCategoryChange(c.value)}
-            className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all flex-shrink-0 ${
+            className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap transition-all flex-shrink-0 border-2 border-black ${
               selectedCategory === c.value
-                ? "bg-primary text-text-main shadow-sm"
-                : "bg-white dark:bg-surface-dark text-text-sub dark:text-text-sub-dark border border-gray-200 dark:border-border-dark"
+                ? "bg-type-black text-white shadow-[3px_3px_0px_0px_#000]"
+                : "bg-paper-white text-type-black shadow-[2px_2px_0px_0px_#000] hover:shadow-[1px_1px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px]"
             }`}
           >
             {c.label}

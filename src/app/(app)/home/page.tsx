@@ -66,12 +66,12 @@ function GuestHomeView() {
             </Link>
 
             <Link
-              href="/diary/learn"
+              href="/diary?tab=learn"
               className="bg-sakura-pink wobbly-4 rounded-[15px] p-5 border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
             >
               <div className="text-4xl mb-3">📖</div>
               <h3 className="font-black text-type-black text-sm">학습 일기</h3>
-              <p className="text-xs text-type-black/60 font-bold mt-1">100개 일기 무료</p>
+              <p className="text-xs text-type-black/60 font-bold mt-1">300개 일기 무료</p>
               <div className="mt-3 bg-paper-white text-type-black text-xs font-black px-3 py-1.5 rounded-xl inline-block border-2 border-black">
                 읽어보기
               </div>
@@ -293,7 +293,7 @@ export default async function HomePage() {
               completed={learning?.learningDiaryCompleted ?? 0}
               total={learning?.learningDiaryTotal ?? 0}
               nextTitle={learning?.learningDiaryNextTitle ?? null}
-              href={learning?.learningDiaryNextId ? `/diary/learn/${learning.learningDiaryNextId}` : "/diary/learn"}
+              href={learning?.learningDiaryNextId ? `/diary/learn/${learning.learningDiaryNextId}` : "/diary?tab=learn"}
               accent="text-sakura-pink"
             />
           </div>

@@ -36,7 +36,7 @@ export default async function VocabularyPage() {
                 경어 레슨 →
               </Link>
               <Link
-                href="/diary/learn"
+                href="/diary?tab=learn"
                 className="flex-1 py-2.5 bg-sakura-pink text-black text-sm font-black rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_#000] text-center"
               >
                 학습 일기 →

@@ -328,7 +328,7 @@ export function DiaryDetail({ diary, bookmarkMap }: Props) {
           newLevel={xpResult.newLevel}
           quizScore={quizScore}
           quizTotal={quizTotal}
-          backHref="/diary/learn"
+          backHref="/diary?tab=learn"
           backLabel="목록으로"
         />
       )}
