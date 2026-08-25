@@ -115,7 +115,7 @@ export default function VocabHubPage() {
                 <div className="flex items-center gap-2">
                   <p className="text-base font-black text-type-black">주제별 단어</p>
                   <span className="text-[10px] font-black bg-shiba-orange/30 px-2 py-0.5 rounded-full border border-black text-type-black">
-                    50개 단어
+                    100개 주제
                   </span>
                 </div>
                 <p className="text-xs text-type-black/60 font-bold mt-0.5">

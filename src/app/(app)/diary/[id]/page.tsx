@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { ShibaAvatar } from "@/components/mascot/ShibaAvatar";
 import { DeleteDiaryButton } from "./DeleteDiaryButton";
+import type { TutorReviewResult } from "@/actions/diaryTutor";
 
 const MOOD_EMOJI: Record<string, string> = {
   happy: "😊",
@@ -56,11 +57,14 @@ export default async function DiaryDetailPage({
   const moodEmoji = diary.mood ? MOOD_EMOJI[diary.mood] ?? "😊" : null;
   const moodLabel = diary.mood ? MOOD_LABEL[diary.mood] ?? "" : null;
 
-  // 일기 내용을 문장 단위로 분리 (마침표 기준)
-  const sentences = diary.content
-    .split(/(?<=[。！？])/)
-    .map((s) => s.trim())
-    .filter(Boolean);
+  let tutorReviewData: TutorReviewResult | null = null;
+  if (diary.tutorReview) {
+    try {
+      tutorReviewData = JSON.parse(diary.tutorReview) as TutorReviewResult;
+    } catch {
+      tutorReviewData = null;
+    }
+  }
 
   return (
     <main className="min-h-screen bg-sakura-blush">
@@ -109,29 +113,13 @@ export default async function DiaryDetailPage({
       </div>
 
       {/* 일기 본문 */}
-      <div className="px-5 py-6">
+      <div className="px-5 py-6 space-y-5">
         <div className="bg-paper-white border-2 border-black rounded-2xl shadow-[4px_4px_0px_0px_#000] overflow-hidden">
-          {/* 문장 카드 */}
-          <div className="px-5 py-5 space-y-4">
-            {sentences.length > 0 ? (
-              sentences.map((sentence, i) => (
-                <div
-                  key={i}
-                  className="bg-canvas-almond/60 rounded-xl p-3 border border-black/5"
-                >
-                  <span className="text-xs font-black text-type-black/30 mr-2">
-                    {i + 1}
-                  </span>
-                  <span className="text-base font-bold text-type-black leading-relaxed">
-                    {sentence}
-                  </span>
-                </div>
-              ))
-            ) : (
-              <p className="text-base font-bold text-type-black leading-relaxed whitespace-pre-wrap">
-                {diary.content}
-              </p>
-            )}
+          {/* 본문 내용 */}
+          <div className="p-6">
+            <p className="text-base font-bold text-type-black leading-relaxed whitespace-pre-wrap">
+              {diary.content}
+            </p>
           </div>
 
           {/* 푸터 정보 */}
@@ -152,6 +140,27 @@ export default async function DiaryDetailPage({
             </div>
           </div>
         </div>
+
+        {tutorReviewData && (
+          <div className="bg-grape-punch/10 rounded-2xl border-2 border-grape-punch/30 p-4">
+            <p className="text-xs font-black text-grape-punch mb-2">
+              🎓 AI 튜터 리뷰
+            </p>
+            <p className="text-sm font-bold text-type-black mb-3">
+              {tutorReviewData.overallComment}
+            </p>
+            {tutorReviewData.improvedText && (
+              <div className="bg-white/60 rounded-xl p-3">
+                <p className="text-[10px] font-black text-grape-punch mb-1">
+                  개선 예문
+                </p>
+                <p className="text-sm font-bold text-type-black">
+                  {tutorReviewData.improvedText}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* 하단 액션 */}
