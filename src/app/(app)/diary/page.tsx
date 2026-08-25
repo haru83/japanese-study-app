@@ -6,13 +6,10 @@ import { getCompletedLearningDiaries } from "@/actions/learningDiary";
 import { prisma } from "@/lib/db";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { ShibaAvatar } from "@/components/mascot/ShibaAvatar";
+import { formatDateKST } from "@/lib/dateUtils";
 
 function formatDate(date: Date) {
-  return new Date(date).toLocaleDateString("ko-KR", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
+  return formatDateKST(date);
 }
 
 const MOOD_EMOJI: Record<string, string> = {

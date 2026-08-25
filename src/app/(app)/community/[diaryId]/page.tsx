@@ -9,6 +9,7 @@ import { LikeButton } from "@/components/community/LikeButton";
 import { CommentSection } from "@/components/community/CommentSection";
 import { ReportButton } from "@/components/community/ReportModal";
 import type { TutorReviewResult } from "@/actions/diaryTutor";
+import { formatDateKST } from "@/lib/dateUtils";
 
 export default async function CommunityDiaryPage({
   params,
@@ -62,7 +63,7 @@ export default async function CommunityDiaryPage({
               </span>
             </div>
             <p className="text-xs text-type-black/50 font-bold">
-              {new Date(diary.createdAt).toLocaleDateString("ko-KR")}
+              {formatDateKST(diary.createdAt)}
             </p>
           </div>
         </div>

@@ -6,6 +6,7 @@ import { getPublicDiaries, getReceivedReactions, markReactionsRead } from "@/act
 import { getCommunityPosts } from "@/actions/communityPost";
 import { FeedTabClient } from "@/components/community/FeedTabClient";
 import { BoardTabClient } from "@/components/community/BoardTabClient";
+import { formatDateKST } from "@/lib/dateUtils";
 
 export default async function CommunityPage({
   searchParams,
@@ -186,7 +187,7 @@ async function ReactionsTab({ userId }: { userId?: string }) {
             </p>
           </div>
           <span className="text-[10px] text-type-black/40 font-bold shrink-0">
-            {new Date(item.createdAt).toLocaleDateString("ko-KR")}
+            {formatDateKST(item.createdAt)}
           </span>
         </Link>
       ))}

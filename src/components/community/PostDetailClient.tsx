@@ -16,6 +16,7 @@ import { ReportButton } from "@/components/community/ReportModal";
 import { filterCommentInput, hasKorean } from "@/lib/japaneseInput";
 import { ReactionPicker } from "@/components/community/ReactionPicker";
 import { ReactionGroup, CommentWithReplies } from "@/lib/community";
+import { formatDateKST } from "@/lib/dateUtils";
 
 interface CommentUser {
   id: string;
@@ -198,7 +199,7 @@ export function PostDetailClient({ post, currentUserId, isAdmin }: Props) {
                 </span>
               </div>
               <span className="text-xs text-type-black/50 font-bold">
-                {new Date(post.createdAt).toLocaleDateString("ko-KR")}
+                {formatDateKST(post.createdAt)}
               </span>
             </div>
           </div>
@@ -330,7 +331,7 @@ export function PostDetailClient({ post, currentUserId, isAdmin }: Props) {
                           </span>
                         </div>
                         <span className="text-[10px] text-type-black/40 font-bold">
-                          {new Date(comment.createdAt).toLocaleDateString("ko-KR")}
+                          {formatDateKST(comment.createdAt)}
                         </span>
                       </div>
 
@@ -450,7 +451,7 @@ export function PostDetailClient({ post, currentUserId, isAdmin }: Props) {
                                   </span>
                                 </div>
                                 <span className="text-[9px] text-type-black/40 font-bold">
-                                  {new Date(reply.createdAt).toLocaleDateString("ko-KR")}
+                                  {formatDateKST(reply.createdAt)}
                                 </span>
                               </div>
 

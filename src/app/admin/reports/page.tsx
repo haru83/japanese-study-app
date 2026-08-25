@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import ReportCard from "./ReportCard";
+import { formatDateKST } from "@/lib/dateUtils";
 
 export default async function AdminReportsPage() {
   const pending = await prisma.report.findMany({
@@ -67,7 +68,7 @@ export default async function AdminReportsPage() {
               <div key={r.id} className="bg-white border-2 border-black rounded-[15px] p-3 shadow-[2px_2px_0px_0px_#000]">
                 <div className="flex justify-between items-start mb-1">
                   <span className="font-black text-sm">[{r.targetType}] {r.id.slice(0,8)}...</span>
-                  <span className="text-xs font-bold text-gray-500">{new Date(r.createdAt).toLocaleDateString('ko-KR')}</span>
+                  <span className="text-xs font-bold text-gray-500">{formatDateKST(r.createdAt)}</span>
                 </div>
                 <p className="text-sm font-bold mb-1">사유: {r.reason || "없음"}</p>
                 {r.adminNote && (

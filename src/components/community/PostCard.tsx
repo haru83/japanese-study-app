@@ -3,6 +3,7 @@
 
 import Link from "next/link";
 import { ShibaAvatar } from "@/components/mascot/ShibaAvatar";
+import { formatDateKST } from "@/lib/dateUtils";
 
 export const POST_CATEGORIES: Record<string, { label: string; bg: string; text: string }> = {
   chat: { label: "💬 잡담", bg: "bg-canvas-almond", text: "text-type-black" },
@@ -77,7 +78,7 @@ export function PostCard({ post, onAvatarClick }: Props) {
               </span>
             </div>
             <span className="text-[10px] text-type-black/50 font-bold block">
-              {new Date(post.createdAt).toLocaleDateString("ko-KR")}
+              {formatDateKST(post.createdAt)}
             </span>
           </div>
         </div>

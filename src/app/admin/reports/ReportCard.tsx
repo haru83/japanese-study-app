@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { resolveReport, deleteReportTarget, setDiaryPrivate } from "@/actions/admin";
+import { formatDateTimeKST } from "@/lib/dateUtils";
 
 interface ReportProps {
   id: string;
@@ -67,7 +68,7 @@ export default function ReportCard({ report }: { report: ReportProps }) {
           신고자: {report.reporter.name || report.reporter.email} (전체 {report.reporter._count.reports}건 신고한 유저)
         </p>
         <p className="text-xs text-gray-600 mt-1">
-          {new Date(report.createdAt).toLocaleString("ko-KR")}
+          {formatDateTimeKST(report.createdAt)}
         </p>
       </div>
 

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ShibaAvatar } from "@/components/mascot/ShibaAvatar";
 
 import { ReactionGroup } from "@/lib/community";
+import { formatDateKST } from "@/lib/dateUtils";
 
 type Props = {
   diary: {
@@ -63,7 +64,7 @@ export function PublicDiaryCard({ diary, onAvatarClick }: Props) {
             </span>
           </div>
           <span className="text-xs text-type-black/50 font-bold">
-            {new Date(diary.createdAt).toLocaleDateString("ko-KR")}
+            {formatDateKST(diary.createdAt)}
           </span>
         </div>
       </div>

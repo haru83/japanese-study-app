@@ -6,6 +6,7 @@ import { deleteComment, addComment } from "@/actions/community";
 import { ReportModal } from "./ReportModal";
 import { filterCommentInput, hasKorean } from "@/lib/japaneseInput";
 import { CommentWithReplies } from "@/lib/community";
+import { formatDateKST } from "@/lib/dateUtils";
 
 export type DiaryCommentType = {
   id: string;
@@ -90,7 +91,7 @@ export function CommentItem({ comment, currentUserId }: Props) {
               {comment.user.name ?? "학습자"}
             </span>
             <span className="text-[10px] text-type-black/40 font-bold">
-              {new Date(comment.createdAt).toLocaleDateString("ko-KR")}
+              {formatDateKST(comment.createdAt)}
             </span>
           </div>
           <p className="text-sm text-type-black font-bold mb-2">{comment.content}</p>
@@ -189,7 +190,7 @@ export function CommentItem({ comment, currentUserId }: Props) {
                       {reply.user.name ?? "학습자"}
                     </span>
                     <span className="text-[9px] text-type-black/40 font-bold">
-                      {new Date(reply.createdAt).toLocaleDateString("ko-KR")}
+                      {formatDateKST(reply.createdAt)}
                     </span>
                   </div>
                   <p className="text-xs font-bold text-type-black">{reply.content}</p>

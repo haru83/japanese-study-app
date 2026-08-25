@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { toggleUserDisabled, updateUserName, updateUserRole } from "@/actions/admin";
+import { formatDateKST } from "@/lib/dateUtils";
 
 export default async function AdminUserDetailPage({ params }: { params: Promise<{ userId: string }> }) {
   const session = await getServerSession(authOptions);
@@ -93,7 +94,7 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
               </span>
             </div>
             <p className="text-sm text-gray-600">{user.email}</p>
-            <p className="text-sm font-bold mt-1">가입일: {user.createdAt.toLocaleDateString()}</p>
+            <p className="text-sm font-bold mt-1">가입일: {formatDateKST(user.createdAt)}</p>
           </div>
 
           <div className="flex flex-wrap gap-2 text-sm font-bold bg-sakura-pink p-3 border-2 border-black rounded-xl">
@@ -177,7 +178,7 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
                 >
                   <p className="font-bold text-sm truncate">{diary.title}</p>
                   <div className="flex justify-between items-center mt-1 text-xs text-gray-600 font-bold">
-                    <span>{diary.createdAt.toLocaleDateString()}</span>
+                    <span>{formatDateKST(diary.createdAt)}</span>
                     <span>❤️ {diary._count.likes}</span>
                   </div>
                 </Link>
@@ -206,7 +207,7 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
                     </span>
                   </div>
                   <div className="flex justify-between items-center text-xs text-gray-600 font-bold">
-                    <span>{post.createdAt.toLocaleDateString()}</span>
+                    <span>{formatDateKST(post.createdAt)}</span>
                     <span>❤️ {post._count.likes} · 💬 {post._count.comments}</span>
                   </div>
                 </Link>
@@ -229,7 +230,7 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
                       {report.targetType}
                     </span>
                     <span className="text-xs font-bold text-gray-500">
-                      {report.createdAt.toLocaleDateString()}
+                      {formatDateKST(report.createdAt)}
                     </span>
                   </div>
                   <p className="font-bold mb-1">{report.reason}</p>
@@ -259,7 +260,7 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
                     </Link>
                   </div>
                   <p className="text-xs text-gray-500 mt-2 text-right">
-                    {comment.createdAt.toLocaleDateString()}
+                    {formatDateKST(comment.createdAt)}
                   </p>
                 </div>
               ))}

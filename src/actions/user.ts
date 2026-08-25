@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { toKSTDateString } from "@/lib/dateUtils";
 
 export interface PublicUserProfile {
   id: string;
@@ -136,10 +137,7 @@ export async function getUserStudyDates(): Promise<string[]> {
 
   const addDate = (d?: Date | null) => {
     if (!d) return;
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    dateSet.add(`${year}-${month}-${day}`);
+    dateSet.add(toKSTDateString(d));
   };
 
   keigo.forEach((k) => addDate(k.completedAt));

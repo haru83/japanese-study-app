@@ -6,6 +6,7 @@ import { prisma } from "@/lib/db";
 import { ShibaAvatar } from "@/components/mascot/ShibaAvatar";
 import { DeleteDiaryButton } from "./DeleteDiaryButton";
 import type { TutorReviewResult } from "@/actions/diaryTutor";
+import { formatDateKST, formatTimeKST } from "@/lib/dateUtils";
 
 const MOOD_EMOJI: Record<string, string> = {
   happy: "😊",
@@ -24,19 +25,13 @@ const MOOD_LABEL: Record<string, string> = {
 };
 
 function formatDate(date: Date) {
-  return new Date(date).toLocaleDateString("ko-KR", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
+  return formatDateKST(date, {
     weekday: "short",
   });
 }
 
 function formatTime(date: Date) {
-  return new Date(date).toLocaleTimeString("ko-KR", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  return formatTimeKST(date);
 }
 
 export default async function DiaryDetailPage({
