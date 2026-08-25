@@ -225,7 +225,7 @@ export function TopicVocabClient({ initialBookmarkMap }: Props) {
           {/* 1. 대분류 드롭다운 */}
           <div className="relative">
             <label className="block text-[10px] font-black text-type-black/50 mb-1 ml-1">
-              1. 대분류 카테고리
+              1. 대분류 카테고리 (10개)
             </label>
             <div className="relative">
               <select
@@ -235,7 +235,7 @@ export function TopicVocabClient({ initialBookmarkMap }: Props) {
               >
                 {TOPIC_CATEGORIES.map((cat) => (
                   <option key={cat.id} value={cat.id}>
-                    {cat.icon} {cat.label} {cat.id === "all" ? "(전체 100개)" : ""}
+                    {cat.icon} {cat.label} {cat.id === "all" ? "(전체 10개 테마)" : ""}
                   </option>
                 ))}
               </select>
