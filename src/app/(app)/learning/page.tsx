@@ -141,7 +141,7 @@ export default function VocabHubPage() {
                 <div className="flex items-center gap-2">
                   <p className="text-base font-black text-type-black">재미있는 숙어</p>
                   <span className="text-[10px] font-black bg-shiba-orange/30 px-2 py-0.5 rounded-full border border-black text-type-black">
-                    50개 관용구
+                    100개 관용구
                   </span>
                 </div>
                 <p className="text-xs text-type-black/60 font-bold mt-0.5">
@@ -167,7 +167,7 @@ export default function VocabHubPage() {
                 <div className="flex items-center gap-2">
                   <p className="text-base font-black text-type-black">헷갈리는 문법</p>
                   <span className="text-[10px] font-black bg-shiba-orange/30 px-2 py-0.5 rounded-full border border-black text-type-black">
-                    50개 비교
+                    100개 비교
                   </span>
                 </div>
                 <p className="text-xs text-type-black/60 font-bold mt-0.5">

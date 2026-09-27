@@ -95,7 +95,7 @@ export function ConfusingGrammarClient({ initialBookmarkMap }: Props) {
               헷갈리는 문법 🤔
             </h1>
             <p className="text-xs font-bold text-type-black/60">
-              비슷해서 틀리기 쉬운 핵심 문법 50선 명쾌 비교
+              비슷해서 틀리기 쉬운 핵심 문법 100선 명쾌 비교
             </p>
           </div>
         </div>

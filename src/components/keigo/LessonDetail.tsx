@@ -139,7 +139,7 @@ export function LessonDetail({ lesson, bookmarkMap }: Props) {
       <div className="px-5 py-5 pb-24">
         {activeSection === "dialogue" && (
           <div>
-            <DialoguePlayer dialogue={lesson.dialogue} />
+            <DialoguePlayer dialogue={lesson.dialogue} lessonId={lesson.id} />
             <div className="mt-6 flex justify-end">
               <button
                 onClick={() => handleSelectSection("grammar")}

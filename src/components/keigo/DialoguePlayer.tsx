@@ -14,13 +14,15 @@ interface DialogueLine {
 
 interface DialoguePlayerProps {
   dialogue: DialogueLine[];
+  lessonId?: string;
 }
 
-export function DialoguePlayer({ dialogue }: DialoguePlayerProps) {
+export function DialoguePlayer({ dialogue, lessonId }: DialoguePlayerProps) {
   const [showPronunciation, setShowPronunciation] = useState(false);
   const [showTranslation, setShowTranslation] = useState(false);
   const [activePlayingIndex, setActivePlayingIndex] = useState<number | null>(null);
   const isPlayingRef = useRef(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const rubySegments = useMemo(
     () => dialogue.map((line) => buildRubySegments(line.text, line.pronunciation)),
@@ -29,6 +31,10 @@ export function DialoguePlayer({ dialogue }: DialoguePlayerProps) {
 
   useEffect(() => {
     return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
         window.speechSynthesis.cancel();
       }
@@ -45,6 +51,10 @@ export function DialoguePlayer({ dialogue }: DialoguePlayerProps) {
   };
 
   const stopFullPlay = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       window.speechSynthesis.cancel();
     }
@@ -61,19 +71,56 @@ export function DialoguePlayer({ dialogue }: DialoguePlayerProps) {
     setActivePlayingIndex(index);
     const line = dialogue[index];
     const config = getSpeakerConfig(line.speaker);
+    const audioSrc = lessonId ? `/audio/keigo/${lessonId}_${index}.mp3` : undefined;
+
+    const advanceNext = () => {
+      if (isPlayingRef.current) {
+        setTimeout(() => {
+          playSequentially(index + 1);
+        }, 350); // slight natural pause between dialogue turns
+      }
+    };
+
+    if (audioSrc && typeof window !== "undefined") {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      const audio = new Audio(audioSrc);
+      audioRef.current = audio;
+      audio.onended = () => {
+        advanceNext();
+      };
+      audio.onerror = () => {
+        // Fallback to Web Speech API if audio file fails/missing
+        speakJapanese({
+          text: line.text,
+          rate: 0.9,
+          gender: config.gender,
+          pitch: config.pitch,
+          onEnd: advanceNext,
+          onError: () => stopFullPlay(),
+        });
+      };
+      audio.play().catch(() => {
+        speakJapanese({
+          text: line.text,
+          rate: 0.9,
+          gender: config.gender,
+          pitch: config.pitch,
+          onEnd: advanceNext,
+          onError: () => stopFullPlay(),
+        });
+      });
+      return;
+    }
 
     speakJapanese({
       text: line.text,
       rate: 0.9,
       gender: config.gender,
       pitch: config.pitch,
-      onEnd: () => {
-        if (isPlayingRef.current) {
-          setTimeout(() => {
-            playSequentially(index + 1);
-          }, 350); // slight natural pause between dialogue turns
-        }
-      },
+      onEnd: advanceNext,
       onError: () => {
         stopFullPlay();
       },
@@ -172,6 +219,7 @@ export function DialoguePlayer({ dialogue }: DialoguePlayerProps) {
                   </p>
                   <TtsButton
                     text={line.text}
+                    audioSrc={lessonId ? `/audio/keigo/${lessonId}_${i}.mp3` : undefined}
                     size="sm"
                     gender={config.gender}
                     pitch={config.pitch}

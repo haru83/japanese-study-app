@@ -97,8 +97,8 @@ describe("주제별 단어 및 재미있는 숙어 데이터 검증", () => {
     expect(bodyWords.length).toBeGreaterThanOrEqual(15);
   });
 
-  it("재미있는 숙어가 정확히 50개여야 함", () => {
-    expect(IDIOMS_DATA.length).toBe(50);
+  it("재미있는 숙어가 정확히 100개여야 함", () => {
+    expect(IDIOMS_DATA.length).toBe(100);
   });
 
   it("재미있는 숙어의 모든 항목이 필수 필드를 가지고 있어야 함", () => {

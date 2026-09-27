@@ -6,18 +6,18 @@ import {
 import { parseMonoRubySegments } from "@/lib/rubyParser";
 
 describe("헷갈리는 문법(Confusing Grammar) 데이터 검증", () => {
-  it("헷갈리는 문법 데이터가 정확히 50개여야 함", () => {
-    expect(CONFUSING_GRAMMAR_DATA.length).toBe(50);
+  it("헷갈리는 문법 데이터가 정확히 100개여야 함", () => {
+    expect(CONFUSING_GRAMMAR_DATA.length).toBe(100);
   });
 
   it("모든 항목의 ID가 고유해야 함", () => {
     const ids = new Set(CONFUSING_GRAMMAR_DATA.map((item) => item.id));
-    expect(ids.size).toBe(50);
+    expect(ids.size).toBe(100);
   });
 
   it("모든 항목이 유효한 필수 필드를 가지고 있어야 함", () => {
     for (const item of CONFUSING_GRAMMAR_DATA) {
-      expect(item.id).toMatch(/^cg-\d{2}$/);
+      expect(item.id).toMatch(/^cg-\d{2,3}$/);
       expect(item.title).toBeTruthy();
       expect(item.category).toBeTruthy();
       expect(item.categoryLabel).toBeTruthy();

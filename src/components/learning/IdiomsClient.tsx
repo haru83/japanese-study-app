@@ -57,7 +57,7 @@ export function IdiomsClient({ initialBookmarkMap }: Props) {
             재미있는 숙어 💡
           </h1>
           <p className="text-xs font-bold text-type-black/60">
-            원어민이 매일 쓰는 핵심 일본어 관용구 50선
+            원어민이 매일 쓰는 핵심 일본어 관용구 100선
           </p>
         </div>
       </header>
